@@ -224,9 +224,28 @@ async function fetchMovieBoxHome() {
       renderPosterRail('trendingSeriesRail', state.seriesCatalog);
       renderPosterRail('animeRail', state.animeCatalog);
       renderAllDynamicMovieBoxRows(state.mbRows);
+
+      // Fetch dedicated NetMirror CDN catalog asynchronously
+      fetchNetMirrorCatalog().catch(() => {});
     }
   } catch (err) {
     console.warn('Failed fetching MovieBox home:', err);
+  }
+}
+
+async function fetchNetMirrorCatalog(force = false) {
+  try {
+    const res = await fetch(`/api/netmirror/catalog${force ? '?refresh=1' : ''}`);
+    const data = await res.json();
+    if (data.ok && Array.isArray(data.items) && data.items.length > 0) {
+      state.netMirrorCatalog = data.items;
+      renderPosterRail('netMirrorRail', state.netMirrorCatalog);
+      if (state.activeDedicatedPage === 'netmirror') {
+        renderDedicatedPageContent('netmirror');
+      }
+    }
+  } catch (err) {
+    console.warn('Could not fetch NetMirror catalog:', err);
   }
 }
 
@@ -1706,18 +1725,31 @@ function loadVideoStream(streamObj, posterUrl, startSeconds = 0, subtitles = [])
       video.play().catch(() => {});
     }
   }
-  // 2. HLS (.m3u8) via hls.js
-  else if (url.includes('.m3u8') && window.Hls && Hls.isSupported()) {
-    const hls = new Hls();
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+  // 2. HLS (.m3u8) via hls.js or Native Safari / iOS WebKit engine
+  else if (url.includes('.m3u8')) {
+    if (window.Hls && Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
+      hls.on(Hls.Events.ERROR, () => {
+        hideVideoLoadingRing();
+      });
+      state.hlsInstance = hls;
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
+      video.addEventListener('loadedmetadata', () => {
+        if (startSeconds > 0 && startSeconds < video.duration) {
+          video.currentTime = startSeconds;
+        }
+        video.play().catch(() => {});
+      }, { once: true });
+    } else {
+      video.src = url;
       video.play().catch(() => {});
-    });
-    hls.on(Hls.Events.ERROR, () => {
-      hideVideoLoadingRing();
-    });
-    state.hlsInstance = hls;
+    }
   }
   // 3. Direct MP4 / MKV
   else {
@@ -2306,6 +2338,9 @@ function showHomeBrowseView() {
   document.querySelectorAll('.rail-item[data-nav]').forEach(b => {
     b.classList.toggle('active', b.dataset.nav === 'home');
   });
+  document.querySelectorAll('.dock-tab[data-dock]').forEach(d => {
+    d.classList.toggle('active', d.dataset.dock === 'home');
+  });
   document.querySelectorAll('.yt-chip').forEach(c => {
     c.classList.toggle('active', c.dataset.chip === 'all');
   });
@@ -2325,6 +2360,7 @@ const DEDICATED_PAGES_CONFIG = {
     desc: 'Stream global originals, Western blockbusters, and multi-season series in 1080p Full HD with multi-language audio tracks.',
     subfilters: [
       { id: 'all', label: 'All NetMirror' },
+      { id: 'originals', label: 'Netflix Originals' },
       { id: 'movies', label: 'Movies' },
       { id: 'series', label: 'TV Series' },
       { id: 'scifi', label: 'Sci-Fi & Action' },
@@ -2544,9 +2580,12 @@ async function openDedicatedPage(pageKey, customSearchQuery = '') {
   document.getElementById('watchView')?.classList.add('hidden');
   document.getElementById('dedicatedPageView')?.classList.remove('hidden');
 
-  // Highlight matching sidebar item & filter chip
+  // Highlight matching sidebar item & filter chip & mobile dock tab
   document.querySelectorAll('.rail-item[data-nav]').forEach(b => {
     b.classList.toggle('active', b.dataset.nav === pageKey);
+  });
+  document.querySelectorAll('.dock-tab[data-dock]').forEach(d => {
+    d.classList.toggle('active', d.dataset.dock === pageKey);
   });
   document.querySelectorAll('.yt-chip').forEach(c => {
     c.classList.toggle('active', c.dataset.chip === pageKey);
@@ -2666,6 +2705,14 @@ async function openDedicatedPage(pageKey, customSearchQuery = '') {
         if (state.activeDedicatedPage === 'anime') renderDedicatedPageContent('anime');
       }
     } catch {}
+    return;
+  }
+
+  // If NetMirror page has no items loaded yet, fetch directly from /api/netmirror/catalog
+  if (pageKey === 'netmirror' && (!state.netMirrorCatalog || state.netMirrorCatalog.length === 0)) {
+    renderDedicatedPageContent(pageKey);
+    await fetchNetMirrorCatalog();
+    if (state.activeDedicatedPage === 'netmirror') renderDedicatedPageContent('netmirror');
     return;
   }
 
@@ -2983,19 +3030,14 @@ function renderDedicatedPageContent(pageKey) {
   let filtered = [];
 
   if (pageKey === 'netmirror') {
-    filtered = allItems.filter(it => {
-      const rt = String(it._rowTitle || '').toLowerCase();
-      return !it.isLocal && (
-        rt.includes('western') || rt.includes('hollywood') || rt.includes('trending') ||
-        rt.includes('popular') || rt.includes('series') || rt.includes('gems') ||
-        state.top10Movies.includes(it) || state.top10Series.includes(it)
-      );
-    });
-    if (filtered.length === 0) filtered = allItems.filter(it => !it.isLocal);
+    filtered = (state.netMirrorCatalog && state.netMirrorCatalog.length > 0)
+      ? [...state.netMirrorCatalog]
+      : allItems.filter(it => it.provider?.includes('NetMirror') || /western|hollywood|netflix|original/i.test(it._rowTitle || ''));
+    if (sub === 'originals') filtered = filtered.filter(it => String(it.badge || '').toUpperCase().includes('ORIGINAL'));
     if (sub === 'movies') filtered = filtered.filter(it => it.type !== 'series' && Number(it.stype) !== 2);
     if (sub === 'series') filtered = filtered.filter(it => it.type === 'series' || Number(it.stype) === 2);
     if (sub === 'scifi') filtered = filtered.filter(it => (it.genres || []).some(g => /sci-fi|action|fantasy|adventure/i.test(g)));
-    if (sub === 'toprated') filtered = filtered.filter(it => parseFloat(it.rating || '8.2') >= 8.0);
+    if (sub === 'toprated') filtered = filtered.filter(it => parseFloat(it.rating || '8.2') >= 8.2);
   } else if (pageKey === 'movies') {
     filtered = allItems.filter(it => it.type !== 'series' && Number(it.stype) !== 2);
     if (sub === 'action') filtered = filtered.filter(it => (it.genres || []).some(g => /action|adventure/i.test(g)) || /action|hollywood/i.test(it._rowTitle || ''));
@@ -3783,6 +3825,20 @@ function bindEvents() {
         setTimeout(() => document.getElementById('dedicatedFilterInput')?.focus(), 80);
       } else {
         openDedicatedPage(nav);
+      }
+    });
+  });
+
+  document.querySelectorAll('.dock-tab[data-dock]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.dock-tab[data-dock]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const dock = btn.dataset.dock;
+      if (dock === 'home') {
+        showHomeBrowseView();
+      } else {
+        openDedicatedPage(dock);
       }
     });
   });

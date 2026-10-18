@@ -50,22 +50,18 @@ self.addEventListener('fetch', (event) => {
   // Ignore non-GET or cross-origin requests
   if (req.method !== 'GET') return;
 
-  // Never cache live streams, proxies, or dynamic APIs
+  // Pass through all APIs, live streams, and Range requests directly to native browser engine
   if (
     url.pathname.startsWith('/api/') ||
     url.pathname.includes('/mb-dash/') ||
     url.pathname.includes('/mb-proxy') ||
-    url.pathname.includes('/local-stream')
+    url.pathname.includes('/local-stream') ||
+    url.pathname.endsWith('.mpd') ||
+    url.pathname.endsWith('.m3u8') ||
+    url.pathname.endsWith('.mp4') ||
+    url.pathname.endsWith('.m4s') ||
+    req.headers.has('range')
   ) {
-    // Network first, no caching
-    event.respondWith(
-      fetch(req).catch(() => {
-        return new Response(JSON.stringify({ ok: false, error: 'Offline' }), {
-          status: 503,
-          headers: { 'Content-Type': 'application/json' }
-        });
-      })
-    );
     return;
   }
 

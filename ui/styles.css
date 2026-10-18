@@ -4337,84 +4337,100 @@ body {
 /* ----------------------------------------------------------------------------
    C. PHONES — IPHONE & ANDROID TOUCH UI (max-width: 767px)
    ---------------------------------------------------------------------------- */
+/* Mobile Floating Bottom Dock (Hidden on Desktop, Visible on Phone/Tablet) */
+.mobile-bottom-dock {
+  display: none;
+}
+
 @media (max-width: 767px) {
-  /* Transform Left Sidebar into Floating iOS/visionOS Bottom Tab Bar */
-  .hotstar-rail,
-  .hotstar-rail:hover {
+  /* Hide the 12-item desktop sidebar on phones */
+  .hotstar-rail {
+    display: none !important;
+  }
+
+  /* 5-Tab Liquid-Glass & Claymorphic Bottom Floating Dock */
+  .mobile-bottom-dock {
+    display: flex !important;
     position: fixed !important;
-    top: auto !important;
-    bottom: max(8px, env(safe-area-inset-bottom)) !important;
-    left: 8px !important;
-    right: 8px !important;
-    width: auto !important;
-    height: 62px !important;
-    padding: 6px 10px !important;
-    border-radius: 22px !important;
-    flex-direction: row !important;
+    bottom: max(10px, env(safe-area-inset-bottom, 12px)) !important;
+    left: 12px !important;
+    right: 12px !important;
+    height: 64px !important;
+    background: linear-gradient(165deg, rgba(20, 26, 42, 0.90) 0%, rgba(10, 13, 22, 0.96) 100%) !important;
+    backdrop-filter: blur(28px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.2),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.6),
+                0 16px 40px rgba(0, 0, 0, 0.85) !important;
+    border-radius: 26px !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    scrollbar-width: none !important;
-    z-index: 1600 !important;
+    justify-content: space-around !important;
+    padding: 0 4px !important;
+    z-index: 1700 !important;
   }
-  .hotstar-rail::-webkit-scrollbar {
-    display: none !important;
-  }
-  .rail-brand {
-    display: none !important;
-  }
-  .rail-nav {
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 4px !important;
-    width: auto !important;
-    flex: 1 0 auto !important;
-  }
-  .rail-footer {
-    flex-direction: row !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    padding-left: 4px !important;
-    border-top: none !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
-    width: auto !important;
-    flex: 0 0 auto !important;
-  }
-  .rail-item {
-    width: auto !important;
-    min-width: 56px !important;
-    height: 48px !important;
-    padding: 4px 8px !important;
+
+  .dock-tab {
+    display: flex !important;
     flex-direction: column !important;
+    align-items: center !important;
     justify-content: center !important;
-    gap: 2px !important;
-    border-radius: 14px !important;
+    gap: 3px !important;
+    background: none !important;
+    border: none !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    padding: 6px 10px !important;
+    border-radius: 18px !important;
+    transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    position: relative !important;
+    flex: 1 1 0 !important;
+    max-width: 72px !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
-  .rail-icon {
+  .dock-tab:hover {
+    color: #f8fafc !important;
+  }
+  .dock-tab.active {
+    color: #fff !important;
+    background: linear-gradient(145deg, rgba(229, 9, 20, 0.88) 0%, rgba(139, 44, 245, 0.78) 100%) !important;
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.35),
+                inset -1.5px -1.5px 3px rgba(0, 0, 0, 0.4),
+                0 6px 18px rgba(229, 9, 20, 0.4) !important;
+  }
+  .dock-tab-icon {
+    width: 22px !important;
+    height: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .dock-tab-icon svg {
     width: 20px !important;
     height: 20px !important;
   }
-  .rail-icon svg {
-    width: 18px !important;
-    height: 18px !important;
+  .dock-tab-label {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.2px !important;
+    font-family: 'Outfit', sans-serif !important;
   }
-  .rail-label {
-    opacity: 1 !important;
-    transform: none !important;
-    font-size: 9.5px !important;
-    font-weight: 600 !important;
-    gap: 3px !important;
-  }
-  .rail-label kbd,
-  .rail-pill {
-    display: none !important;
+  .dock-live-dot {
+    width: 6px !important;
+    height: 6px !important;
+    background: #ef4444 !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 4px !important;
+    right: 18px !important;
+    box-shadow: 0 0 8px #ef4444 !important;
+    animation: livePulse 1.6s infinite !important;
   }
 
   /* Main App Shell with Bottom Safe-Area Clearance */
   .app-shell {
     margin-left: 0 !important;
-    padding: 8px 10px 88px 10px !important;
+    padding: 8px 10px 96px 10px !important;
   }
 
   /* Compact Phone Top Header */
@@ -4553,14 +4569,21 @@ body {
   }
   .media-rail {
     gap: 10px !important;
-    padding: 4px 2px 12px !important;
+    padding: 4px 10px 14px !important;
+    scroll-snap-type: x mandatory !important;
+    scroll-padding: 0 10px !important;
+    -webkit-overflow-scrolling: touch !important;
   }
   .poster-card {
-    width: 146px !important;
-    border-radius: 14px !important;
+    flex: 0 0 134px !important;
+    width: 134px !important;
+    min-width: 134px !important;
+    max-width: 134px !important;
+    border-radius: 16px !important;
+    scroll-snap-align: start !important;
   }
   .poster-thumb {
-    height: 204px !important;
+    height: 196px !important;
   }
   .poster-body {
     padding: 9px 10px 10px !important;
