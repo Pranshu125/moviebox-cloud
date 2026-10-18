@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Deep Apple Dark Squircle Base Gradient -->
+    <linearGradient id="bgSquircle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#171c2b" />
+      <stop offset="50%" stop-color="#0b0e18" />
+      <stop offset="100%" stop-color="#05070c" />
+    </linearGradient>
+
+    <!-- Iridescent Aurora Backlight inside the Glass -->
+    <radialGradient id="auroraGlow1" cx="25%" cy="22%" r="65%">
+      <stop offset="0%" stop-color="#5e9eff" stop-opacity="0.72" />
+      <stop offset="55%" stop-color="#3b5bdb" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#0b0e18" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="auroraGlow2" cx="78%" cy="80%" r="65%">
+      <stop offset="0%" stop-color="#ff3b6b" stop-opacity="0.65" />
+      <stop offset="50%" stop-color="#7c3aed" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#05070c" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Frosted Liquid Glass Inner Lens -->
+    <linearGradient id="liquidGlassFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.34" />
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.10" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.04" />
+    </linearGradient>
+
+    <!-- Specular Rim Stroke Gradient -->
+    <linearGradient id="rimHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.78" />
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.08" />
+    </linearGradient>
+
+    <!-- Play Prism Gradient -->
+    <linearGradient id="playPrism" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#e8f1ff" />
+      <stop offset="100%" stop-color="#b8d4ff" />
+    </linearGradient>
+
+    <!-- Top Specular Sheen -->
+    <linearGradient id="topSheen" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.42" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <filter id="softShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.55" />
+    </filter>
+  </defs>
+
+  <!-- Outer Apple Squircle Base -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgSquircle)" />
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#auroraGlow1)" />
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#auroraGlow2)" />
+
+  <!-- Outer Squircle Specular Rim -->
+  <rect x="25.5" y="25.5" width="461" height="461" rx="106.5" fill="none" stroke="url(#rimHighlight)" stroke-width="3" />
+
+  <!-- Top Refractive Glass Arc -->
+  <path d="M 132 26 L 380 26 C 438 26 484 72 486 130 C 370 175 142 175 26 130 C 28 72 74 26 132 26 Z" fill="url(#topSheen)" opacity="0.55" />
+
+  <!-- Inner Floating Liquid Glass Disc -->
+  <circle cx="256" cy="256" r="144" fill="url(#liquidGlassFill)" stroke="url(#rimHighlight)" stroke-width="2.5" filter="url(#softShadow)" />
+
+  <!-- Inner Secondary Ring -->
+  <circle cx="256" cy="256" r="118" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1.5" />
+
+  <!-- Center Liquid Glass Play Prism -->
+  <path d="M 222 184 C 214 179 204 185 204 195 L 204 317 C 204 327 214 333 222 328 L 324 267 C 332 262 332 250 324 245 Z" fill="url(#playPrism)" filter="url(#softShadow)" />
+</svg>

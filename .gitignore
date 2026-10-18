@@ -1,0 +1,16 @@
+# Windows executables and local binaries
+moviebox-tui.exe
+vlc-help.txt
+
+# Local user runtime data & cache
+ui-data.json
+.system_generated/
+*.log
+
+# Dependencies
+node_modules/
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store

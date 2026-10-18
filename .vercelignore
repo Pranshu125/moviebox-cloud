@@ -1,0 +1,8 @@
+moviebox-tui.exe
+*.bat
+*.vbs
+vlc-help.txt
+ui-data.json
+.git
+.gemini
+scripts/

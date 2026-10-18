@@ -1,0 +1,23 @@
+{
+  "name": "moviebox-studio",
+  "version": "2.0.0",
+  "description": "MovieBox Studio - Liquid Glass & Claymorphism Home Theater & Cloud Streaming PWA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "moviebox",
+    "streaming",
+    "pwa",
+    "liquid-glass",
+    "claymorphism",
+    "home-theater",
+    "vercel"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true
+}
