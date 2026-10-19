@@ -1,5 +1,2 @@
-const { handleRequest } = require('../server.js');
-
-module.exports = async (req, res) => {
-  return handleRequest(req, res);
-};
+const handler = require('./index.js');
+module.exports = handler;

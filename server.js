@@ -750,9 +750,26 @@ const MIME_TYPES = {
   '.vtt': 'text/vtt; charset=utf-8'
 };
 
+function safeSendHeaders(res, statusCode, headers = {}) {
+  if (res.headersSent) return;
+  for (const [key, value] of Object.entries(headers)) {
+    try {
+      res.setHeader(key, value);
+    } catch {}
+  }
+  try {
+    res.statusCode = statusCode;
+  } catch {}
+  if (typeof res.writeHead === 'function') {
+    try {
+      res.writeHead(statusCode, headers);
+    } catch {}
+  }
+}
+
 function sendJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
-  res.writeHead(statusCode, {
+  safeSendHeaders(res, statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -2695,14 +2712,14 @@ async function handleRequest(req, res) {
   let safePath = pathname === '/' ? '/index.html' : pathname;
   const filePath = path.join(UI_DIR, safePath);
   if (!filePath.startsWith(UI_DIR)) {
-    res.writeHead(403);
+    safeSendHeaders(res, 403);
     return res.end('Forbidden');
   }
 
   // 1. Instant sub-millisecond in-memory delivery for core PWA assets (Vercel Serverless & Edge)
   if (safePath === '/' || safePath === '/index.html') {
     if (STATIC_IN_MEMORY['/index.html']) {
-      res.writeHead(200, {
+      safeSendHeaders(res, 200, {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'public, max-age=0, must-revalidate'
       });
@@ -2712,7 +2729,7 @@ async function handleRequest(req, res) {
 
   if (STATIC_IN_MEMORY[safePath]) {
     const ext = path.extname(safePath).toLowerCase();
-    res.writeHead(200, {
+    safeSendHeaders(res, 200, {
       'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
       'Cache-Control': safePath === '/sw.js' ? 'no-cache, no-store, must-revalidate' : 'public, max-age=3600'
     });
@@ -2726,7 +2743,7 @@ async function handleRequest(req, res) {
 
   if (candidateFile) {
     const ext = path.extname(candidateFile).toLowerCase();
-    res.writeHead(200, {
+    safeSendHeaders(res, 200, {
       'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
       'Cache-Control': 'no-store, no-cache, must-revalidate'
     });
@@ -2735,10 +2752,10 @@ async function handleRequest(req, res) {
       console.warn('[Static Stream Error]:', err?.message);
       if (!res.headersSent) {
         if (STATIC_IN_MEMORY['/index.html']) {
-          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          safeSendHeaders(res, 200, { 'Content-Type': 'text/html; charset=utf-8' });
           res.end(STATIC_IN_MEMORY['/index.html']);
         } else {
-          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          safeSendHeaders(res, 200, { 'Content-Type': 'text/html; charset=utf-8' });
           res.end('<!DOCTYPE html><html><head><title>MovieBox Studio</title></head><body>Loading MovieBox Studio...</body></html>');
         }
       }
@@ -2747,13 +2764,13 @@ async function handleRequest(req, res) {
   } else {
     // 3. Fallback for SPA routing: serve index.html with 200 OK
     if (STATIC_IN_MEMORY['/index.html']) {
-      res.writeHead(200, {
+      safeSendHeaders(res, 200, {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'public, max-age=0, must-revalidate'
       });
       return res.end(STATIC_IN_MEMORY['/index.html']);
     }
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    safeSendHeaders(res, 404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
   }
 }
