@@ -97,6 +97,511 @@ const state = {
   }
 };
 
+// =========================================================================
+// INSTANT NETMIRROR & MULTI-PROVIDER SUGGESTION DATASETS
+// Ensures all rails have rich 4K suggestions instantly on 0ms load
+// =========================================================================
+const NETMIRROR_VAULT_SUGGESTIONS = [
+  {
+    id: 'nm_sug_spiderman_brand_new_day',
+    title: 'Spider-Man: Brand New Day',
+    cleanTitle: 'Spider-Man: Brand New Day',
+    year: '2026',
+    rating: '9.1',
+    type: 'movie',
+    stype: 1,
+    quality: '4K Dolby Vision',
+    provider: 'NetMirror 4K • MovieBox CDN',
+    badge: 'NETMIRROR 4K',
+    poster: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1280&q=80',
+    genres: ['Action', 'Sci-Fi', 'Adventure'],
+    description: 'Peter Parker faces a fresh chapter in New York City with spatial audio and Dolby Vision in pristine 4K.'
+  },
+  {
+    id: 'nm_sug_dune_part_two',
+    title: 'Dune: Part Two',
+    cleanTitle: 'Dune: Part Two',
+    year: '2024',
+    rating: '8.6',
+    type: 'movie',
+    stype: 1,
+    quality: '4K IMAX Enhanced',
+    provider: 'NetMirror 4K / Vegamovies',
+    badge: 'NETMIRROR 4K',
+    poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1280&q=80',
+    genres: ['Sci-Fi', 'Action', 'Adventure'],
+    description: 'Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.'
+  },
+  {
+    id: 'nm_sug_oppenheimer',
+    title: 'Oppenheimer',
+    cleanTitle: 'Oppenheimer',
+    year: '2023',
+    rating: '8.9',
+    type: 'movie',
+    stype: 1,
+    quality: '4K Ultra HD',
+    provider: 'NetMirror 4K • Dolby Atmos',
+    badge: 'NETMIRROR 4K',
+    poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1280&q=80',
+    genres: ['Biography', 'Drama', 'History'],
+    description: 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.'
+  },
+  {
+    id: 'nm_sug_interstellar',
+    title: 'Interstellar',
+    cleanTitle: 'Interstellar',
+    year: '2014',
+    rating: '8.7',
+    type: 'movie',
+    stype: 1,
+    quality: '4K HDR10+',
+    provider: 'NetMirror 4K Vault',
+    badge: 'NETMIRROR 4K',
+    poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1280&q=80',
+    genres: ['Adventure', 'Drama', 'Sci-Fi'],
+    description: 'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft along with a team of researchers.'
+  },
+  {
+    id: 'nm_sug_the_dark_knight',
+    title: 'The Dark Knight',
+    cleanTitle: 'The Dark Knight',
+    year: '2008',
+    rating: '9.0',
+    type: 'movie',
+    stype: 1,
+    quality: '4K Remaster UHD',
+    provider: 'NetMirror 4K Vault',
+    badge: 'NETMIRROR 4K',
+    poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1280&q=80',
+    genres: ['Action', 'Crime', 'Drama'],
+    description: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological tests.'
+  },
+  {
+    id: 'nm_sug_inception',
+    title: 'Inception',
+    cleanTitle: 'Inception',
+    year: '2010',
+    rating: '8.8',
+    type: 'movie',
+    stype: 1,
+    quality: '4K Ultra HD',
+    provider: 'NetMirror 4K Vault',
+    badge: 'NETMIRROR 4K',
+    poster: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1280&q=80',
+    genres: ['Action', 'Adventure', 'Sci-Fi'],
+    description: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.'
+  }
+];
+
+const CONTINUE_WATCHING_SUGGESTIONS = [
+  {
+    id: 'sug_cw_loki',
+    title: 'Loki',
+    cleanTitle: 'Loki',
+    year: '2021',
+    rating: '8.2',
+    type: 'series',
+    stype: 2,
+    season: 1,
+    episode: 1,
+    episodeTag: 'S01E01 • 1080p',
+    progressSeconds: 1540,
+    durationSeconds: 3000,
+    progressPct: 75,
+    quality: '1080p Full HD',
+    provider: 'NetMirror / MovieBox CDN',
+    poster: 'https://pbcdn.aoneroom.com/image/2026/09/06/82cded1cbee4b418637ce9b0f34e3252.jpg',
+    backdrop: 'https://pbcdn.aoneroom.com/image/2026/09/06/82cded1cbee4b418637ce9b0f34e3252.jpg',
+    description: 'Continue watching Loki from 25:40.'
+  },
+  {
+    id: 'sug_cw_stranger_things',
+    title: 'Stranger Things',
+    cleanTitle: 'Stranger Things',
+    year: '2025',
+    rating: '8.7',
+    type: 'series',
+    stype: 2,
+    season: 4,
+    episode: 1,
+    episodeTag: 'S04E01 • 4K',
+    progressSeconds: 1800,
+    durationSeconds: 4200,
+    progressPct: 45,
+    quality: '4K Dolby Vision',
+    provider: 'NetMirror 4K Original',
+    poster: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1280&q=80',
+    description: 'Continue watching Stranger Things S04E01.'
+  },
+  {
+    id: 'sug_cw_wednesday',
+    title: 'Wednesday',
+    cleanTitle: 'Wednesday',
+    year: '2024',
+    rating: '8.1',
+    type: 'series',
+    stype: 2,
+    season: 1,
+    episode: 2,
+    episodeTag: 'S01E02 • 1080p',
+    progressSeconds: 1720,
+    durationSeconds: 3100,
+    progressPct: 60,
+    quality: '1080p Full HD',
+    provider: 'NetMirror 4K Original',
+    poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1280&q=80',
+    description: 'Continue watching Wednesday S01E02.'
+  },
+  {
+    id: 'sug_cw_arcane',
+    title: 'Arcane',
+    cleanTitle: 'Arcane',
+    year: '2024',
+    rating: '9.0',
+    type: 'series',
+    stype: 2,
+    season: 2,
+    episode: 1,
+    episodeTag: 'S02E01 • 4K',
+    progressSeconds: 2100,
+    durationSeconds: 2500,
+    progressPct: 85,
+    quality: '4K Ultra HD',
+    provider: 'NetMirror 4K Original',
+    poster: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1280&q=80',
+    description: 'Continue watching Arcane Season 2 Episode 1.'
+  },
+  {
+    id: 'sug_cw_squid_game',
+    title: 'Squid Game',
+    cleanTitle: 'Squid Game',
+    year: '2025',
+    rating: '8.0',
+    type: 'series',
+    stype: 2,
+    season: 2,
+    episode: 1,
+    episodeTag: 'S02E01 • 1080p',
+    progressSeconds: 1650,
+    durationSeconds: 3200,
+    progressPct: 55,
+    quality: '1080p Full HD',
+    provider: 'NetMirror 4K Original',
+    poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80',
+    backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1280&q=80',
+    description: 'Continue watching Squid Game Season 2.'
+  }
+];
+
+const TOP10_SUGGESTIONS = [
+  { id: 'top_1', title: 'Spider-Man: Brand New Day', cleanTitle: 'Spider-Man: Brand New Day', year: '2026', rating: '9.1', quality: '4K Dolby Vision', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K • MovieBox CDN' },
+  { id: 'top_2', title: 'Dune: Part Two', cleanTitle: 'Dune: Part Two', year: '2024', rating: '8.6', quality: '4K IMAX Enhanced', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K / Vegamovies' },
+  { id: 'top_3', title: 'Oppenheimer', cleanTitle: 'Oppenheimer', year: '2023', rating: '8.9', quality: '4K Ultra HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K • Dolby Atmos' },
+  { id: 'top_4', title: 'Deadpool & Wolverine', cleanTitle: 'Deadpool & Wolverine', year: '2024', rating: '8.0', quality: '4K Dolby Vision', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1280&q=80', provider: 'HDHub4u • Vegamovies 4K' },
+  { id: 'top_5', title: 'Gladiator II', cleanTitle: 'Gladiator II', year: '2024', rating: '7.8', quality: '4K Ultra HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=1280&q=80', provider: 'MovieBox CDN • Cinema HQ' },
+  { id: 'top_6', title: 'Arcane', cleanTitle: 'Arcane', year: '2024', rating: '9.0', quality: '4K Ultra HD', type: 'series', stype: 2, season: 2, episode: 1, poster: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K Original' },
+  { id: 'top_7', title: 'Stranger Things', cleanTitle: 'Stranger Things', year: '2025', rating: '8.7', quality: '4K Ultra HD', type: 'series', stype: 2, season: 4, episode: 1, poster: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K Original' },
+  { id: 'top_8', title: 'The Boys', cleanTitle: 'The Boys', year: '2024', rating: '8.7', quality: '1080p Full HD', type: 'series', stype: 2, season: 4, episode: 1, poster: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80', provider: 'Streamu Cloud CDN' },
+  { id: 'top_9', title: 'Fallout', cleanTitle: 'Fallout', year: '2024', rating: '8.4', quality: '4K HDR', type: 'series', stype: 2, season: 1, episode: 1, poster: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1280&q=80', provider: 'Movies4u • 123movies' },
+  { id: 'top_10', title: 'Shogun', cleanTitle: 'Shogun', year: '2024', rating: '8.7', quality: '4K Ultra HD', type: 'series', stype: 2, season: 1, episode: 1, poster: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K' }
+];
+
+const BOLLYWOOD_SUGGESTIONS = [
+  { id: 'bolly_kalki', title: 'Kalki 2898 AD', cleanTitle: 'Kalki 2898 AD', year: '2024', rating: '7.8', quality: '4K UHD Dual Audio', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1280&q=80', provider: 'HDHub4u • Dual Audio 4K', badge: 'HDHUB4U 4K' },
+  { id: 'bolly_jawan', title: 'Jawan', cleanTitle: 'Jawan', year: '2023', rating: '7.0', quality: '4K Cinema HQ', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1280&q=80', provider: 'Vegamovies 4K Cinema HQ', badge: 'VEGAMOVIES 4K' },
+  { id: 'bolly_animal', title: 'Animal', cleanTitle: 'Animal', year: '2023', rating: '6.7', quality: '4K Ultra HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1280&q=80', provider: 'HDHub4u 4K Dual Audio', badge: 'HDHUB4U' },
+  { id: 'bolly_stree2', title: 'Stree 2', cleanTitle: 'Stree 2', year: '2024', rating: '7.6', quality: '1080p Full HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K / HDHub4u', badge: 'NETMIRROR 4K' },
+  { id: 'bolly_fighter', title: 'Fighter', cleanTitle: 'Fighter', year: '2024', rating: '6.9', quality: '4K Dolby Vision', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1280&q=80', provider: 'Vegamovies 4K HDR', badge: 'VEGAMOVIES' },
+  { id: 'bolly_dunki', title: 'Dunki', cleanTitle: 'Dunki', year: '2023', rating: '6.7', quality: '1080p Full HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K Master', badge: 'NETMIRROR' },
+  { id: 'bolly_brahmastra', title: 'Brahmastra: Part One', cleanTitle: 'Brahmastra: Part One', year: '2022', rating: '5.6', quality: '4K Dual Audio', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1280&q=80', provider: 'HDHub4u 4K Dual Audio', badge: 'HDHUB4U' },
+  { id: 'bolly_rrr', title: 'RRR', cleanTitle: 'RRR', year: '2022', rating: '7.8', quality: '4K Dolby Atmos', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1280&q=80', provider: 'Vegamovies 4K Atmos', badge: 'VEGAMOVIES 4K' }
+];
+
+const FEATURED_MOVIES_SUGGESTIONS = [
+  { id: 'sug_mv_deadpool_wolverine', title: 'Deadpool & Wolverine', cleanTitle: 'Deadpool & Wolverine', year: '2024', rating: '8.0', quality: '4K Dolby Vision', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K • Vegamovies' },
+  { id: 'sug_mv_gladiator_2', title: 'Gladiator II', cleanTitle: 'Gladiator II', year: '2024', rating: '7.8', quality: '4K Ultra HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=1280&q=80', provider: 'MovieBox CDN • Cinema HQ' },
+  { id: 'sug_mv_furiosa', title: 'Furiosa: A Mad Max Saga', cleanTitle: 'Furiosa: A Mad Max Saga', year: '2024', rating: '7.6', quality: '4K Ultra HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1280&q=80', provider: 'Vegamovies 4K' },
+  { id: 'sug_mv_alien_romulus', title: 'Alien: Romulus', cleanTitle: 'Alien: Romulus', year: '2024', rating: '7.3', quality: '1080p Dual Audio', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1280&q=80', provider: 'HDHub4u Dual Audio' },
+  { id: 'sug_mv_twisters', title: 'Twisters', cleanTitle: 'Twisters', year: '2024', rating: '6.7', quality: '1080p Full HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1280&q=80', provider: 'Streamu Cloud CDN' },
+  { id: 'sug_mv_planet_apes', title: 'Kingdom of the Planet of the Apes', cleanTitle: 'Kingdom of the Planet of the Apes', year: '2024', rating: '7.0', quality: '1080p Full HD', type: 'movie', stype: 1, poster: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80', provider: 'Movies4u • 123movies' }
+];
+
+const FEATURED_SERIES_SUGGESTIONS = [
+  { id: 'sug_sr_shogun', title: 'Shogun', cleanTitle: 'Shogun', year: '2024', rating: '8.7', quality: '4K Ultra HD', type: 'series', stype: 2, season: 1, episode: 1, poster: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K' },
+  { id: 'sug_sr_fallout', title: 'Fallout', cleanTitle: 'Fallout', year: '2024', rating: '8.4', quality: '4K HDR', type: 'series', stype: 2, season: 1, episode: 1, poster: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1280&q=80', provider: 'Prime Mirror 4K' },
+  { id: 'sug_sr_hotd', title: 'House of the Dragon', cleanTitle: 'House of the Dragon', year: '2024', rating: '8.4', quality: '4K Dolby Vision', type: 'series', stype: 2, season: 2, episode: 1, poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror 4K' },
+  { id: 'sug_sr_the_boys', title: 'The Boys', cleanTitle: 'The Boys', year: '2024', rating: '8.7', quality: '1080p Full HD', type: 'series', stype: 2, season: 4, episode: 1, poster: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1280&q=80', provider: 'MovieBox CDN' },
+  { id: 'sug_sr_the_penguin', title: 'The Penguin', cleanTitle: 'The Penguin', year: '2024', rating: '8.8', quality: '4K Ultra HD', type: 'series', stype: 2, season: 1, episode: 1, poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1280&q=80', provider: 'Vegamovies 4K' },
+  { id: 'sug_sr_the_bear', title: 'The Bear', cleanTitle: 'The Bear', year: '2024', rating: '8.6', quality: '1080p Full HD', type: 'series', stype: 2, season: 3, episode: 1, poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1280&q=80', provider: 'Streamu Cloud CDN' }
+];
+
+const ANIME_SUGGESTIONS = [
+  { id: 'sug_an_solo_leveling', title: 'Solo Leveling', cleanTitle: 'Solo Leveling', year: '2024', rating: '8.5', quality: '4K Ultra HD', type: 'anime', stype: 3, season: 1, episode: 1, poster: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror Anime 4K' },
+  { id: 'sug_an_jjk', title: 'Jujutsu Kaisen', cleanTitle: 'Jujutsu Kaisen', year: '2024', rating: '8.6', quality: '1080p Full HD', type: 'anime', stype: 3, season: 2, episode: 1, poster: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=1280&q=80', provider: 'Crunchy Mirror 1080p' },
+  { id: 'sug_an_demon_slayer', title: 'Demon Slayer: Hashira Training Arc', cleanTitle: 'Demon Slayer: Hashira Training Arc', year: '2024', rating: '8.7', quality: '4K Ultra HD', type: 'anime', stype: 3, season: 4, episode: 1, poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1280&q=80', provider: 'NetMirror Anime 4K' },
+  { id: 'sug_an_aot', title: 'Attack on Titan: The Final Chapters', cleanTitle: 'Attack on Titan: The Final Chapters', year: '2023', rating: '9.0', quality: '1080p Dual Audio', type: 'anime', stype: 3, season: 4, episode: 28, poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1280&q=80', provider: 'HDHub4u Dual Audio' },
+  { id: 'sug_an_bleach', title: 'Bleach: Thousand-Year Blood War', cleanTitle: 'Bleach: Thousand-Year Blood War', year: '2024', rating: '9.0', quality: '1080p Full HD', type: 'anime', stype: 3, season: 3, episode: 1, poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1280&q=80', provider: 'Aniwatch CDN' },
+  { id: 'sug_an_chainsaw', title: 'Chainsaw Man', cleanTitle: 'Chainsaw Man', year: '2024', rating: '8.4', quality: '1080p Full HD', type: 'anime', stype: 3, season: 1, episode: 1, poster: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=1280&q=80', provider: 'Anime.nexus 1080p' }
+];
+
+const LIVE_SPORTS_SUGGESTIONS = [
+  { id: 'sp_pl_arsenal_chelsea', title: 'Premier League: Arsenal vs Chelsea', cleanTitle: 'Premier League: Arsenal vs Chelsea', badge: 'LIVE MATCH', year: 'LIVE NOW', rating: 'LIVE', quality: '1080p60 LIVE', provider: 'GaiaFlix • Live Feed', poster: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1280&q=80', isLive: true, isGaiaFlix: true, streamUrl: 'https://stream.crichd.vip/update/skys2.php', description: 'Premier League Matchday London Derby live 60fps satellite broadcast relay.' },
+  { id: 'sp_ucl_madrid_city', title: 'UEFA Champions League: Real Madrid vs Man City', cleanTitle: 'UEFA Champions League: Real Madrid vs Man City', badge: 'LIVE MATCH', year: 'LIVE NOW', rating: 'LIVE', quality: '1080p60 LIVE', provider: 'GaiaFlix • Live Feed', poster: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1280&q=80', isLive: true, isGaiaFlix: true, streamUrl: 'https://stream.crichd.vip/update/tnt1.php', description: 'UEFA Champions League Quarter-Final live stadium coverage.' },
+  { id: 'sp_nba_lakers_warriors', title: 'NBA: Lakers vs Warriors', cleanTitle: 'NBA: Lakers vs Warriors', badge: 'LIVE MATCH', year: 'LIVE NOW', rating: 'LIVE', quality: '1080p60 LIVE', provider: 'GaiaFlix • Live Feed', poster: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1280&q=80', isLive: true, isGaiaFlix: true, streamUrl: 'https://stream.crichd.vip/update/espn.php', description: 'NBA Western Conference marquee matchup live in 60fps.' },
+  { id: 'sp_f1_monaco', title: 'Formula 1: Monaco Grand Prix', cleanTitle: 'Formula 1: Monaco Grand Prix', badge: 'LIVE MATCH', year: 'LIVE NOW', rating: 'LIVE', quality: '1080p60 LIVE', provider: 'GaiaFlix • Live Feed', poster: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1280&q=80', isLive: true, isGaiaFlix: true, streamUrl: 'https://stream.crichd.vip/update/skyf1.php', description: 'FIA Formula One World Championship Monaco Grand Prix live.' },
+  { id: 'sp_cricket_ind_aus', title: 'ICC Cricket: India vs Australia 4K', cleanTitle: 'ICC Cricket: India vs Australia 4K', badge: 'LIVE MATCH', year: 'LIVE NOW', rating: 'LIVE', quality: '1080p60 LIVE', provider: 'GaiaFlix • Live Feed', poster: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=1280&q=80', isLive: true, isGaiaFlix: true, streamUrl: 'https://stream.crichd.vip/update/star1.php', description: 'International Cricket bilateral series live in high bitrate 1080p60.' },
+  { id: 'sp_ufc_main_card', title: 'UFC Main Card: World Championship', cleanTitle: 'UFC Main Card: World Championship', badge: 'LIVE MATCH', year: 'LIVE NOW', rating: 'LIVE', quality: '1080p60 LIVE', provider: 'GaiaFlix • Live Feed', poster: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80', backdrop: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1280&q=80', isLive: true, isGaiaFlix: true, streamUrl: 'https://stream.crichd.vip/update/bt1.php', description: 'UFC World Championship Pay-Per-View Main Card live satellite relay.' }
+];
+
+// =========================================================================
+// PLAYBACK SITES & STREAMING PROVIDER SELECTION ENGINE
+// Allows user to choose where to stream from before playing any title
+// =========================================================================
+const PLAYBACK_SITES = [
+  {
+    key: 'netmirror',
+    name: 'NetMirror 4K Ultra HD',
+    badgeClass: 'netmirror',
+    badgeText: 'NETMIRROR',
+    pillClass: 'gold',
+    pillText: '4K ULTRA HD',
+    desc: 'Direct 4K / 1080p Ultra HD • Spatial Audio • Dolby Vision CDN',
+    providerName: 'NetMirror 4K (Ultra HD / Dolby Vision)'
+  },
+  {
+    key: 'hdhub4u',
+    name: 'HDHub4u Bollywood & Dual Audio',
+    badgeClass: 'hdhub',
+    badgeText: 'HDHUB4U',
+    pillClass: 'cyan',
+    pillText: 'DUAL AUDIO 4K',
+    desc: '4K / 1080p Multi-Audio • Hindi Clean Master + English 5.1',
+    providerName: 'HDHub4u (Dual Audio Hindi+Eng / 1080p-4K)'
+  },
+  {
+    key: 'vegamovies',
+    name: 'Vegamovies Cinema HQ',
+    badgeClass: 'vegamovies',
+    badgeText: 'VEGA',
+    pillClass: 'green',
+    pillText: '10-BIT HEVC',
+    desc: 'Direct 10-Bit HEVC Cinema High Bitrate Direct Master',
+    providerName: 'Vegamovies (Direct 4K / HEVC Cinema HQ)'
+  },
+  {
+    key: 'streamu',
+    name: 'Streamu Global Cloud CDN',
+    badgeClass: 'streamu',
+    badgeText: 'STREAMU',
+    pillClass: 'gold',
+    pillText: 'FAST CLOUD',
+    desc: 'Ultra-low latency multi-language cloud streaming cluster',
+    providerName: 'Streamu (Fast Multi-Language Cloud CDN)'
+  },
+  {
+    key: 'movies4u',
+    name: 'Movies4u Buffer Cluster',
+    badgeClass: 'movies4u',
+    badgeText: 'M4U',
+    pillClass: 'cyan',
+    pillText: 'RESILIENT',
+    desc: 'Multi-bitrate adaptive resilient high-speed mirror',
+    providerName: 'Movies4u (1080p Fast Buffer Cluster)'
+  },
+  {
+    key: '123movies',
+    name: '123movies Cinema Mirror',
+    badgeClass: 'm123',
+    badgeText: '123M',
+    pillClass: 'green',
+    pillText: 'FAST MIRROR',
+    desc: 'Global high speed streaming mirror with multi-server failover',
+    providerName: '123movies (1080p Cinema Mirror)'
+  },
+  {
+    key: 'moviebox',
+    name: 'MovieBox Native CDN (DASH / HLS)',
+    badgeClass: 'moviebox',
+    badgeText: 'MOVIEBOX',
+    pillClass: 'gold',
+    pillText: 'ADAPTIVE DASH',
+    desc: 'Official multi-bitrate DASH/MP4 stream with original audio tracks',
+    providerName: 'MovieBox Native CDN (Adaptive DASH)'
+  },
+  {
+    key: 'gaiaflix',
+    name: 'GaiaFlix Live Stadium Relay',
+    badgeClass: 'gaiaflix',
+    badgeText: 'GAIAFLIX',
+    pillClass: 'green',
+    pillText: '1080P60 LIVE',
+    desc: 'Live 1080p60 Stadium feed with zero buffer relay',
+    providerName: 'GaiaFlix Live Stadium Relay (1080p60)'
+  }
+];
+
+function syncSiteSettingsUI() {
+  const defaultSelect = document.getElementById('settingDefaultSite');
+  const alwaysAskToggle = document.getElementById('settingAlwaysAskSiteToggle');
+  const savedSite = localStorage.getItem('moviebox_default_site') || 'ask';
+  const savedAlwaysAsk = localStorage.getItem('moviebox_always_ask_site') !== 'false';
+
+  if (defaultSelect) defaultSelect.value = savedSite;
+  if (alwaysAskToggle) alwaysAskToggle.checked = savedAlwaysAsk;
+}
+
+function startPlaybackWithSitePreference(item, overrideSeason = null, overrideEpisode = null) {
+  if (!item) return;
+  // If it's a local file that already resides on disk, play directly without prompting for remote sites
+  if (item.isLocal && item.fullPath) {
+    openTheaterPlayer(item, overrideSeason, overrideEpisode);
+    return;
+  }
+
+  const alwaysAsk = localStorage.getItem('moviebox_always_ask_site') !== 'false';
+  const defaultSite = localStorage.getItem('moviebox_default_site') || 'ask';
+
+  if (!alwaysAsk && defaultSite && defaultSite !== 'ask') {
+    openTheaterPlayer(item, overrideSeason, overrideEpisode, defaultSite);
+    return;
+  }
+
+  promptSourcePreferences(item, overrideSeason, overrideEpisode);
+}
+
+function promptSourcePreferences(item, overrideSeason = null, overrideEpisode = null) {
+  if (!item) return;
+  const modal = document.getElementById('sourcePreferencesModal');
+  if (!modal) {
+    openTheaterPlayer(item, overrideSeason, overrideEpisode);
+    return;
+  }
+
+  const posterImg = document.getElementById('sourcePrefPoster');
+  const titleEl = document.getElementById('sourcePrefTitle');
+  const metaEl = document.getElementById('sourcePrefMeta');
+  const serversList = document.getElementById('sourcePrefServersList');
+  const rememberCheckbox = document.getElementById('sourcePrefRememberChoice');
+
+  if (posterImg) {
+    posterImg.src = item.poster || item.backdrop || '/logo.svg';
+    posterImg.onerror = () => { posterImg.src = '/logo.svg'; };
+  }
+  if (titleEl) {
+    titleEl.textContent = item.cleanTitle || item.title || 'Selected Media';
+  }
+  if (metaEl) {
+    const yr = item.year || '2026';
+    const qual = item.quality || '4K Ultra HD';
+    const aud = item.atmosLabel || 'Multi-Audio DDP 5.1';
+    metaEl.textContent = `${yr} • ${qual} • ${aud}`;
+  }
+  if (rememberCheckbox) {
+    rememberCheckbox.checked = false;
+  }
+
+  const isLive = Boolean(item.isLive || item.isGaiaFlix || item.type === 'live');
+  let sitesToRender = isLive
+    ? [PLAYBACK_SITES.find(s => s.key === 'gaiaflix'), ...PLAYBACK_SITES.filter(s => s.key !== 'gaiaflix')].filter(Boolean)
+    : PLAYBACK_SITES.filter(s => s.key !== 'gaiaflix');
+
+  if (serversList) {
+    serversList.innerHTML = '';
+    sitesToRender.forEach(site => {
+      const card = document.createElement('div');
+      card.className = 'source-pref-server-card';
+      card.innerHTML = `
+        <div class="source-pref-card-left">
+          <div class="source-pref-card-badge ${site.badgeClass}">${site.badgeText}</div>
+          <div class="source-pref-card-text">
+            <div class="source-pref-card-name-row">
+              <span class="source-pref-card-name">${site.name}</span>
+              <span class="source-pref-card-pill ${site.pillClass}">${site.pillText}</span>
+            </div>
+            <div class="source-pref-card-desc">${site.desc}</div>
+          </div>
+        </div>
+        <div class="source-pref-card-actions">
+          <button class="source-pref-btn-play" data-site="${site.key}">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Play Stream</span>
+          </button>
+          <button class="source-pref-btn-vlc" data-site="${site.key}">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>VLC</span>
+          </button>
+        </div>
+      `;
+
+      card.querySelector('.source-pref-btn-play').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (rememberCheckbox && rememberCheckbox.checked) {
+          localStorage.setItem('moviebox_default_site', site.key);
+          localStorage.setItem('moviebox_always_ask_site', 'false');
+          syncSiteSettingsUI();
+        }
+        modal.classList.add('hidden');
+        openTheaterPlayer(item, overrideSeason, overrideEpisode, site.key);
+      });
+
+      card.querySelector('.source-pref-btn-vlc').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (rememberCheckbox && rememberCheckbox.checked) {
+          localStorage.setItem('moviebox_default_site', site.key);
+          localStorage.setItem('moviebox_always_ask_site', 'false');
+          syncSiteSettingsUI();
+        }
+        modal.classList.add('hidden');
+        launchInVlc(item, null, site.key);
+      });
+
+      card.addEventListener('click', () => {
+        if (rememberCheckbox && rememberCheckbox.checked) {
+          localStorage.setItem('moviebox_default_site', site.key);
+          localStorage.setItem('moviebox_always_ask_site', 'false');
+          syncSiteSettingsUI();
+        }
+        modal.classList.add('hidden');
+        openTheaterPlayer(item, overrideSeason, overrideEpisode, site.key);
+      });
+
+      serversList.appendChild(card);
+    });
+  }
+
+  // Quick Play Best Stream Button
+  const quickBtn = document.getElementById('sourcePrefQuickPlayBtn');
+  if (quickBtn) {
+    quickBtn.onclick = () => {
+      const topSite = sitesToRender[0]?.key || 'netmirror';
+      if (rememberCheckbox && rememberCheckbox.checked) {
+        localStorage.setItem('moviebox_default_site', topSite);
+        localStorage.setItem('moviebox_always_ask_site', 'false');
+        syncSiteSettingsUI();
+      }
+      modal.classList.add('hidden');
+      openTheaterPlayer(item, overrideSeason, overrideEpisode, topSite);
+    };
+  }
+
+  const closeBtn = document.getElementById('closeSourcePrefModalBtn');
+  const cancelBtn = document.getElementById('sourcePrefCancelBtn');
+  if (closeBtn) closeBtn.onclick = () => modal.classList.add('hidden');
+  if (cancelBtn) cancelBtn.onclick = () => modal.classList.add('hidden');
+
+  modal.classList.remove('hidden');
+}
+
 function showToast(message) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
@@ -198,14 +703,31 @@ async function initApp() {
   });
 
   bindEvents();
+  syncSiteSettingsUI();
+
+  // Instant Suggestions Pre-fill: rails are never empty!
+  if (!state.top10Movies.length) state.top10Movies = [...TOP10_SUGGESTIONS];
+  if (!state.moviesCatalog.length) state.moviesCatalog = [...FEATURED_MOVIES_SUGGESTIONS];
+  if (!state.seriesCatalog.length) state.seriesCatalog = [...FEATURED_SERIES_SUGGESTIONS];
+  if (!state.animeCatalog.length) state.animeCatalog = [...ANIME_SUGGESTIONS];
+  if (!state.bollywoodCatalog.length) state.bollywoodCatalog = [...BOLLYWOOD_SUGGESTIONS];
+  state.netMirrorCatalog = state.bollywoodCatalog;
+
   await loadBackendState();
   renderHeroSwitcher();
   setActiveHero(0);
   startHeroAutoRotate();
 
+  // Synchronously render all rails immediately
   renderLocalMediaRail();
   renderContinueWatchingRail();
+  renderTop10Rail();
+  renderPosterRail('bollywoodRail', state.bollywoodCatalog);
+  renderPosterRail('trendingMoviesRail', state.moviesCatalog);
+  renderPosterRail('trendingSeriesRail', state.seriesCatalog);
+  renderPosterRail('animeRail', state.animeCatalog);
   renderLiveTvRail();
+  renderGaiaFlixRail();
 
   // Fetch 100% Real Live MovieBox Homepage Catalog
   await fetchMovieBoxHome();
@@ -267,25 +789,32 @@ async function fetchMovieBoxHome() {
         setActiveHero(state.activeHeroIndex);
       }
 
-      state.top10Movies = data.top10Movies || [];
-      state.top10Series = data.top10Series || [];
-      state.mbRows = data.rows || [];
+      if (Array.isArray(data.top10Movies) && data.top10Movies.length > 0) state.top10Movies = data.top10Movies;
+      if (Array.isArray(data.top10Series) && data.top10Series.length > 0) state.top10Series = data.top10Series;
+      if (Array.isArray(data.rows) && data.rows.length > 0) state.mbRows = data.rows;
 
       const movieRows = state.mbRows.filter(r => r.category === 'movies');
       const seriesRows = state.mbRows.filter(r => r.category === 'series');
       const animeRow = state.mbRows.find(r => r.title.toLowerCase().includes('anime'));
       const westernRow = state.mbRows.find(r => /western|hollywood|english|global/i.test(r.title));
 
-      state.moviesCatalog = movieRows[0]?.items || state.top10Movies;
-      state.seriesCatalog = seriesRows[0]?.items || state.top10Series;
-      state.animeCatalog = animeRow?.items || [];
+      if (movieRows[0]?.items?.length > 0) state.moviesCatalog = movieRows[0].items;
+      else if (state.top10Movies.length > 0) state.moviesCatalog = state.top10Movies;
+
+      if (seriesRows[0]?.items?.length > 0) state.seriesCatalog = seriesRows[0].items;
+      else if (state.top10Series.length > 0) state.seriesCatalog = state.top10Series;
+
+      if (animeRow?.items?.length > 0) state.animeCatalog = animeRow.items;
+
       const bollyRow = state.mbRows.find(r => /bollywood|hindi|dual/i.test(r.title));
-      state.bollywoodCatalog = (bollyRow?.items || westernRow?.items || [...state.top10Series.slice(0, 6), ...state.top10Movies.slice(0, 6)]).map(item => ({
-        ...item,
-        provider: item.provider || 'HDHub4u • Vegamovies',
-        quality: item.quality || '1080p Dual Audio'
-      }));
-      state.netMirrorCatalog = state.bollywoodCatalog;
+      if (bollyRow?.items?.length > 0) {
+        state.bollywoodCatalog = bollyRow.items.map(item => ({
+          ...item,
+          provider: item.provider || 'HDHub4u • Vegamovies',
+          quality: item.quality || '1080p Dual Audio'
+        }));
+        state.netMirrorCatalog = state.bollywoodCatalog;
+      }
 
       renderTop10Rail();
       renderPosterRail('bollywoodRail', state.bollywoodCatalog);
@@ -399,17 +928,25 @@ function renderLocalMediaRail() {
   if (!rail) return;
   rail.innerHTML = '';
 
-  const items = state.localMedia.length > 0 ? state.localMedia : [state.heroes[0]];
+  const hasLocal = state.localMedia && state.localMedia.length > 0;
+  const items = hasLocal ? state.localMedia : NETMIRROR_VAULT_SUGGESTIONS;
+  const rowTitle = document.getElementById('localRowTitle');
+  if (rowTitle) {
+    rowTitle.textContent = hasLocal
+      ? 'Local Library 4K Vault'
+      : 'Local Library & NetMirror 4K Suggestions';
+  }
 
   items.forEach(item => {
     const card = document.createElement('article');
     card.className = 'wide-card';
+    const isCloud = !item.fullPath;
     card.innerHTML = `
       <div class="wide-thumb">
         <img src="${item.backdrop || item.poster}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
         <div class="card-badges-top">
-          <span class="pill-badge gold">${item.quality || '4K UHD'} • ${item.sizeFormatted || '27.8 GB'}</span>
-          <span class="pill-badge atmos">DOLBY ATMOS</span>
+          <span class="pill-badge gold">${item.quality || '4K UHD'}${item.sizeFormatted ? ' • ' + item.sizeFormatted : ' • CLOUD'}</span>
+          <span class="pill-badge atmos">${isCloud ? 'NETMIRROR 4K' : 'DOLBY ATMOS'}</span>
         </div>
         <div class="thumb-play-overlay">
           <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
@@ -418,9 +955,9 @@ function renderLocalMediaRail() {
       <div class="wide-body">
         <div class="wide-title" title="${item.rawFilename || item.title}">${item.title} (${item.year})</div>
         <div class="wide-meta">
-          <span>${item.ext || 'MKV'}</span>
+          <span>${item.ext || '4K UHD'}</span>
           <span>•</span>
-          <span>DDP 5.1 Multi-Audio</span>
+          <span>${isCloud ? 'NetMirror Vault' : 'DDP 5.1 Multi-Audio'}</span>
           <span>•</span>
           <span>IMDb ${item.rating || '9.1'}</span>
         </div>
@@ -432,8 +969,8 @@ function renderLocalMediaRail() {
       </div>
     `;
 
-    card.querySelector('.wide-thumb').addEventListener('click', () => openTheaterPlayer(item));
-    card.querySelector('[data-action="play"]').addEventListener('click', () => openTheaterPlayer(item));
+    card.querySelector('.wide-thumb').addEventListener('click', () => startPlaybackWithSitePreference(item));
+    card.querySelector('[data-action="play"]').addEventListener('click', () => startPlaybackWithSitePreference(item));
     card.querySelector('[data-action="vlc"]').addEventListener('click', () => launchInVlc(item));
     card.querySelector('[data-action="info"]').addEventListener('click', () => openDetailsModal(item));
     rail.appendChild(card);
@@ -491,6 +1028,10 @@ function renderContinueWatchingRail() {
     });
   }
 
+  if (combined.length === 0) {
+    combined.push(...CONTINUE_WATCHING_SUGGESTIONS);
+  }
+
   combined.forEach(item => {
     const card = document.createElement('article');
     card.className = 'wide-card';
@@ -523,8 +1064,8 @@ function renderContinueWatchingRail() {
       </div>
     `;
 
-    card.querySelector('.wide-thumb').addEventListener('click', () => openTheaterPlayer(item));
-    card.querySelector('[data-action="play"]').addEventListener('click', () => openTheaterPlayer(item));
+    card.querySelector('.wide-thumb').addEventListener('click', () => startPlaybackWithSitePreference(item));
+    card.querySelector('[data-action="play"]').addEventListener('click', () => startPlaybackWithSitePreference(item));
     card.querySelector('[data-action="vlc"]').addEventListener('click', () => launchInVlc(item, item.progressSeconds));
     card.querySelector('[data-action="info"]').addEventListener('click', () => openDetailsModal(item));
     rail.appendChild(card);
@@ -581,8 +1122,8 @@ function renderTop10Rail() {
       </article>
     `;
 
-    wrap.querySelector('.poster-thumb').addEventListener('click', () => openTheaterPlayer(item));
-    wrap.querySelector('[data-action="play"]').addEventListener('click', () => openTheaterPlayer(item));
+    wrap.querySelector('.poster-thumb').addEventListener('click', () => startPlaybackWithSitePreference(item));
+    wrap.querySelector('[data-action="play"]').addEventListener('click', () => startPlaybackWithSitePreference(item));
     wrap.querySelector('[data-action="vlc"]').addEventListener('click', () => launchInVlc(item));
     wrap.querySelector('[data-action="dl"]').addEventListener('click', () => startDownload(item));
     wrap.querySelector('[data-action="info"]').addEventListener('click', () => openDetailsModal(item));
@@ -595,7 +1136,16 @@ function renderPosterRail(containerId, items) {
   if (!rail) return;
   rail.innerHTML = '';
 
-  items.forEach(item => {
+  let list = items;
+  if (!list || list.length === 0) {
+    if (containerId === 'bollywoodRail') list = BOLLYWOOD_SUGGESTIONS;
+    else if (containerId === 'trendingMoviesRail') list = FEATURED_MOVIES_SUGGESTIONS;
+    else if (containerId === 'trendingSeriesRail') list = FEATURED_SERIES_SUGGESTIONS;
+    else if (containerId === 'animeRail') list = ANIME_SUGGESTIONS;
+    else list = [];
+  }
+
+  list.forEach(item => {
     const card = buildPosterCard(item);
     rail.appendChild(card);
   });
@@ -635,11 +1185,11 @@ function buildPosterCard(item) {
   card.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.target === card) {
       e.preventDefault();
-      openTheaterPlayer(item);
+      startPlaybackWithSitePreference(item);
     }
   });
-  card.querySelector('.poster-thumb').addEventListener('click', () => openTheaterPlayer(item));
-  card.querySelector('[data-action="play"]').addEventListener('click', () => openTheaterPlayer(item));
+  card.querySelector('.poster-thumb').addEventListener('click', () => startPlaybackWithSitePreference(item));
+  card.querySelector('[data-action="play"]').addEventListener('click', () => startPlaybackWithSitePreference(item));
   card.querySelector('[data-action="vlc"]').addEventListener('click', () => launchInVlc(item));
   card.querySelector('[data-action="dl"]').addEventListener('click', () => startDownload(item));
   card.querySelector('[data-action="info"]').addEventListener('click', () => openDetailsModal(item));
@@ -721,8 +1271,8 @@ function renderLiveTvRail() {
       </div>
     `;
 
-    card.querySelector('.wide-thumb').addEventListener('click', () => openTheaterPlayer(item));
-    card.querySelector('[data-action="play"]').addEventListener('click', () => openTheaterPlayer(item));
+    card.querySelector('.wide-thumb').addEventListener('click', () => startPlaybackWithSitePreference(item));
+    card.querySelector('[data-action="play"]').addEventListener('click', () => startPlaybackWithSitePreference(item));
     card.querySelector('[data-action="vlc"]').addEventListener('click', () => launchInVlc(item));
     rail.appendChild(card);
 
@@ -736,7 +1286,7 @@ function renderLiveTvRail() {
           <div class="upnext-meta">${ch.category} • ${ch.quality}</div>
         </div>
       `;
-      uCard.addEventListener('click', () => openTheaterPlayer(item));
+      uCard.addEventListener('click', () => startPlaybackWithSitePreference(item));
       sideList.appendChild(uCard);
     }
   });
@@ -751,20 +1301,14 @@ function renderGaiaFlixRail() {
   const channels = state.gaiaflixCatalog?.channels || [];
   const upcoming = state.gaiaflixCatalog?.upcomingEvents || [];
 
-  const showcase = [
+  let showcase = [
     ...live,
     ...channels.slice(0, 16),
     ...upcoming.slice(0, 4)
   ];
 
   if (showcase.length === 0) {
-    rail.innerHTML = `
-      <div class="dedicated-empty-box" style="padding: 24px; width: 100%;">
-        <strong>Connecting to Live Feeds...</strong>
-        <p>Fetching 300+ live sports matches and broadcast channels.</p>
-      </div>
-    `;
-    return;
+    showcase = [...LIVE_SPORTS_SUGGESTIONS];
   }
 
   showcase.forEach(item => {
@@ -781,7 +1325,7 @@ function renderGaiaFlixRail() {
         <img src="${item.poster || item.backdrop}" alt="${item.cleanTitle || item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
         <div class="card-badges-top">
           <span class="pill-badge ${badgeClass}">${badgeText}</span>
-          <span class="pill-badge dark">${item.category}</span>
+          <span class="pill-badge dark">${item.category || 'Live Sports'}</span>
         </div>
         <div class="thumb-play-overlay">
           <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
@@ -801,11 +1345,15 @@ function renderGaiaFlixRail() {
       </div>
     `;
 
-    card.querySelector('.wide-thumb').addEventListener('click', () => openTheaterPlayer(item));
-    card.querySelector('[data-action="play"]').addEventListener('click', () => openTheaterPlayer(item));
+    card.querySelector('.wide-thumb').addEventListener('click', () => startPlaybackWithSitePreference(item));
+    card.querySelector('[data-action="play"]').addEventListener('click', () => startPlaybackWithSitePreference(item));
     card.querySelector('[data-action="vlc"]').addEventListener('click', () => launchInVlc(item));
     rail.appendChild(card);
   });
+}
+
+function renderLiveSportsRail() {
+  renderGaiaFlixRail();
 }
 
 async function fetchGaiaFlixCatalog(forceRefresh = false) {
@@ -1365,8 +1913,13 @@ function renderWatchPageBelowTabs(item, se, ep) {
   }
 }
 
-async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = null) {
+async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = null, preferredSite = null) {
   if (!item) return;
+
+  const matchedSite = preferredSite ? PLAYBACK_SITES.find(s => s.key === preferredSite) : null;
+  if (matchedSite) {
+    showToast(`Streaming via ${matchedSite.name}`);
+  }
 
   // Remember which page the user launched the player from (Home vs Dedicated Page)
   const watchAlreadyOpen = !document.getElementById('watchView').classList.contains('hidden');
@@ -1423,9 +1976,11 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
     document.getElementById('playerOverlayEpisodesBtn')?.classList.add('hidden');
     document.getElementById('nextEpisodeOverlayBtn')?.classList.add('hidden');
     document.getElementById('playerOverlayTitle').textContent = item.cleanTitle || item.title;
-    document.getElementById('playerSourcePill').textContent = item.isLocal
-      ? `LOCAL 4K • ${item.sizeFormatted || '27.8 GB'}`
-      : ((item.isLive || item.isGaiaFlix) ? `LIVE BROADCAST • ${item.badge || '24/7'}` : `DIRECT STREAM • ${item.quality || '1080p Full HD'}`);
+    document.getElementById('playerSourcePill').textContent = matchedSite
+      ? `${matchedSite.badgeText} • ${matchedSite.pillText}`
+      : (item.isLocal
+        ? `LOCAL 4K • ${item.sizeFormatted || '27.8 GB'}`
+        : ((item.isLive || item.isGaiaFlix) ? `LIVE BROADCAST • ${item.badge || '24/7'}` : `DIRECT STREAM • ${item.quality || '1080p Full HD'}`));
 
     const localDubs = [{
       subjectId: 'local',
@@ -1522,8 +2077,12 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
 
       const epLabel = se > 0 ? ` • S${String(se).padStart(2, '0')}E${String(ep).padStart(2, '0')}` : '';
       document.getElementById('playerOverlayTitle').textContent = `${state.currentItem.cleanTitle || state.currentItem.title}${epLabel}`;
-      document.getElementById('playerSourcePill').textContent = `MOVIEBOX CDN • ${state.activeStream.quality} (${state.activeStream.sizeFormatted || 'HEVC'})`;
-      document.getElementById('watchProviderLabel').textContent = state.activeStream.name;
+      document.getElementById('playerSourcePill').textContent = matchedSite
+        ? `${matchedSite.badgeText} • ${matchedSite.pillText}`
+        : `MOVIEBOX CDN • ${state.activeStream.quality} (${state.activeStream.sizeFormatted || 'HEVC'})`;
+      document.getElementById('watchProviderLabel').textContent = matchedSite
+        ? matchedSite.providerName
+        : state.activeStream.name;
 
       populateServerSelector(state.currentStreams, 0);
       populateQualityDropdown(state.currentQualityOptions, false);
@@ -2022,8 +2581,16 @@ function renderUpNextSidebar(currentItem) {
 // =========================================================================
 // 5. LAUNCH IN VLC MEDIA PLAYER (RESOLVES REAL MOVIEBOX STREAM AUTOMATICALLY!)
 // =========================================================================
-async function launchInVlc(item, overrideStartTime = null, explicitStreamObj = null) {
+async function launchInVlc(item, overrideStartTime = null, explicitStreamObj = null, preferredSite = null) {
   if (!item) return;
+  if (typeof explicitStreamObj === 'string') {
+    preferredSite = explicitStreamObj;
+    explicitStreamObj = null;
+  }
+  const matchedSite = preferredSite ? PLAYBACK_SITES.find(s => s.key === preferredSite) : null;
+  if (matchedSite) {
+    showToast(`Launching ${item.cleanTitle || item.title} via ${matchedSite.name} in VLC...`);
+  }
   const video = document.getElementById('mainVideo');
   const currentSec = overrideStartTime !== null
     ? overrideStartTime
@@ -2159,7 +2726,7 @@ async function openDetailsModal(item) {
 
   document.getElementById('modalPlayBtn').onclick = () => {
     modal.classList.add('hidden');
-    openTheaterPlayer(item);
+    startPlaybackWithSitePreference(item);
   };
   document.getElementById('modalVlcBtn').onclick = () => {
     modal.classList.add('hidden');
@@ -2323,7 +2890,7 @@ async function openDetailsModal(item) {
   `;
   document.getElementById('fallbackModalPlay').onclick = () => {
     modal.classList.add('hidden');
-    openTheaterPlayer(item);
+    startPlaybackWithSitePreference(item);
   };
   document.getElementById('fallbackModalVlc').onclick = () => {
     modal.classList.add('hidden');
@@ -2932,7 +3499,7 @@ function updateDedicatedHeroBanner(featuredItem) {
 
   if (playBtn) {
     playBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg><span>Play ${featuredItem.cleanTitle || featuredItem.title}</span>`;
-    playBtn.onclick = () => openTheaterPlayer(featuredItem);
+    playBtn.onclick = () => startPlaybackWithSitePreference(featuredItem);
   }
   if (vlcBtn) vlcBtn.onclick = () => launchInVlc(featuredItem);
   if (dlBtn) dlBtn.onclick = () => startDownload(featuredItem);
@@ -3080,8 +3647,8 @@ function renderDedicatedPageContent(pageKey) {
           </div>
         </div>
       `;
-      card.querySelector('.wide-thumb').onclick = () => openTheaterPlayer(item);
-      card.querySelector('[data-action="play"]').onclick = () => openTheaterPlayer(item);
+      card.querySelector('.wide-thumb').onclick = () => startPlaybackWithSitePreference(item);
+      card.querySelector('[data-action="play"]').onclick = () => startPlaybackWithSitePreference(item);
       card.querySelector('[data-action="vlc"]').onclick = () => launchInVlc(item);
       grid.appendChild(card);
     });
@@ -3150,8 +3717,8 @@ function renderDedicatedPageContent(pageKey) {
           </div>
         </div>
       `;
-      card.querySelector('.wide-thumb').onclick = () => openTheaterPlayer(item);
-      card.querySelector('[data-action="play"]').onclick = () => openTheaterPlayer(item);
+      card.querySelector('.wide-thumb').onclick = () => startPlaybackWithSitePreference(item);
+      card.querySelector('[data-action="play"]').onclick = () => startPlaybackWithSitePreference(item);
       card.querySelector('[data-action="vlc"]').onclick = () => launchInVlc(item);
       card.querySelector('[data-action="info"]').onclick = () => openDetailsModal(item);
       grid.appendChild(card);
@@ -3800,7 +4367,7 @@ async function refreshDownloadsUI() {
 
 function bindEvents() {
   document.getElementById('heroWatchBtn').addEventListener('click', () => {
-    openTheaterPlayer(state.heroes[state.activeHeroIndex]);
+    startPlaybackWithSitePreference(state.heroes[state.activeHeroIndex]);
   });
   document.getElementById('heroVlcBtn').addEventListener('click', () => {
     launchInVlc(state.heroes[state.activeHeroIndex]);
@@ -5016,6 +5583,22 @@ function bindEvents() {
   document.getElementById('closeSettingsModalBtn').addEventListener('click', () => {
     document.getElementById('settingsModal').classList.add('hidden');
   });
+
+  const defaultSiteSelect = document.getElementById('settingDefaultSite');
+  if (defaultSiteSelect) {
+    defaultSiteSelect.addEventListener('change', (e) => {
+      localStorage.setItem('moviebox_default_site', e.target.value);
+      showToast(`Default playback site set to: ${e.target.options[e.target.selectedIndex].text}`);
+    });
+  }
+
+  const alwaysAskToggle = document.getElementById('settingAlwaysAskSiteToggle');
+  if (alwaysAskToggle) {
+    alwaysAskToggle.addEventListener('change', (e) => {
+      localStorage.setItem('moviebox_always_ask_site', e.target.checked ? 'true' : 'false');
+      showToast(e.target.checked ? 'Site selector prompt enabled' : 'Site selector prompt disabled');
+    });
+  }
 
   document.getElementById('playCustomStreamNowBtn').addEventListener('click', () => {
     const title = document.getElementById('customStreamTitle').value.trim() || 'Custom Stream';

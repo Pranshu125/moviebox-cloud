@@ -1390,7 +1390,11 @@ async function handleRequest(req, res) {
               }
             }
           }
-          homeData = { ok: true, banners, top10Movies, top10Series, rows };
+          if (banners.length > 0 || rows.length > 0 || top10Movies.length > 0) {
+            homeData = { ok: true, banners, top10Movies, top10Series, rows };
+          } else {
+            homeData = getUnifiedHomeData();
+          }
           homeCache = { data: homeData, expiresAt: Date.now() + 10 * 60 * 1000 };
         } catch {}
       }
@@ -1506,7 +1510,7 @@ async function handleRequest(req, res) {
   // --------------------------------------------------------------------------
   if ((pathname === '/api/moviebox/home' || pathname === '/api/home' || pathname === '/home' || pathname === '/moviebox/home') && req.method === 'GET') {
     try {
-      if (homeCache.data && Date.now() < homeCache.expiresAt && !parsedUrl.searchParams.get('refresh')) {
+      if (homeCache.data && Array.isArray(homeCache.data.rows) && homeCache.data.rows.length > 0 && Date.now() < homeCache.expiresAt && !parsedUrl.searchParams.get('refresh')) {
         return sendJson(res, 200, homeCache.data);
       }
 
@@ -1622,7 +1626,7 @@ async function handleRequest(req, res) {
           banners: banners.length > 0 ? banners : unifiedBase.banners,
           top10Movies: top10Movies.length > 0 ? top10Movies.slice(0, 10) : unifiedBase.top10Movies,
           top10Series: top10Series.length > 0 ? top10Series.slice(0, 10) : unifiedBase.top10Series,
-          rows
+          rows: rows.length > 0 ? rows : unifiedBase.rows
         };
         homeCache = { data: payload, expiresAt: Date.now() + 10 * 60 * 1000 };
         return sendJson(res, 200, payload);

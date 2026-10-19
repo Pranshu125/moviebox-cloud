@@ -994,7 +994,7 @@
         <section class="media-row-section" id="rowLocalSection">
           <div class="row-header">
             <div>
-              <h2 class="row-title">Local Library</h2>
+              <h2 class="row-title" id="localRowTitle">Local Library &amp; NetMirror 4K Suggestions</h2>
             </div>
             <div class="row-actions">
               <button class="row-action-btn" id="rescanLocalBtn">Refresh</button>
@@ -1008,7 +1008,7 @@
         <section class="media-row-section" id="rowContinueSection">
           <div class="row-header">
             <div>
-              <h2 class="row-title">Continue Watching</h2>
+              <h2 class="row-title" id="continueRowTitle">Continue Watching &amp; Top Suggestions</h2>
             </div>
             <div class="row-actions">
               <button class="row-action-btn" data-open-page="mylist">Watchlist &amp; History</button>
@@ -1216,6 +1216,53 @@
   </div>
 
   <!-- =====================================================================
+       6.5 PLAYBACK SITE & SOURCE PREFERENCES MODAL
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="sourcePreferencesModal">
+    <div class="netflix-modal source-pref-modal-box">
+      <button class="modal-close-btn" id="closeSourcePrefModalBtn">&times;</button>
+      <div class="source-pref-inner">
+        <div class="source-pref-badge">SELECT STREAMING SITE</div>
+        <h2 class="source-pref-heading">Choose Where to Play From</h2>
+        <p class="source-pref-sub">Select your preferred streaming provider for this title</p>
+
+        <div class="source-pref-media-summary">
+          <img id="sourcePrefPoster" class="source-pref-poster" src="/logo.svg" alt="" />
+          <div class="source-pref-media-info">
+            <div class="source-pref-media-title" id="sourcePrefTitle">Movie Title</div>
+            <div class="source-pref-media-meta" id="sourcePrefMeta">2026 • 4K Ultra HD • Multi-Audio</div>
+            <div class="source-pref-badge-row" id="sourcePrefBadgeRow">
+              <span class="pill-badge gold">4K ULTRA HD</span>
+              <span class="pill-badge atmos">DOLBY ATMOS</span>
+              <span class="pill-badge dark">MULTI-PROVIDER</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="source-pref-grid-label">AVAILABLE SITES &amp; SERVERS</div>
+        <div class="source-pref-servers-list" id="sourcePrefServersList">
+          <!-- Populated dynamically with NetMirror, HDHub4u, Vegamovies, Streamu, Movies4u, 123movies, MovieBox CDN, GaiaFlix -->
+        </div>
+
+        <div class="source-pref-options-row">
+          <label class="source-pref-checkbox-label">
+            <input type="checkbox" id="sourcePrefRememberChoice" />
+            <span>Set as my default playback site (can be changed in Settings anytime)</span>
+          </label>
+        </div>
+
+        <div class="source-pref-footer-btns">
+          <button class="modal-btn secondary" id="sourcePrefCancelBtn">Cancel</button>
+          <button class="modal-btn primary" id="sourcePrefQuickPlayBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+            <span>Play Best Stream (Auto 4K)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
        7. SETTINGS MODAL
        ===================================================================== -->
   <div class="modal-backdrop hidden" id="settingsModal">
@@ -1256,6 +1303,27 @@
               <button class="btn-hero-play" id="playCustomStreamNowBtn">Play</button>
               <button class="btn-hero-vlc" id="vlcCustomStreamNowBtn">Open in VLC</button>
               <button class="btn-hero-secondary" id="saveCustomIptvBtn">Save Channel</button>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Playback Site Preferences</h3>
+            <label class="setting-field">
+              <span>Default Playback Site</span>
+              <select id="settingDefaultSite" class="setting-select" style="width: 100%; height: 38px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16); color: #fff; padding: 0 10px; font-size: 13px;">
+                <option value="ask">Always Ask Before Playing (Recommended)</option>
+                <option value="netmirror">NetMirror 4K (Ultra HD / Dolby Vision)</option>
+                <option value="hdhub4u">HDHub4u (Dual Audio Hindi+Eng / 1080p-4K)</option>
+                <option value="vegamovies">Vegamovies (Direct 4K / HEVC Cinema HQ)</option>
+                <option value="streamu">Streamu (Fast Multi-Language Cloud CDN)</option>
+                <option value="movies4u">Movies4u (1080p Fast Buffer Cluster)</option>
+                <option value="123movies">123movies (1080p Cinema Mirror)</option>
+                <option value="moviebox">MovieBox Native CDN (Adaptive DASH)</option>
+              </select>
+            </label>
+            <div class="setting-toggle-row">
+              <span>Always Ask Before Playing</span>
+              <input type="checkbox" id="settingAlwaysAskSiteToggle" checked />
             </div>
           </div>
 
