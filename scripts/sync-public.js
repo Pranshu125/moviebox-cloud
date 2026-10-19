@@ -5,27 +5,22 @@ const uiDir = path.join(__dirname, '..', 'ui');
 const publicDir = path.join(__dirname, '..', 'public');
 const iconsDir = path.join(__dirname, '..', 'icons');
 const publicIconsDir = path.join(publicDir, 'icons');
+const rootDir = path.join(__dirname, '..');
 
 if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
 if (!fs.existsSync(publicIconsDir)) fs.mkdirSync(publicIconsDir, { recursive: true });
 
-const rootDir = path.join(__dirname, '..');
-
-// Copy all files from ui to public and root
+// Copy all files from ui to public
 const uiFiles = fs.readdirSync(uiDir);
 for (const file of uiFiles) {
   const src = path.join(uiDir, file);
   const destPublic = path.join(publicDir, file);
-  const destRoot = path.join(rootDir, file);
   if (fs.statSync(src).isFile()) {
     fs.copyFileSync(src, destPublic);
-    if (['index.html', 'styles.css', 'app.js', 'sw.js', 'manifest.json', 'logo.svg', 'favicon.ico', 'robots.txt', 'sitemap.xml'].includes(file)) {
-      fs.copyFileSync(src, destRoot);
-    }
   }
 }
 
-// Copy icons
+// Copy icons to public/icons
 if (fs.existsSync(iconsDir)) {
   const iconFiles = fs.readdirSync(iconsDir);
   for (const file of iconFiles) {
@@ -37,4 +32,13 @@ if (fs.existsSync(iconsDir)) {
   }
 }
 
-console.log('Public assets synchronized successfully to both public/ and root.');
+// Clean any accidental root client files so Vercel does not treat app.js as a Node serverless function
+const rootArtifactsToRemove = ['app.js', 'styles.css', 'sw.js', 'manifest.json', 'index.html', 'robots.txt', 'sitemap.xml', 'logo.svg', 'favicon.ico'];
+for (const f of rootArtifactsToRemove) {
+  const p = path.join(rootDir, f);
+  if (fs.existsSync(p)) {
+    try { fs.unlinkSync(p); } catch {}
+  }
+}
+
+console.log('Public assets synchronized cleanly to public/ and root cleaned for Vercel CDN.');
