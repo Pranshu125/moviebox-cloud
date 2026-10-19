@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dist/dash.all.min.js"></script>
-  <link rel="stylesheet" href="/styles.css?v=20261013_v8" />
+  <link rel="stylesheet" href="/styles.css?v=20261019_v10" />
 </head>
 <body>
   <!-- Spatial Ambient Lighting Canvas -->
@@ -57,20 +57,6 @@
         <span class="rail-label">Search <kbd>/</kbd></span>
       </button>
 
-      <button class="rail-item" data-nav="netmirror">
-        <span class="rail-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-        </span>
-        <span class="rail-label">NetMirror <span class="rail-pill live">NEW</span></span>
-      </button>
-
-      <button class="rail-item" data-nav="local">
-        <span class="rail-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-        </span>
-        <span class="rail-label">Library <span class="rail-pill gold">4K</span></span>
-      </button>
-
       <button class="rail-item" data-nav="movies">
         <span class="rail-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="3"/><path d="M7 3v18M17 3v18M2 12h20"/></svg>
@@ -96,14 +82,14 @@
         <span class="rail-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
         </span>
-        <span class="rail-label">Live TV <span class="rail-pill live">LIVE</span></span>
+        <span class="rail-label">Live TV &amp; Sports <span class="rail-pill live">LIVE</span></span>
       </button>
 
-      <button class="rail-item" data-nav="gaiaflix">
+      <button class="rail-item" data-nav="local">
         <span class="rail-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
         </span>
-        <span class="rail-label">GaiaFlix <span class="rail-pill live">260+</span></span>
+        <span class="rail-label">Library <span class="rail-pill gold">4K</span></span>
       </button>
 
       <button class="rail-item" data-nav="mylist">
@@ -343,6 +329,14 @@
                   <span class="now-playing-title" id="playerOverlayTitle">Loading...</span>
                 </div>
                 <div class="player-top-right">
+                  <select id="topServerSelector" class="ctrl-select server-select-top" title="Select Stream Server">
+                    <option value="0">Server 1: High-Speed Direct</option>
+                    <option value="1">Server 2: VidPlay Ultra</option>
+                    <option value="2">Server 3: StreamU Multi-Audio</option>
+                    <option value="3">Server 4: HDHub4u Dual Audio</option>
+                    <option value="4">Server 5: Vega / 123Movies</option>
+                    <option value="5">Server 6: Live / HLS Mirror</option>
+                  </select>
                   <button type="button" class="player-top-Quick-btn hidden" id="playerOverlayEpisodesBtn" title="Jump to Episodes">
                     Episodes
                   </button>
@@ -534,6 +528,15 @@
                   </div>
 
                   <div class="controls-right">
+                    <select id="serverSelector" class="ctrl-select server-select" title="Streaming Server Source">
+                      <option value="0">Server 1: High-Speed Direct</option>
+                      <option value="1">Server 2: VidPlay Ultra</option>
+                      <option value="2">Server 3: StreamU Multi-Audio</option>
+                      <option value="3">Server 4: HDHub4u Dual Audio</option>
+                      <option value="4">Server 5: Vega / 123Movies</option>
+                      <option value="5">Server 6: Live / HLS Mirror</option>
+                    </select>
+
                     <select id="audioSelector" class="ctrl-select" title="Audio Track &amp; Format">
                       <option value="orig|aac_stereo">Audio: Original (Stereo 2.0)</option>
                       <option value="orig|ddp_surround">Audio: Dolby Surround 5.1</option>
@@ -885,16 +888,9 @@
 
           <button class="hub-card hub-live" data-hub="livetv">
             <div class="hub-glow"></div>
-            <span class="hub-tag">BROADCAST</span>
-            <strong class="hub-name">Live Channels</strong>
-            <span class="hub-sub">HLS Streams</span>
-          </button>
-
-          <button class="hub-card hub-gaiaflix" data-hub="gaiaflix">
-            <div class="hub-glow"></div>
-            <span class="hub-tag">GAIAFLIX</span>
-            <strong class="hub-name">GaiaFlix Live</strong>
-            <span class="hub-sub" id="hubGaiaflixCount">260+ Channels &amp; Match Feed</span>
+            <span class="hub-tag">LIVE RELAY</span>
+            <strong class="hub-name">Live TV &amp; Sports</strong>
+            <span class="hub-sub" id="hubLiveCount">300+ Live Sports &amp; Television Feeds</span>
           </button>
         </div>
       </section>
@@ -939,26 +935,13 @@
           <div class="media-rail top10-rail" id="top10Rail"></div>
         </section>
 
-        <section class="media-row-section" id="rowLiveTvSection">
-          <div class="row-header">
-            <div>
-              <h2 class="row-title">Live Channels</h2>
-            </div>
-            <div class="row-actions">
-              <button class="row-action-btn" id="addM3uRowBtn">Add Stream</button>
-              <button class="row-action-btn" data-open-page="livetv">Open Live TV Page</button>
-            </div>
-          </div>
-          <div class="media-rail wide-cards" id="liveTvRail"></div>
-        </section>
-
         <section class="media-row-section" id="rowNetMirrorSection">
           <div class="row-header">
             <div>
-              <h2 class="row-title"><span class="row-accent-dot netflix"></span>NetMirror — Global Originals &amp; Series</h2>
+              <h2 class="row-title">Bollywood &amp; Dual Audio 4K Hits</h2>
             </div>
             <div class="row-actions">
-              <button class="row-action-btn" data-open-page="netmirror">Open NetMirror Page</button>
+              <button class="row-action-btn" data-open-page="movies">View All Movies</button>
             </div>
           </div>
           <div class="media-rail poster-cards" id="netMirrorRail"></div>
@@ -967,11 +950,11 @@
         <section class="media-row-section" id="rowGaiaFlixSection">
           <div class="row-header">
             <div>
-              <h2 class="row-title"><span class="row-accent-dot gaiaflix"></span>GaiaFlix.live — 24/7 Channels &amp; Live Sports Feed</h2>
+              <h2 class="row-title">Live Sports &amp; 24/7 TV Channels</h2>
             </div>
             <div class="row-actions">
-              <button class="row-action-btn" id="refreshGaiaBtn">Refresh Feed</button>
-              <button class="row-action-btn" data-open-page="gaiaflix">Open GaiaFlix Hub</button>
+              <button class="row-action-btn" id="refreshGaiaBtn">Refresh Feeds</button>
+              <button class="row-action-btn" data-open-page="livetv">View All Live TV</button>
             </div>
           </div>
           <div class="media-rail wide-cards" id="gaiaFlixRail"></div>
@@ -1359,18 +1342,18 @@
       </div>
       <span class="dock-tab-label">Series</span>
     </button>
-    <button class="dock-tab" data-dock="gaiaflix">
+    <button class="dock-tab" data-dock="anime">
+      <div class="dock-tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <span class="dock-tab-label">Anime</span>
+    </button>
+    <button class="dock-tab" data-dock="livetv">
       <div class="dock-tab-icon live-dock-icon">
         <span class="dock-live-dot"></span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
       </div>
-      <span class="dock-tab-label">Live Sports</span>
-    </button>
-    <button class="dock-tab" data-dock="netmirror">
-      <div class="dock-tab-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-      </div>
-      <span class="dock-tab-label">NetMirror</span>
+      <span class="dock-tab-label">Live TV</span>
     </button>
   </nav>
 
@@ -1378,6 +1361,6 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-  <script src="/app.js?v=20261013_v9"></script>
+  <script src="/app.js?v=20261019_v10"></script>
 </body>
 </html>

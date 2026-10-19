@@ -9,13 +9,19 @@ const publicIconsDir = path.join(publicDir, 'icons');
 if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
 if (!fs.existsSync(publicIconsDir)) fs.mkdirSync(publicIconsDir, { recursive: true });
 
-// Copy all files from ui to public
+const rootDir = path.join(__dirname, '..');
+
+// Copy all files from ui to public and root
 const uiFiles = fs.readdirSync(uiDir);
 for (const file of uiFiles) {
   const src = path.join(uiDir, file);
-  const dest = path.join(publicDir, file);
+  const destPublic = path.join(publicDir, file);
+  const destRoot = path.join(rootDir, file);
   if (fs.statSync(src).isFile()) {
-    fs.copyFileSync(src, dest);
+    fs.copyFileSync(src, destPublic);
+    if (['index.html', 'styles.css', 'app.js', 'sw.js', 'manifest.json', 'logo.svg', 'favicon.ico'].includes(file)) {
+      fs.copyFileSync(src, destRoot);
+    }
   }
 }
 
@@ -31,4 +37,4 @@ if (fs.existsSync(iconsDir)) {
   }
 }
 
-console.log('Public assets synchronized successfully.');
+console.log('Public assets synchronized successfully to both public/ and root.');

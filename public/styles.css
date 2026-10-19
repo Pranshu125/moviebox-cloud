@@ -5697,6 +5697,244 @@ body {
   }
 }
 
+/* Streaming Server Selectors */
+.server-select-top {
+  height: 32px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.16), rgba(14, 18, 30, 0.88)) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  color: #60a5fa !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  outline: none;
+}
+.server-select-top option,
+.ctrl-select.server-select option {
+  background: #0b0f19;
+  color: #fff;
+}
+.ctrl-select.server-select {
+  border-color: rgba(96, 165, 250, 0.45);
+  color: #93c5fd;
+}
+
+@media (max-width: 768px) {
+  .player-top-overlay {
+    padding: 10px 12px 20px !important;
+  }
+  .player-top-right {
+    display: flex !important;
+    gap: 6px;
+  }
+  .player-top-right .player-top-Quick-btn {
+    display: none;
+  }
+  .server-select-top {
+    font-size: 10.5px !important;
+    height: 28px !important;
+    padding: 0 6px !important;
+    max-width: 140px;
+  }
+  .controls-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .controls-left {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+  .controls-right {
+    overflow-x: auto !important;
+    width: 100% !important;
+    scrollbar-width: none !important;
+    padding-bottom: 2px !important;
+  }
+  .controls-right::-webkit-scrollbar {
+    display: none !important;
+  }
+  .ctrl-select {
+    font-size: 11px !important;
+    height: 32px !important;
+    padding: 0 6px !important;
+    flex-shrink: 0 !important;
+  }
+  .ctrl-btn {
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 11px !important;
+    flex-shrink: 0 !important;
+  }
+  .ctrl-vlc-btn {
+    height: 32px !important;
+    padding: 0 10px !important;
+    font-size: 11px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* =========================================================================
+   DEVICE-SPECIFIC ADAPTIVE LAYOUTS (PHONE, TABLET, DESKTOP, SMART TV)
+   ========================================================================= */
+
+/* --- 1. MOBILE PHONE ADAPTATION (body.device-mobile) --- */
+body.device-mobile {
+  --sidebar-w: 0px !important;
+}
+body.device-mobile .yt-sidebar {
+  display: none !important;
+}
+body.device-mobile .yt-app-body {
+  padding-left: 0 !important;
+}
+body.device-mobile .yt-main-content {
+  padding: 12px 14px calc(var(--dock-h) + 28px) 14px !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+body.device-mobile .topbar-content {
+  padding: 0 12px !important;
+  gap: 8px !important;
+}
+body.device-mobile .topbar-right .action-pill:not(.install-pill) {
+  display: none !important;
+}
+body.device-mobile .hero-billboard {
+  margin-right: 0 !important;
+  border-radius: 20px !important;
+  padding: 0 16px 24px !important;
+}
+body.device-mobile .hero-title {
+  font-size: clamp(22px, 6.5vw, 32px) !important;
+}
+body.device-mobile .hero-desc {
+  -webkit-line-clamp: 2 !important;
+  font-size: 13px !important;
+}
+body.device-mobile .hero-actions {
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+body.device-mobile .btn-hero-play,
+body.device-mobile .btn-hero-vlc,
+body.device-mobile .btn-hero-secondary {
+  height: 40px !important;
+  padding: 0 16px !important;
+  font-size: 13px !important;
+}
+body.device-mobile .hubs-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 10px !important;
+  margin-right: 0 !important;
+}
+body.device-mobile .media-rail {
+  gap: 12px !important;
+  padding: 10px 0 !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+body.device-mobile .poster-card {
+  width: 155px !important;
+}
+body.device-mobile .poster-thumb {
+  height: 220px !important;
+}
+body.device-mobile .wide-card {
+  width: 280px !important;
+}
+body.device-mobile .wide-thumb {
+  height: 155px !important;
+}
+body.device-mobile .mobile-dock {
+  display: flex !important;
+}
+body.device-mobile #watchView {
+  padding-bottom: calc(var(--dock-h) + 24px) !important;
+}
+body.device-mobile .watch-layout {
+  grid-template-columns: 1fr !important;
+  gap: 16px !important;
+}
+body.device-mobile .watch-sidebar {
+  width: 100% !important;
+}
+body.device-mobile .watch-topbar-nav {
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+body.device-mobile .watch-mode-badges .theater-toggle-btn,
+body.device-mobile .watch-mode-badges .ambient-toggle-btn {
+  display: none !important;
+}
+body.device-mobile .dedicated-hero-banner {
+  min-height: 220px !important;
+  padding: 18px 16px !important;
+}
+body.device-mobile .dedicated-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+body.device-mobile .dedicated-grid.wide-grid {
+  grid-template-columns: 1fr !important;
+}
+
+/* Mobile Landscape Watch Player optimization */
+body.device-mobile.orientation-landscape #watchView {
+  padding: 0 !important;
+}
+body.device-mobile.orientation-landscape .watch-primary {
+  max-width: 100vw !important;
+}
+body.device-mobile.orientation-landscape .video-container {
+  border-radius: 0 !important;
+  max-height: 100vh !important;
+}
+
+/* --- 2. TABLET ADAPTATION (body.device-tablet) --- */
+body.device-tablet .yt-sidebar {
+  width: 76px !important;
+}
+body.device-tablet .yt-sidebar .rail-title {
+  display: none !important;
+}
+body.device-tablet .yt-main-content {
+  padding: 20px 24px 40px !important;
+}
+body.device-tablet .hubs-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+body.device-tablet .dedicated-grid {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+}
+body.device-tablet .poster-card {
+  width: 175px !important;
+}
+body.device-tablet .mobile-dock {
+  display: none !important;
+}
+
+/* --- 3. DESKTOP ADAPTATION (body.device-desktop) --- */
+body.device-desktop .mobile-dock {
+  display: none !important;
+}
+
+/* --- 4. SMART TV ADAPTATION (body.device-tv) --- */
+body.device-tv {
+  font-size: 18px !important;
+}
+body.device-tv .mobile-dock {
+  display: none !important;
+}
+body.device-tv *:focus-visible {
+  outline: 4px solid #60a5fa !important;
+  outline-offset: 4px !important;
+  transform: scale(1.04) !important;
+  z-index: 100 !important;
+}
+
 
 
 

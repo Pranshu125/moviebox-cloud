@@ -1,9 +1,9 @@
 /* ============================================================================
-   MovieBox Studio — PWA Service Worker (v2.0 Liquid Glass & Claymorphism)
+   MovieBox Studio — PWA Service Worker (v3.0 Liquid Glass & Multi-Device)
    Provides instant app launching on phones, tablets, and desktops
    ============================================================================ */
 
-const CACHE_NAME = 'moviebox-pwa-v2.0';
+const CACHE_NAME = 'moviebox-pwa-v3.0';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

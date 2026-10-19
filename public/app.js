@@ -127,9 +127,76 @@ function cleanEmoji(text) {
 }
 
 // =========================================================================
+// DEVICE DETECTION & ADAPTIVE RESPONSIVE LAYOUT ENGINE
+// Automatically adapts UI according to the device being used:
+// - Phone (touch gestures, bottom dock, full-width touch friendly player)
+// - Tablet (adaptive 3-4 column grid, flexible layout)
+// - Desktop (expanded studio sidebar, keyboard shortcuts, precision controls)
+// - Smart TV (D-pad focus states, 10-foot cinema UI)
+// =========================================================================
+function detectDeviceProfile() {
+  const ua = navigator.userAgent || '';
+  const isMobileUA = /Android|iPhone|iPod|Windows Phone|webOS|BlackBerry/i.test(ua);
+  const isTabletUA = /iPad/i.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua) && window.innerWidth <= 1180);
+  const isTvUA = /SmartTV|GoogleTV|HbbTV|AppleTV|BRAVIA|NetCast|Tizen|Web0S|Roku|POV_TV/i.test(ua);
+
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia('(pointer: coarse)').matches;
+  const isLandscape = w > h;
+
+  let device = 'desktop';
+  if (isTvUA) {
+    device = 'tv';
+  } else if (isTabletUA || (isTouch && w >= 768 && w <= 1180)) {
+    device = 'tablet';
+  } else if (isMobileUA || w < 768 || (isTouch && w < 850 && !isLandscape)) {
+    device = 'mobile';
+  }
+
+  const root = document.documentElement;
+  const body = document.body;
+
+  root.dataset.device = device;
+  root.dataset.orientation = isLandscape ? 'landscape' : 'portrait';
+  root.dataset.touch = isTouch ? 'touch' : 'mouse';
+
+  body.classList.remove('device-mobile', 'device-tablet', 'device-desktop', 'device-tv', 'orientation-landscape', 'orientation-portrait');
+  body.classList.add(`device-${device}`);
+  body.classList.add(isLandscape ? 'orientation-landscape' : 'orientation-portrait');
+
+  if (state) {
+    state.deviceProfile = { device, isTouch, isLandscape, width: w, height: h };
+  }
+
+  // Adjust billboard height according to device
+  const heroEl = document.getElementById('heroBillboard');
+  if (heroEl) {
+    if (device === 'mobile') {
+      heroEl.style.minHeight = isLandscape ? '280px' : '440px';
+    } else if (device === 'tablet') {
+      heroEl.style.minHeight = '480px';
+    } else {
+      heroEl.style.minHeight = '';
+    }
+  }
+
+  return device;
+}
+
+// =========================================================================
 // 1. INITIALIZATION & NATIVE MOVIEBOX SYNC
 // =========================================================================
 async function initApp() {
+  detectDeviceProfile();
+  window.addEventListener('resize', () => {
+    clearTimeout(window._resizeTimer);
+    window._resizeTimer = setTimeout(detectDeviceProfile, 100);
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(detectDeviceProfile, 150);
+  });
+
   bindEvents();
   await loadBackendState();
   renderHeroSwitcher();
@@ -143,7 +210,7 @@ async function initApp() {
   // Fetch 100% Real Live MovieBox Homepage Catalog
   await fetchMovieBoxHome();
 
-  // Fetch real-time GaiaFlix.live 24/7 channels and live sports feed
+  // Fetch real-time 24/7 channels and live sports feed
   fetchGaiaFlixCatalog();
 }
 
@@ -746,7 +813,7 @@ async function fetchGaiaFlixCatalog(forceRefresh = false) {
         channels: data.channels || []
       };
 
-      const hubCount = document.getElementById('hubGaiaflixCount');
+      const hubCount = document.getElementById('hubLiveCount') || document.getElementById('hubGaiaflixCount');
       if (hubCount) {
         const liveCount = data.counts?.live || 0;
         const chCount = data.counts?.channels || 0;
@@ -758,8 +825,8 @@ async function fetchGaiaFlixCatalog(forceRefresh = false) {
       renderGaiaFlixRail();
 
       const dedicatedView = document.getElementById('dedicatedPageView');
-      if (dedicatedView && !dedicatedView.classList.contains('hidden') && state.activeDedicatedPage === 'gaiaflix') {
-        renderDedicatedPageContent('gaiaflix');
+      if (dedicatedView && !dedicatedView.classList.contains('hidden') && (state.activeDedicatedPage === 'gaiaflix' || state.activeDedicatedPage === 'livetv')) {
+        renderDedicatedPageContent(state.activeDedicatedPage);
       }
 
       if (forceRefresh) {
@@ -1373,6 +1440,10 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
       streamUrl: item.streamUrl,
       vlcUrl: item.fullPath || item.streamUrl
     }];
+    if (item.streams && Array.isArray(item.streams) && item.streams.length > 0) {
+      state.currentStreams = item.streams;
+    }
+    populateServerSelector(state.currentStreams, 0);
     state.activeStream = state.currentStreams[0];
     updateWatchBadgesAndAudioSummary();
     renderStreamSourcesSidebar();
@@ -1439,6 +1510,7 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
       document.getElementById('playerSourcePill').textContent = `MOVIEBOX CDN • ${state.activeStream.quality} (${state.activeStream.sizeFormatted || 'HEVC'})`;
       document.getElementById('watchProviderLabel').textContent = state.activeStream.name;
 
+      populateServerSelector(state.currentStreams, 0);
       populateQualityDropdown(state.currentQualityOptions, false);
       updateWatchBadgesAndAudioSummary();
       renderStreamSourcesSidebar();
@@ -1461,6 +1533,40 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
     hideVideoLoadingRing();
     showToast(`Stream error: ${err.message}`);
   }
+}
+
+function populateServerSelector(streams, activeIndex = 0) {
+  const selectors = [
+    document.getElementById('serverSelector'),
+    document.getElementById('topServerSelector')
+  ].filter(Boolean);
+
+  selectors.forEach(sel => {
+    sel.innerHTML = '';
+    (streams || []).forEach((st, idx) => {
+      const opt = document.createElement('option');
+      opt.value = String(idx);
+      opt.textContent = st.name || `Server ${idx + 1}`;
+      if (idx === activeIndex) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.classList.toggle('hidden', !streams || streams.length <= 1);
+  });
+}
+
+function onServerChange(idx) {
+  const targetIdx = Number(idx);
+  if (!state.currentStreams || !state.currentStreams[targetIdx]) return;
+  const newStream = state.currentStreams[targetIdx];
+  state.activeStream = newStream;
+  showToast(`Switched to ${newStream.name}`);
+  loadVideoStream(newStream, state.currentItem?.backdrop || state.currentItem?.poster, 0, state.currentSubtitles);
+  const s1 = document.getElementById('serverSelector');
+  const s2 = document.getElementById('topServerSelector');
+  if (s1 && s1.value !== String(targetIdx)) s1.value = String(targetIdx);
+  if (s2 && s2.value !== String(targetIdx)) s2.value = String(targetIdx);
+  const pill = document.getElementById('playerSourcePill');
+  if (pill) pill.textContent = (newStream.name || 'STREAM').toUpperCase();
 }
 
 function renderWatchDubsBar(dubs, activeSubjectId, se, ep) {
@@ -1661,13 +1767,16 @@ function loadVideoStream(streamObj, posterUrl, startSeconds = 0, subtitles = [])
   }
 
   const embedFrame = document.getElementById('streamEmbedFrame');
-  const isEmbedStream = streamObj.type === 'embed' || url.includes('/bintv/') || url.includes('bintv-sources.pages.dev') || url.includes('/api/gaiaflix/player');
+  const isEmbedStream = streamObj.type === 'embed' || url.includes('/bintv/') || url.includes('bintv-sources.pages.dev') || url.includes('/api/gaiaflix/player') || url.includes('vidsrc') || url.includes('vidlink') || url.includes('autoembed') || url.includes('2embed') || url.includes('superembed') || url.includes('embed.su') || url.includes('smashystream') || url.includes('rive.');
 
   if (isEmbedStream && embedFrame) {
     video.pause();
     video.classList.add('hidden');
     embedFrame.classList.remove('hidden');
-    const playerUrl = `/api/gaiaflix/player?url=${encodeURIComponent(url)}`;
+    let playerUrl = url;
+    if (url.includes('/bintv/') || url.includes('bintv-sources.pages.dev') || url.includes('ehgembxe.cfd')) {
+      playerUrl = `/api/gaiaflix/player?url=${encodeURIComponent(url)}`;
+    }
     embedFrame.src = playerUrl;
     embedFrame.onload = () => {
       hideVideoLoadingRing();
@@ -2368,45 +2477,44 @@ const DEDICATED_PAGES_CONFIG = {
     ]
   },
   movies: {
-    tag: 'CINEMA CATALOG',
-    badge: 'MOVIES',
-    subtag: '1080P & 4K UHD FEATURE FILMS',
-    title: 'Movies — Blockbusters & World Cinema',
-    desc: 'Full-length theatrical releases, Hollywood blockbusters, and regional cinema with multi-audio stereo & surround support.',
+    tag: 'CINEMA VAULT',
+    badge: 'MOVIES 4K',
+    subtag: 'HOLLYWOOD, BOLLYWOOD & DUAL AUDIO 4K',
+    title: 'Movies — 4K Cinema & Dual Audio Hits',
+    desc: 'Stream Hollywood blockbusters, Bollywood releases, South Hindi dubbed, and 4K cinema from HDHub4u, Vegamovies, 123movies, and MovieBox.',
     subfilters: [
       { id: 'all', label: 'All Movies' },
-      { id: 'action', label: 'Action & Adventure' },
-      { id: 'scifi', label: 'Sci-Fi & Fantasy' },
-      { id: 'thriller', label: 'Thriller & Crime' },
-      { id: 'drama', label: 'Drama' },
+      { id: 'bolly', label: 'Bollywood & Dual Audio' },
+      { id: 'holly', label: 'Hollywood 4K' },
+      { id: 'action', label: 'Action & Sci-Fi' },
       { id: 'toprated', label: 'Top Rated (8.0+)' }
     ]
   },
   series: {
-    tag: 'SERIES STUDIO',
-    badge: 'TV SERIES',
-    subtag: 'MULTI-SEASON SHOWS',
-    title: 'TV Series & Global Shows',
-    desc: 'Binge complete seasons with instant episode switching, audio dub selection, and episode-by-episode download options.',
+    tag: 'BINGE VAULT',
+    badge: 'SERIES',
+    subtag: 'GLOBAL SHOWS, WEB SERIES & ORIGINALS',
+    title: 'TV Series, Web Shows & Originals',
+    desc: 'Stream complete seasons of global hit shows, Netflix originals, Prime, and HBO series from Streamu, NetMirror, and MovieBox.',
     subfilters: [
       { id: 'all', label: 'All Series' },
-      { id: 'western', label: 'Western & Hollywood TV' },
-      { id: 'asian', label: 'K-Drama & Asian' },
-      { id: 'crime', label: 'Crime & Mystery' },
+      { id: 'originals', label: 'Global Originals' },
+      { id: 'drama', label: 'Drama & Crime' },
+      { id: 'scifi', label: 'Sci-Fi & Fantasy' },
       { id: 'toprated', label: 'Top Rated (8.0+)' }
     ]
   },
   anime: {
-    tag: 'ANIME HUB',
+    tag: 'ANIME VAULT',
     badge: 'ANIME',
-    subtag: 'SUBBED & DUBBED SIMULCASTS',
+    subtag: 'SUBBED & DUBBED FROM ANIME.NEXUS & ANIWATCH',
     title: 'Anime — Series, Shonen & Theatrical Films',
-    desc: 'Japanese animation series and movies with original audio, English/Hindi dubs, and high-bitrate HEVC streams.',
+    desc: 'Japanese anime series and movies with dual audio (Japanese/English/Hindi dubs) powered by Anime.nexus, Aniwatch, and Gogoanime.',
     subfilters: [
       { id: 'all', label: 'All Anime' },
       { id: 'series', label: 'Anime Series' },
       { id: 'movies', label: 'Anime Movies' },
-      { id: 'toprated', label: 'Top Rated' }
+      { id: 'toprated', label: 'Top Rated Shonen' }
     ]
   },
   local: {
@@ -2424,34 +2532,33 @@ const DEDICATED_PAGES_CONFIG = {
     ]
   },
   livetv: {
-    tag: 'LIVE BROADCAST',
-    badge: 'LIVE TV',
-    subtag: '24/7 HLS CHANNELS & IPTV',
-    title: 'Live TV Channels & Broadcast Streams',
-    desc: 'Watch live sports, news, entertainment, and custom M3U8 IPTV streams directly in the Studio Player or VLC.',
+    tag: 'LIVE BROADCAST & SPORTS',
+    badge: 'LIVE TV & SPORTS',
+    subtag: '24/7 CABLE, SATELLITE & LIVE SPORTS RELAY',
+    title: 'Live TV Channels & Live Sports Feeds',
+    desc: 'Stream 300+ live satellite & cable television channels, real-time cricket, football, F1, UFC, and global news feeds.',
     subfilters: [
-      { id: 'all', label: 'All Channels' },
-      { id: 'sports', label: 'Sports' },
-      { id: 'news', label: 'News' },
-      { id: 'entertainment', label: 'Movies & Entertainment' },
-      { id: 'music', label: 'Music & Lifestyle' }
+      { id: 'all', label: 'All Live Feeds & Channels' },
+      { id: 'sports', label: 'Live Sports' },
+      { id: 'cricket', label: 'Cricket Channels' },
+      { id: 'football', label: 'Football & Soccer' },
+      { id: 'news', label: 'News & World' },
+      { id: 'entertainment', label: 'Movies & Entertainment' }
     ]
   },
   gaiaflix: {
-    tag: 'GAIAFLIX LIVE HUB',
-    badge: 'GAIAFLIX.LIVE',
-    subtag: '260+ LIVE CHANNELS & REAL-TIME SPORTS FEED',
-    title: 'GaiaFlix.live — 24/7 Channels & Live Sports Feed',
-    desc: 'Stream 260+ live satellite and cable television channels, real-time sports event feeds, and upcoming global tournaments powered by GaiaFlix.',
+    tag: 'LIVE BROADCAST & SPORTS',
+    badge: 'LIVE TV & SPORTS',
+    subtag: '24/7 CABLE, SATELLITE & LIVE SPORTS RELAY',
+    title: 'Live TV Channels & Live Sports Feeds',
+    desc: 'Stream 300+ live satellite & cable television channels, real-time cricket, football, F1, UFC, and global news feeds.',
     subfilters: [
-      { id: 'all', label: 'All GaiaFlix' },
-      { id: 'live', label: 'Live Feed Now' },
-      { id: 'upcoming', label: 'Upcoming Feed' },
-      { id: 'sports', label: 'Sports Channels' },
-      { id: 'movies', label: 'Movies & TV' },
+      { id: 'all', label: 'All Live Feeds & Channels' },
+      { id: 'sports', label: 'Live Sports' },
+      { id: 'cricket', label: 'Cricket Channels' },
+      { id: 'football', label: 'Football & Soccer' },
       { id: 'news', label: 'News & World' },
-      { id: 'kids', label: 'Kids & Family' },
-      { id: 'entertainment', label: 'General Entertainment' }
+      { id: 'entertainment', label: 'Movies & Entertainment' }
     ]
   },
   mylist: {
@@ -2785,110 +2892,71 @@ function renderDedicatedPageContent(pageKey) {
   const sortMode = document.getElementById('dedicatedSortSelect')?.value || 'featured';
   const allItems = collectAllCatalogItems();
 
-  // Special Case A: Live TV Dedicated Page
-  if (pageKey === 'livetv') {
-    grid.classList.add('wide-grid');
-    let channels = (state.uiData.customIptv || []).filter(ch => {
-      if (sub !== 'all' && !String(ch.category || '').toLowerCase().includes(sub)) return false;
-      if (filterText && !String(ch.name || '').toLowerCase().includes(filterText)) return false;
-      return true;
-    });
-    if (countEl) countEl.textContent = `${channels.length} Live Channels`;
-
-    if (channels.length > 0) {
-      const firstCh = channels[0];
-      updateDedicatedHeroBanner({
-        id: firstCh.id,
-        title: firstCh.name,
-        cleanTitle: firstCh.name,
-        poster: firstCh.logo,
-        backdrop: firstCh.logo,
-        quality: firstCh.quality || '1080p LIVE',
-        streamUrl: firstCh.streamUrl,
-        isLive: true
-      });
-    }
-
-    channels.forEach(ch => {
-      const item = {
-        id: ch.id,
-        title: ch.name,
-        year: 'LIVE NOW',
-        rating: 'LIVE',
-        quality: ch.quality || '1080p60 LIVE',
-        provider: `IPTV • ${ch.category}`,
-        poster: ch.logo,
-        backdrop: ch.logo,
-        streamUrl: ch.streamUrl,
-        isLive: true,
-        description: `Live 24/7 broadcast (${ch.category} • ${ch.language}).`
-      };
-      const card = document.createElement('article');
-      card.className = 'wide-card';
-      card.tabIndex = 0;
-      card.innerHTML = `
-        <div class="wide-thumb">
-          <img src="${ch.logo}" alt="${ch.name}" loading="lazy" />
-          <div class="card-badges-top">
-            <span class="pill-badge live">LIVE</span>
-            <span class="pill-badge dark">${ch.category}</span>
-          </div>
-          <div class="thumb-play-overlay">
-            <div class="play-circle-icon">▶</div>
-          </div>
-        </div>
-        <div class="wide-body">
-          <div class="wide-title">${ch.name}</div>
-          <div class="wide-meta"><span>${ch.quality}</span><span>•</span><span>${ch.language}</span></div>
-          <div class="wide-actions">
-            <button class="card-btn play" data-action="play">Watch Live</button>
-            <button class="card-btn vlc" data-action="vlc">Open in VLC</button>
-          </div>
-        </div>
-      `;
-      card.querySelector('.wide-thumb').onclick = () => openTheaterPlayer(item);
-      card.querySelector('[data-action="play"]').onclick = () => openTheaterPlayer(item);
-      card.querySelector('[data-action="vlc"]').onclick = () => launchInVlc(item);
-      grid.appendChild(card);
-    });
-    return;
-  }
-
-  // Special Case A2: GaiaFlix Live Dedicated Page (260+ Channels & Live Match Feed)
-  if (pageKey === 'gaiaflix') {
+  // Special Case A: Live TV & Sports Dedicated Page (All 300+ Sports & Satellite Channels)
+  if (pageKey === 'livetv' || pageKey === 'gaiaflix') {
     grid.classList.add('wide-grid');
     const live = state.gaiaflixCatalog?.liveEvents || [];
     const upcoming = state.gaiaflixCatalog?.upcomingEvents || [];
     const channels = state.gaiaflixCatalog?.channels || [];
+    const custom = (state.uiData.customIptv || []).map(ch => ({
+      id: ch.id,
+      title: ch.name,
+      cleanTitle: ch.name,
+      year: 'LIVE NOW',
+      rating: 'LIVE',
+      quality: ch.quality || '1080p60 LIVE',
+      genreKey: String(ch.category || '').toLowerCase(),
+      category: ch.category || 'Television',
+      provider: 'Live Relay',
+      poster: ch.logo,
+      backdrop: ch.logo,
+      streamUrl: ch.streamUrl,
+      isLive: true,
+      badge: '24/7 LIVE'
+    }));
 
     let pool = [];
-    if (sub === 'live') {
-      pool = [...live];
-    } else if (sub === 'upcoming') {
-      pool = [...upcoming];
-    } else if (sub === 'sports') {
-      pool = channels.filter(c => c.genreKey === 'sports');
-    } else if (sub === 'movies') {
-      pool = channels.filter(c => c.genreKey === 'movies');
+    if (sub === 'sports') {
+      pool = [
+        ...live.filter(it => /sport/i.test(it.category || '') || it.genreKey === 'sports'),
+        ...channels.filter(c => c.genreKey === 'sports' || /sport/i.test(c.category || '')),
+        ...custom.filter(c => /sport/i.test(c.genreKey || ''))
+      ];
+    } else if (sub === 'cricket') {
+      pool = [
+        ...live.filter(it => /cricket/i.test(it.title || '') || /cricket/i.test(it.category || '')),
+        ...channels.filter(c => /cricket/i.test(c.name || '') || /cricket/i.test(c.category || '') || /cricket/i.test(c.id || '')),
+        ...custom.filter(c => /cricket/i.test(c.title || '') || /cricket/i.test(c.category || ''))
+      ];
+    } else if (sub === 'football') {
+      pool = [
+        ...live.filter(it => /football|soccer/i.test(it.title || '') || /football|soccer/i.test(it.category || '')),
+        ...channels.filter(c => /football|soccer/i.test(c.name || '') || /football|soccer/i.test(c.category || '')),
+        ...custom.filter(c => /football|soccer/i.test(c.title || ''))
+      ];
     } else if (sub === 'news') {
-      pool = channels.filter(c => c.genreKey === 'news');
-    } else if (sub === 'kids') {
-      pool = channels.filter(c => c.genreKey === 'kids');
+      pool = [
+        ...channels.filter(c => c.genreKey === 'news' || /news/i.test(c.category || '')),
+        ...custom.filter(c => /news/i.test(c.genreKey || ''))
+      ];
     } else if (sub === 'entertainment') {
-      pool = channels.filter(c => c.genreKey === 'entertainment');
+      pool = [
+        ...channels.filter(c => c.genreKey === 'entertainment' || c.genreKey === 'movies'),
+        ...custom.filter(c => /ent|movie|series/i.test(c.genreKey || ''))
+      ];
     } else {
-      // 'all': active live matches first, then 24/7 channels, then upcoming events
-      pool = [...live, ...channels, ...upcoming];
+      // 'all': active live matches first, then 24/7 channels & custom IPTV, then upcoming events
+      pool = [...live, ...channels, ...custom, ...upcoming];
     }
 
     if (filterText) {
       pool = pool.filter(it =>
-        String(it.name || it.title || '').toLowerCase().includes(filterText) ||
+        String(it.name || it.title || it.cleanTitle || '').toLowerCase().includes(filterText) ||
         String(it.category || '').toLowerCase().includes(filterText)
       );
     }
 
-    if (countEl) countEl.textContent = `${pool.length} GaiaFlix Streams Available`;
+    if (countEl) countEl.textContent = `${pool.length} Live Feeds & Channels`;
 
     if (pool.length > 0) {
       const topPick = pool.find(it => it.isLive) || pool[0];
@@ -2907,7 +2975,7 @@ function renderDedicatedPageContent(pageKey) {
     if (pool.length === 0) {
       grid.innerHTML = `
         <div class="dedicated-empty-box">
-          <strong>No GaiaFlix Streams Found</strong>
+          <strong>No Live Streams Found</strong>
           <p>No streams match your filter. Try switching sub-category pills or clearing the search text.</p>
         </div>
       `;
@@ -2925,7 +2993,7 @@ function renderDedicatedPageContent(pageKey) {
 
       card.innerHTML = `
         <div class="wide-thumb">
-          <img src="${item.poster || item.backdrop}" alt="${item.cleanTitle || item.title}" loading="lazy" />
+          <img src="${item.poster || item.backdrop}" alt="${item.cleanTitle || item.title || item.name}" loading="lazy" />
           <div class="card-badges-top">
             <span class="pill-badge ${badgeClass}">${badgeText}</span>
             <span class="pill-badge dark">${item.category}</span>
@@ -2935,11 +3003,11 @@ function renderDedicatedPageContent(pageKey) {
           </div>
         </div>
         <div class="wide-body">
-          <div class="wide-title" title="${item.cleanTitle || item.title}">${item.cleanTitle || item.title}</div>
+          <div class="wide-title" title="${item.cleanTitle || item.title || item.name}">${item.cleanTitle || item.title || item.name}</div>
           <div class="wide-meta">
             <span>${item.quality || '1080p60'}</span>
             <span>•</span>
-            <span>${item.provider || 'GaiaFlix'}</span>
+            <span>${item.provider || 'Live Relay'}</span>
           </div>
           <div class="wide-actions">
             <button class="card-btn play" data-action="play">${isUpcoming ? 'Watch Feed' : 'Watch Live'}</button>
@@ -4279,12 +4347,27 @@ function bindEvents() {
   video.addEventListener('canplaythrough', () => {
     hideVideoLoadingRing();
   });
+  let autoServerFailoverCount = 0;
   video.addEventListener('playing', () => {
+    autoServerFailoverCount = 0;
     hideVideoLoadingRing();
     videoContainer?.classList.remove('is-paused');
   });
-  video.addEventListener('error', () => {
+  video.addEventListener('error', (e) => {
+    console.warn('Video element playback error:', e);
     hideVideoLoadingRing();
+    if (state.currentStreams && state.currentStreams.length > 1 && autoServerFailoverCount < state.currentStreams.length - 1) {
+      autoServerFailoverCount++;
+      const curIdx = state.currentStreams.findIndex(s => s === state.activeStream);
+      const nextIdx = (curIdx >= 0 && curIdx < state.currentStreams.length - 1) ? curIdx + 1 : 0;
+      const nextStream = state.currentStreams[nextIdx];
+      if (nextStream && nextStream !== state.activeStream) {
+        showToast(`Auto-switching to ${nextStream.name}...`);
+        onServerChange(nextIdx);
+        return;
+      }
+    }
+    document.getElementById('mkvAudioBanner')?.classList.remove('hidden');
   });
 
   const centerPlaySvg = document.getElementById('centerPlaySvg');
@@ -4632,6 +4715,13 @@ function bindEvents() {
       e.preventDefault();
       frameStepBtn?.click();
     }
+  });
+
+  document.getElementById('serverSelector')?.addEventListener('change', (e) => {
+    onServerChange(e.target.value);
+  });
+  document.getElementById('topServerSelector')?.addEventListener('change', (e) => {
+    onServerChange(e.target.value);
   });
 
   document.getElementById('speedSelector').addEventListener('change', (e) => {

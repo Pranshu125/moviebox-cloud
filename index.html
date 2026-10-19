@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#08090d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MovieBox Studio" />
+  <title>MovieBox Studio</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <link rel="apple-touch-icon" href="/logo.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dist/dash.all.min.js"></script>
+  <link rel="stylesheet" href="/styles.css?v=20261019_v10" />
+</head>
+<body>
+  <!-- Spatial Ambient Lighting Canvas -->
+  <div class="bg-mesh" aria-hidden="true">
+    <div class="bg-orb orb-netflix"></div>
+    <div class="bg-orb orb-hotstar"></div>
+    <div class="bg-orb orb-youtube"></div>
+  </div>
+
+  <!-- =====================================================================
+       1. APPLE LIQUID GLASS FLOATING NAVIGATION RAIL
+       ===================================================================== -->
+  <aside class="hotstar-rail" id="sidebarRail" aria-label="Primary Navigation">
+    <div class="rail-brand" id="brandHomeBtn" title="MovieBox Studio">
+      <div class="brand-logo-mark">
+        <img src="/logo.svg" alt="MovieBox Logo" class="brand-logo-svg" />
+      </div>
+      <div class="brand-text">
+        <span class="brand-title">MovieBox</span>
+        <span class="brand-sub">Studio</span>
+      </div>
+    </div>
+
+    <nav class="rail-nav">
+      <button class="rail-item active" data-nav="home">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/></svg>
+        </span>
+        <span class="rail-label">Home</span>
+      </button>
+
+      <button class="rail-item" data-nav="search">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
+        </span>
+        <span class="rail-label">Search <kbd>/</kbd></span>
+      </button>
+
+      <button class="rail-item" data-nav="movies">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="3"/><path d="M7 3v18M17 3v18M2 12h20"/></svg>
+        </span>
+        <span class="rail-label">Movies</span>
+      </button>
+
+      <button class="rail-item" data-nav="series">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="14" rx="3"/><path d="M8 21h8M12 20v1"/></svg>
+        </span>
+        <span class="rail-label">Series</span>
+      </button>
+
+      <button class="rail-item" data-nav="anime">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </span>
+        <span class="rail-label">Anime</span>
+      </button>
+
+      <button class="rail-item" data-nav="livetv">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+        </span>
+        <span class="rail-label">Live TV &amp; Sports <span class="rail-pill live">LIVE</span></span>
+      </button>
+
+      <button class="rail-item" data-nav="local">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="rail-label">Library <span class="rail-pill gold">4K</span></span>
+      </button>
+
+      <button class="rail-item" data-nav="mylist">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="rail-label">Watchlist</span>
+      </button>
+
+      <button class="rail-item" id="railDownloadsBtn" data-nav="downloads">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </span>
+        <span class="rail-label">Downloads <span class="rail-pill gold" id="railDownloadsBadge">0</span></span>
+      </button>
+    </nav>
+
+    <div class="rail-footer">
+      <button class="rail-item" id="openSettingsModalBtn" title="Preferences">
+        <span class="rail-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </span>
+        <span class="rail-label">Settings</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =====================================================================
+       2. MAIN VIEWPORT
+       ===================================================================== -->
+  <div class="app-shell">
+    <!-- FLOATING LIQUID GLASS COMMAND BAR -->
+    <header class="yt-topbar" id="topHeader">
+      <div class="topbar-left">
+        <div class="platform-fusion-badge" id="topBrandBadge">
+          <img src="/logo.svg" alt="MovieBox" class="top-mini-logo" />
+          <span class="fusion-text">MovieBox Studio</span>
+        </div>
+      </div>
+
+      <!-- Liquid Glass Search Field -->
+      <div class="yt-search-container">
+        <div class="yt-search-box" id="searchBoxWrap">
+          <svg class="search-lead-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
+          <input
+            type="text"
+            id="globalSearchInput"
+            placeholder="Search movies, series, anime, or 4K library..."
+            autocomplete="off"
+          />
+          <button class="search-clear-btn hidden" id="clearSearchBtn" title="Clear">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+          <button class="search-submit-btn" id="searchSubmitBtn" title="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.35-4.35"/></svg>
+          </button>
+        </div>
+        <button class="yt-mic-btn" id="voiceSearchBtn" title="Voice Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+
+        <!-- Search Results Popover -->
+        <div class="search-dropdown hidden" id="searchDropdown">
+          <div class="search-dropdown-header">
+            <span id="searchStatusText">Results</span>
+            <button class="text-btn" id="viewAllSearchBtn">Close</button>
+          </div>
+          <div class="search-dropdown-list" id="searchDropdownList"></div>
+        </div>
+      </div>
+
+      <!-- Topbar Right Quick Actions -->
+      <div class="topbar-actions">
+        <button class="action-pill install-pill" id="installPwaBtn" title="Install MovieBox App on Phone / Desktop">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <span>Install App</span>
+        </button>
+
+        <button class="action-pill cloud-pill hidden" id="cloudModeBadge" title="Running in Cloud on Vercel">
+          <span class="status-dot online" style="background: #06b6d4; box-shadow: 0 0 8px #06b6d4;"></span>
+          <span>Cloud Mode</span>
+        </button>
+
+        <button class="action-pill lan-qr-pill" id="openLanModalBtn" title="Connect Phones, Tablets &amp; Smart TVs via QR Code">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3h-3zM18 14h3M14 18v3"/></svg>
+          <span>Connect TV / Phone</span>
+        </button>
+
+        <button class="action-pill dl-status-pill" id="topDownloadsBtn" title="Downloads">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Downloads</span>
+          <span class="dl-speed-badge" id="topDownloadsBadge">Idle</span>
+        </button>
+
+        <button class="action-pill vlc-status-pill" id="openFolderBtn" title="Open Local Library Folder">
+          <span class="status-dot online"></span>
+          <span>Local Vault</span>
+        </button>
+
+        <button class="action-pill tui-pill" id="launchTuiBtn" title="Open Terminal Interface">
+          <span>Terminal</span>
+        </button>
+
+        <button class="icon-btn" id="openIptvModalBtn" title="Add Custom Stream">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+
+        <button class="profile-avatar-btn" id="profileSpaceBtn" title="Watchlist">
+          <div class="avatar-ring">HP</div>
+        </button>
+      </div>
+    </header>
+
+    <!-- LIQUID GLASS SEGMENTED FILTER BAR -->
+    <div class="yt-chips-bar" id="filterChipsBar">
+      <button class="yt-chip active" data-chip="all">All</button>
+      <button class="yt-chip chip-netmirror" data-chip="netmirror">NetMirror</button>
+      <button class="yt-chip chip-gaiaflix" data-chip="gaiaflix">GaiaFlix Live</button>
+      <button class="yt-chip chip-special" data-chip="local">Local 4K</button>
+      <button class="yt-chip" data-chip="continue">Continue Watching</button>
+      <button class="yt-chip" data-chip="top10">Top 10</button>
+      <button class="yt-chip" data-chip="atmos">Dolby Atmos</button>
+      <button class="yt-chip" data-chip="Sci-Fi">Sci-Fi</button>
+      <button class="yt-chip" data-chip="Action">Action</button>
+      <button class="yt-chip" data-chip="series">Series</button>
+      <button class="yt-chip" data-chip="anime">Anime</button>
+      <button class="yt-chip" data-chip="livetv">Live TV</button>
+      <button class="yt-chip" data-chip="mylist">Watchlist</button>
+    </div>
+
+    <!-- PWA APP INSTALL BANNER -->
+    <div class="pwa-install-banner hidden" id="pwaInstallBanner">
+      <div class="pwa-banner-left">
+        <div class="pwa-banner-icon">
+          <img src="/logo.svg" alt="MovieBox App" />
+        </div>
+        <div>
+          <div class="pwa-banner-title">Install MovieBox Studio App</div>
+          <div class="pwa-banner-desc">Add to Home Screen for 4K streaming anytime, anywhere on your phone without opening cmd!</div>
+        </div>
+      </div>
+      <div class="pwa-banner-actions">
+        <button class="pwa-btn-primary" id="pwaBannerInstallBtn">Install App</button>
+        <button class="pwa-btn-dismiss" id="pwaBannerDismissBtn">Dismiss</button>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         3. DEDICATED WATCH PAGE (NETFLIX × JIOHOTSTAR FULL-PAGE THEATER)
+         =================================================================== -->
+    <section class="yt-watch-view hidden" id="watchView">
+      <div class="watch-layout" id="watchLayout">
+        <div class="watch-primary">
+          <div class="watch-topbar-nav">
+            <div class="watch-nav-left">
+              <button class="back-to-browse-btn" id="backFromWatchBtn" title="Return to previous page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+                <span id="backFromWatchLabel">Back to Browse</span>
+              </button>
+              <button class="back-to-browse-btn secondary-nav-pill" id="minimizeToMiniPlayerBtn" title="Keep playing in Floating Mini-Player">
+                <span>Mini-Player</span>
+              </button>
+            </div>
+            <div class="watch-mode-badges">
+              <button class="theater-toggle-btn" id="cinemaModeToggleBtn" title="Toggle Netflix Edge-to-Edge Cinema Mode">
+                Cinema View
+              </button>
+              <button class="ambient-toggle-btn active" id="ambientToggleBtn" title="Toggle Ambient Lighting">
+                Ambient <strong id="ambientStateLabel">ON</strong>
+              </button>
+              <button class="theater-toggle-btn" id="theaterExpandBtn" title="Toggle Wide Layout">
+                Wide View
+              </button>
+              <button class="close-watch-btn" id="closePlayerBtn" title="Close Player">Close</button>
+            </div>
+          </div>
+
+          <!-- Player Stage with Ambient Canvas -->
+          <div class="player-stage" id="playerStage">
+            <canvas id="ambientCanvas" class="ambient-canvas" width="160" height="90" aria-hidden="true"></canvas>
+            <div class="player-ambient-fallback" id="ambientFallbackGlow"></div>
+
+            <div class="video-container" id="videoContainer">
+              <video
+                id="mainVideo"
+                class="main-video-element"
+                crossorigin="anonymous"
+                playsinline
+                webkit-playsinline
+                poster="https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1920&q=85"
+              ></video>
+
+              <!-- GaiaFlix Direct Stream / Channel Embed Frame -->
+              <iframe
+                id="streamEmbedFrame"
+                class="stream-embed-frame hidden"
+                allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+
+              <!-- 1. LIQUID GLASS LOADING RING SPINNER OVERLAY -->
+              <div class="video-loading-overlay" id="videoLoadingOverlay">
+                <div class="player-loading-ring-wrap">
+                  <div class="player-loading-ring"></div>
+                  <div class="player-loading-ring-inner"></div>
+                </div>
+                <div class="video-loading-text">
+                  <strong id="videoLoadingLabel">Resolving Stream...</strong>
+                  <span id="videoLoadingSub">MovieBox CDN • Multi-Audio HD</span>
+                </div>
+              </div>
+
+              <!-- 2. NETFLIX / JIOHOTSTAR CENTER TRANSPORT OVERLAY -->
+              <div class="player-center-transport" id="playerCenterTransport">
+                <button type="button" class="center-transport-btn" id="centerRewindBtn" title="Rewind 10s">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                  <span>10s</span>
+                </button>
+                <button type="button" class="center-transport-btn primary-play" id="centerPlayPauseBtn" title="Play / Pause">
+                  <svg id="centerPlaySvg" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                </button>
+                <button type="button" class="center-transport-btn" id="centerForwardBtn" title="Forward 10s">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  <span>10s</span>
+                </button>
+              </div>
+
+              <div class="touch-seek-feedback hidden" id="touchSeekFeedback">-10s</div>
+
+              <!-- 3. NETFLIX / JIOHOTSTAR TOP IN-PLAYER BAR -->
+              <div class="player-top-overlay" id="playerTopOverlay">
+                <div class="player-top-left">
+                  <button type="button" class="player-top-back-btn" id="playerOverlayBackBtn" title="Back to Browse">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <span class="now-playing-pill" id="playerSourcePill">DIRECT STREAM</span>
+                  <span class="now-playing-title" id="playerOverlayTitle">Loading...</span>
+                </div>
+                <div class="player-top-right">
+                  <select id="topServerSelector" class="ctrl-select server-select-top" title="Select Stream Server">
+                    <option value="0">Server 1: High-Speed Direct</option>
+                    <option value="1">Server 2: VidPlay Ultra</option>
+                    <option value="2">Server 3: StreamU Multi-Audio</option>
+                    <option value="3">Server 4: HDHub4u Dual Audio</option>
+                    <option value="4">Server 5: Vega / 123Movies</option>
+                    <option value="5">Server 6: Live / HLS Mirror</option>
+                  </select>
+                  <button type="button" class="player-top-Quick-btn hidden" id="playerOverlayEpisodesBtn" title="Jump to Episodes">
+                    Episodes
+                  </button>
+                  <button type="button" class="player-top-Quick-btn" id="playerOverlayAudioSubBtn" title="Audio &amp; Subtitles">
+                    Audio &amp; Subtitles
+                  </button>
+                  <button type="button" class="player-top-Quick-btn" id="playerOverlayCinemaBtn" title="Toggle Cinema Mode">
+                    Cinema
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4. NETFLIX / JIOHOTSTAR FLOATING SKIP INTRO & NEXT EPISODE ACTIONS -->
+              <div class="player-floating-actions" id="playerFloatingActions">
+                <button type="button" class="floating-player-pill" id="skipIntroBtn">
+                  Skip Intro
+                </button>
+                <button type="button" class="floating-player-pill next-ep hidden" id="nextEpisodeOverlayBtn">
+                  Next Episode
+                </button>
+              </div>
+
+              <!-- 5. NETFLIX / JIOHOTSTAR IN-PLAYER AUDIO & SUBTITLES POPOVER -->
+              <div class="player-studio-popover audio-sub-popover hidden" id="playerAudioSubPopover">
+                <div class="popover-head">
+                  <strong>Audio Tracks, Spatial Profile &amp; Subtitles</strong>
+                  <button type="button" class="popover-reset-btn" id="closeAudioSubPopoverBtn">Done</button>
+                </div>
+                <div class="audio-sub-columns">
+                  <div class="audio-sub-col">
+                    <span class="audio-sub-heading">Audio Language</span>
+                    <div class="audio-sub-list" id="inPlayerAudioLangList"></div>
+                    <span class="audio-sub-heading" style="margin-top:10px">Audio Output Mode</span>
+                    <div class="audio-sub-list" id="inPlayerAudioTypeList">
+                      <button type="button" class="audio-sub-item active" data-ipaudiotype="aac_stereo">AAC 2.0 Stereo (Original)</button>
+                      <button type="button" class="audio-sub-item" data-ipaudiotype="ddp_surround">Dolby Surround 5.1</button>
+                      <button type="button" class="audio-sub-item" data-ipaudiotype="vocal_clarity">Dialogue Clarity Boost</button>
+                    </div>
+                  </div>
+                  <div class="audio-sub-col">
+                    <span class="audio-sub-heading">Subtitles &amp; Captions</span>
+                    <div class="audio-sub-list" id="inPlayerSubtitlesList"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- YouTube Stats for Nerds Overlay -->
+              <div class="stats-for-nerds hidden" id="statsForNerdsOverlay">
+                <div class="sfn-header">
+                  <strong>Studio Telemetry (Stats for Nerds)</strong>
+                  <button type="button" class="sfn-close" id="closeStatsForNerdsBtn">✕</button>
+                </div>
+                <div class="sfn-grid">
+                  <span>Viewport / Frames</span><strong id="sfnViewport">1920x1080 / 0 dropped</strong>
+                  <span>Resolution / Codec</span><strong id="sfnResolution">1080p Full HD • HEVC</strong>
+                  <span>Audio Engine</span><strong id="sfnAudio">AAC 2.0 Stereo (100% Gain)</strong>
+                  <span>Buffer Health</span><strong id="sfnBuffer">0.0 s</strong>
+                  <span>Stream Protocol</span><strong id="sfnProtocol">DASH / Direct HTTP</strong>
+                </div>
+              </div>
+
+              <!-- VLC 5-Band Audio Equalizer & Spatial DSP Popover -->
+              <div class="player-studio-popover hidden" id="playerEqPopover">
+                <div class="popover-head">
+                  <strong>VLC Audio Equalizer &amp; Gain (Up to 200%)</strong>
+                  <button type="button" class="popover-reset-btn" id="resetEqBtn">Reset</button>
+                </div>
+                <div class="eq-presets-row" id="eqPresetsRow">
+                  <button type="button" class="eq-preset-pill active" data-eqpreset="flat">Flat</button>
+                  <button type="button" class="eq-preset-pill" data-eqpreset="cinema">Cinema 5.1</button>
+                  <button type="button" class="eq-preset-pill" data-eqpreset="bass">Bass Boost</button>
+                  <button type="button" class="eq-preset-pill" data-eqpreset="vocal">Dialogue Clarity</button>
+                  <button type="button" class="eq-preset-pill" data-eqpreset="night">Night Mode</button>
+                </div>
+                <div class="eq-sliders-grid">
+                  <div class="eq-band">
+                    <input type="range" id="eqPreamp" min="-12" max="12" step="1" value="0" />
+                    <span class="eq-val" id="eqPreampVal">0dB</span>
+                    <label>Preamp</label>
+                  </div>
+                  <div class="eq-band">
+                    <input type="range" class="eq-band-slider" data-band="0" min="-12" max="12" step="1" value="0" />
+                    <span class="eq-val">0dB</span>
+                    <label>60Hz</label>
+                  </div>
+                  <div class="eq-band">
+                    <input type="range" class="eq-band-slider" data-band="1" min="-12" max="12" step="1" value="0" />
+                    <span class="eq-val">0dB</span>
+                    <label>230Hz</label>
+                  </div>
+                  <div class="eq-band">
+                    <input type="range" class="eq-band-slider" data-band="2" min="-12" max="12" step="1" value="0" />
+                    <span class="eq-val">0dB</span>
+                    <label>910Hz</label>
+                  </div>
+                  <div class="eq-band">
+                    <input type="range" class="eq-band-slider" data-band="3" min="-12" max="12" step="1" value="0" />
+                    <span class="eq-val">0dB</span>
+                    <label>3.6kHz</label>
+                  </div>
+                  <div class="eq-band">
+                    <input type="range" class="eq-band-slider" data-band="4" min="-12" max="12" step="1" value="0" />
+                    <span class="eq-val">0dB</span>
+                    <label>14kHz</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VLC Video Adjustments & Aspect Ratio Popover -->
+              <div class="player-studio-popover hidden" id="playerVideoFxPopover">
+                <div class="popover-head">
+                  <strong>VLC Video Filters &amp; Aspect Ratio</strong>
+                  <button type="button" class="popover-reset-btn" id="resetVideoFxBtn">Reset</button>
+                </div>
+                <div class="eq-presets-row" id="aspectRatioRow">
+                  <button type="button" class="eq-preset-pill active" data-aspect="fit">Fit Screen</button>
+                  <button type="button" class="eq-preset-pill" data-aspect="16:9">16:9 Wide</button>
+                  <button type="button" class="eq-preset-pill" data-aspect="21:9">21:9 Ultrawide</button>
+                  <button type="button" class="eq-preset-pill" data-aspect="fill">Zoom Fill</button>
+                  <button type="button" class="eq-preset-pill" data-aspect="4:3">4:3 Classic</button>
+                </div>
+                <div class="vfx-sliders-list">
+                  <label class="vfx-row">
+                    <span>Brightness</span>
+                    <input type="range" id="vfxBrightness" min="50" max="150" value="100" />
+                    <strong id="vfxBrightnessVal">100%</strong>
+                  </label>
+                  <label class="vfx-row">
+                    <span>Contrast</span>
+                    <input type="range" id="vfxContrast" min="50" max="150" value="100" />
+                    <strong id="vfxContrastVal">100%</strong>
+                  </label>
+                  <label class="vfx-row">
+                    <span>Saturation</span>
+                    <input type="range" id="vfxSaturation" min="0" max="200" value="100" />
+                    <strong id="vfxSaturationVal">100%</strong>
+                  </label>
+                  <label class="vfx-row">
+                    <span>Hue Shift</span>
+                    <input type="range" id="vfxHue" min="-180" max="180" value="0" />
+                    <strong id="vfxHueVal">0°</strong>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Surround Audio Notice -->
+              <div class="mkv-audio-banner hidden" id="mkvAudioBanner">
+                <div class="mkv-banner-text">
+                  <strong>Dolby Atmos / E-AC3 5.1 Surround Detected</strong>
+                  <span>Use VLC for hardware 5.1 pass-through, or switch to the Cloud AAC Stereo stream for web audio.</span>
+                </div>
+                <div class="mkv-banner-actions">
+                  <button class="btn-vlc-Now" id="bannerLaunchVlcBtn">Open in VLC</button>
+                  <button class="btn-switch-web" id="bannerPlayCloudBtn">Switch to Cloud AAC</button>
+                  <button class="btn-switch-web" id="bannerSwitchSampleBtn">Dismiss</button>
+                </div>
+              </div>
+
+              <!-- YouTube × VLC Studio Video Controls -->
+              <div class="yt-player-controls" id="playerControls">
+                <div class="scrub-bar-wrap" id="scrubBarWrap">
+                  <div class="scrub-buffer-bar" id="scrubBufferBar"></div>
+                  <div class="scrub-ab-bar hidden" id="abLoopBar"></div>
+                  <div class="scrub-progress-fill" id="scrubProgressFill"></div>
+                  <div class="scrub-hover-tooltip hidden" id="scrubTooltip">0:00</div>
+                  <input type="range" id="videoScrubber" class="video-scrubber" min="0" max="1000" value="0" step="1" />
+                </div>
+
+                <div class="controls-row">
+                  <div class="controls-left">
+                    <button class="ctrl-btn" id="playPauseBtn" title="Play / Pause (Space / K)">
+                      <svg id="playIconSvg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    </button>
+                    <button class="ctrl-btn" id="skipBackBtn" title="Rewind 10s (J / Left)">-10s</button>
+                    <button class="ctrl-btn" id="skipFwdBtn" title="Forward 10s (L / Right)">+10s</button>
+                    <button class="ctrl-btn" id="frameStepBtn" title="Step 1 Frame Forward (E)">+1f</button>
+
+                    <div class="volume-group" title="VLC 200% Volume Boost (Up / Down)">
+                      <button class="ctrl-btn" id="muteBtn" title="Mute (M)">Vol</button>
+                      <input type="range" id="volumeSlider" class="volume-slider" min="0" max="2" step="0.05" value="1" />
+                      <span class="vol-pct-label" id="volumePctLabel">100%</span>
+                    </div>
+
+                    <div class="time-readout">
+                      <span id="currentTimeLabel">0:00</span>
+                      <span class="time-sep">/</span>
+                      <span id="durationTimeLabel">0:00</span>
+                    </div>
+                  </div>
+
+                  <div class="controls-right">
+                    <select id="serverSelector" class="ctrl-select server-select" title="Streaming Server Source">
+                      <option value="0">Server 1: High-Speed Direct</option>
+                      <option value="1">Server 2: VidPlay Ultra</option>
+                      <option value="2">Server 3: StreamU Multi-Audio</option>
+                      <option value="3">Server 4: HDHub4u Dual Audio</option>
+                      <option value="4">Server 5: Vega / 123Movies</option>
+                      <option value="5">Server 6: Live / HLS Mirror</option>
+                    </select>
+
+                    <select id="audioSelector" class="ctrl-select" title="Audio Track &amp; Format">
+                      <option value="orig|aac_stereo">Audio: Original (Stereo 2.0)</option>
+                      <option value="orig|ddp_surround">Audio: Dolby Surround 5.1</option>
+                    </select>
+
+                    <select id="qualitySelector" class="ctrl-select" title="Video Resolution">
+                      <option value="0">1080p Full HD</option>
+                      <option value="1">720p HD</option>
+                      <option value="2">480p SD</option>
+                      <option value="auto">Auto Adaptive</option>
+                    </select>
+
+                    <select id="subtitleSelector" class="ctrl-select" title="Subtitles">
+                      <option value="en">Subtitles: English</option>
+                      <option value="off">Subtitles: Off</option>
+                    </select>
+
+                    <select id="speedSelector" class="ctrl-select" title="Playback Speed">
+                      <option value="0.5">0.5x</option>
+                      <option value="0.75">0.75x</option>
+                      <option value="1" selected>1.0x</option>
+                      <option value="1.25">1.25x</option>
+                      <option value="1.5">1.5x</option>
+                      <option value="2">2.0x</option>
+                    </select>
+
+                    <button class="ctrl-btn" id="abLoopBtn" title="VLC A-B Repeat Loop">A-B</button>
+                    <button class="ctrl-btn" id="snapshotBtn" title="Save PNG Frame Snapshot">Snap</button>
+                    <button class="ctrl-btn" id="playerEqBtn" title="VLC 5-Band Equalizer &amp; Audio Boost">EQ</button>
+                    <button class="ctrl-btn" id="playerVideoFxBtn" title="Video Adjustments &amp; Aspect Ratio">FX</button>
+                    <button class="ctrl-btn" id="statsForNerdsBtn" title="Stats for Nerds Telemetry">Stats</button>
+
+                    <button class="ctrl-vlc-btn" id="playerLaunchVlcBtn" title="Open in VLC Media Player">
+                      Open in VLC
+                    </button>
+
+                    <button class="ctrl-btn" id="pipBtn" title="Picture-in-Picture">PiP</button>
+                    <button class="ctrl-btn" id="fullscreenBtn" title="Fullscreen (F)">Full</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Metadata & JioHotstar / Netflix Watch Page Content -->
+          <div class="yt-video-meta-panel">
+            <div class="yt-video-header-row">
+              <div>
+                <div class="watch-badges-row" id="watchBadgesRow">
+                  <span class="badge-4k">1080p Full HD</span>
+                  <span class="badge-atmos">HEVC</span>
+                  <span class="badge-hotstar">AAC 2.0 STEREO</span>
+                </div>
+                <h1 class="watch-title" id="watchTitle">Title</h1>
+                <p class="watch-subtitle" id="watchSubtitle">2026</p>
+              </div>
+
+              <div class="yt-action-bar">
+                <button class="yt-pill-btn primary-vlc" id="metaLaunchVlcBtn">
+                  <span>Open in VLC</span>
+                </button>
+                <button class="yt-pill-btn primary-download" id="watchDownloadBtn">
+                  <span>Download</span>
+                </button>
+                <button class="yt-pill-btn" id="watchLikeBtn">
+                  <span>Favorite</span>
+                </button>
+                <button class="yt-pill-btn" id="watchAddListBtn">
+                  <span>Watchlist</span>
+                </button>
+                <button class="yt-pill-btn" id="watchCopyStreamBtn">
+                  <span>Copy Link</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Multi-Audio Dub & Audio Format Switcher -->
+            <div class="watch-dubs-bar" id="watchDubsBar">
+              <div class="watch-audio-group">
+                <span class="dubs-label">Audio Language</span>
+                <div class="dubs-pills" id="watchDubsPills"></div>
+              </div>
+              <div class="watch-audio-group">
+                <span class="dubs-label">Audio Type</span>
+                <div class="dubs-pills" id="watchAudioFormatPills">
+                  <button type="button" class="dub-pill active" data-audiotype="aac_stereo">AAC 2.0 Stereo</button>
+                  <button type="button" class="dub-pill" data-audiotype="ddp_surround">Dolby Surround 5.1</button>
+                  <button type="button" class="dub-pill" data-audiotype="vocal_clarity">Dialogue Clarity</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Synopsis Card -->
+            <div class="yt-description-card">
+              <div class="desc-stats-row">
+                <span id="watchProviderLabel">MovieBox CDN</span>
+                <span>•</span>
+                <span id="watchAudioInfo">Original Audio • AAC 2.0 Stereo</span>
+              </div>
+              <p class="desc-body" id="watchDescription"></p>
+            </div>
+
+            <!-- JioHotstar / Netflix Watch Page Below-Player Tabs -->
+            <div class="watch-page-tabs-wrap">
+              <div class="watch-page-tabs" id="watchPageTabs">
+                <button type="button" class="watch-page-tab active" data-wtab="episodes" id="watchTabBtnEpisodes">Episodes &amp; Streams</button>
+                <button type="button" class="watch-page-tab" data-wtab="morelikethis">More Like This</button>
+                <button type="button" class="watch-page-tab" data-wtab="specs">Details &amp; Studio Specs</button>
+              </div>
+
+              <!-- Tab 1: Episodes & Resolutions -->
+              <div class="watch-tab-pane" id="watchTabEpisodesPane">
+                <div class="watch-episodes-bar hidden" id="watchEpisodesBar">
+                  <div class="se-header-row">
+                    <span class="dubs-label">Select Season &amp; Episode</span>
+                    <select id="watchSeasonSelect" class="ctrl-select"></select>
+                  </div>
+                  <div class="ep-pills-grid" id="watchEpisodePills"></div>
+                  <div class="watch-episode-cards-grid" id="watchEpisodeCardsGrid"></div>
+                </div>
+                <div class="watch-resolutions-box" id="watchResolutionsBox">
+                  <span class="dubs-label">Available Resolutions &amp; Direct Streams</span>
+                  <div class="watch-resolutions-grid" id="watchInlineStreamsGrid"></div>
+                </div>
+              </div>
+
+              <!-- Tab 2: More Like This (JioHotstar / Netflix Recommendations Grid) -->
+              <div class="watch-tab-pane hidden" id="watchTabMoreLikeThisPane">
+                <div class="dedicated-grid" id="watchMoreLikeThisGrid"></div>
+              </div>
+
+              <!-- Tab 3: Technical Specs & Audio/Subtitle Tracks -->
+              <div class="watch-tab-pane hidden" id="watchTabSpecsPane">
+                <div class="watch-specs-grid" id="watchTechSpecsGrid"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Sidebar: Sources & Queue -->
+        <aside class="watch-sidebar">
+          <div class="sidebar-tabs">
+            <button class="sidebar-tab active" data-stab="sources">Sources</button>
+            <button class="sidebar-tab" data-stab="upnext">Up Next</button>
+            <button class="sidebar-tab" data-stab="livetv">Live TV</button>
+          </div>
+
+          <div class="sidebar-tab-content" id="sidebarSourcesPane">
+            <div class="sidebar-section-label">Available Streams</div>
+            <div class="sources-list" id="streamSourcesList"></div>
+          </div>
+
+          <div class="sidebar-tab-content hidden" id="sidebarUpnextPane">
+            <div class="sidebar-section-label" id="upNextHeaderLabel">Recommended</div>
+            <div class="upnext-list" id="upNextList"></div>
+          </div>
+
+          <div class="sidebar-tab-content hidden" id="sidebarLivetvPane">
+            <div class="sidebar-section-label">Live Channels</div>
+            <div class="upnext-list" id="sidebarLiveTvList"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         4. DEDICATED CATEGORY / HUB / SEARCH / WATCHLIST / DOWNLOADS PAGE
+         =================================================================== -->
+    <section class="dedicated-page-view hidden" id="dedicatedPageView">
+      <div class="dedicated-page-topbar">
+        <button type="button" class="back-to-browse-btn" id="dedicatedPageBackBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Back to Home</span>
+        </button>
+        <div class="dedicated-page-breadcrumb">
+          <span class="dedicated-cat-pill" id="dedicatedPageTag">STUDIO HUB</span>
+          <span class="dedicated-count-pill" id="dedicatedPageCount">0 Titles</span>
+        </div>
+        <div class="dedicated-page-actions" id="dedicatedPageActions"></div>
+      </div>
+
+      <!-- Dedicated Page Featured Hero Banner -->
+      <div class="dedicated-hero-banner" id="dedicatedPageHero">
+        <div class="dedicated-hero-backdrop">
+          <img id="dedicatedHeroImg" src="https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1920&q=85" alt="Featured" />
+          <div class="hero-vignette-left"></div>
+          <div class="hero-vignette-bottom"></div>
+        </div>
+        <div class="dedicated-hero-content">
+          <div class="hero-studio-tag">
+            <span class="n-ribbon" id="dedicatedHeroBadge">FEATURED</span>
+            <span class="studio-ribbon-text" id="dedicatedHeroSubtag">DEDICATED PAGE</span>
+          </div>
+          <h1 class="dedicated-page-title" id="dedicatedPageTitle">Movies</h1>
+          <p class="dedicated-page-desc" id="dedicatedPageDesc">Explore full-resolution streams, multi-audio tracks, and direct downloads.</p>
+          <div class="hero-buttons" id="dedicatedHeroButtons">
+            <button type="button" class="btn-hero-play" id="dedicatedHeroPlayBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Play Featured</span>
+            </button>
+            <button type="button" class="btn-hero-vlc" id="dedicatedHeroVlcBtn">
+              <span>Open in VLC</span>
+            </button>
+            <button type="button" class="btn-hero-download" id="dedicatedHeroDlBtn">
+              <span>Download</span>
+            </button>
+            <button type="button" class="btn-hero-secondary" id="dedicatedHeroInfoBtn">
+              <span>Details</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dedicated Page Controls: Sub-Category Pills, Filter Input & Sort -->
+      <div class="dedicated-controls-bar" id="dedicatedControlsBar">
+        <div class="dedicated-subfilters" id="dedicatedSubfilters"></div>
+        <div class="dedicated-right-tools">
+          <input type="text" id="dedicatedFilterInput" class="dedicated-filter-input" placeholder="Filter titles on this page..." />
+          <select id="dedicatedSortSelect" class="ctrl-select">
+            <option value="featured">Sort: Featured</option>
+            <option value="rating">Sort: IMDb Rating</option>
+            <option value="year">Sort: Release Year</option>
+            <option value="title">Sort: Title (A–Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Optional Extra Section (e.g. Downloads Manager or Continue Watching inside Dedicated Page) -->
+      <div class="dedicated-extra-container hidden" id="dedicatedExtraContainer"></div>
+
+      <!-- Dedicated Page Full Multi-Column Grid -->
+      <div class="dedicated-grid" id="dedicatedPageGrid"></div>
+    </section>
+
+    <!-- ===================================================================
+         5. HOME BROWSE VIEW
+         =================================================================== -->
+    <main class="browse-view" id="browseView">
+      <!-- HERO BILLBOARD -->
+      <section class="hero-billboard" id="heroBillboard">
+        <div class="hero-backdrop-wrap">
+          <img
+            id="heroBackdropImg"
+            class="hero-backdrop-img"
+            src="https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1920&q=85"
+            alt="Featured Backdrop"
+          />
+          <div class="hero-vignette-left"></div>
+          <div class="hero-vignette-bottom"></div>
+        </div>
+
+        <div class="hero-content">
+          <div class="hero-studio-tag">
+            <span class="n-ribbon">FEATURED</span>
+            <span class="studio-ribbon-text" id="heroRibbonText">PREMIERE</span>
+          </div>
+
+          <h1 class="hero-title" id="heroTitle">Spider-Man: Brand New Day</h1>
+
+          <div class="hero-meta-row">
+            <span class="match-score" id="heroMatch">98% Match</span>
+            <span class="meta-year" id="heroYear">2026</span>
+            <span class="maturity-box" id="heroMaturity">U/A 13+</span>
+            <span class="quality-box" id="heroQuality">1080p Full HD</span>
+            <span class="atmos-box" id="heroAtmosBadge">HEVC • AAC 2.0</span>
+            <span class="imdb-box">IMDb <span id="heroRating">8.5</span></span>
+          </div>
+
+          <div class="hero-languages" id="heroLanguages">
+            Original Stereo &amp; Multi-Audio Track Support
+          </div>
+
+          <p class="hero-synopsis" id="heroSynopsis"></p>
+
+          <div class="hero-buttons">
+            <button class="btn-hero-play" id="heroWatchBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Play</span>
+            </button>
+
+            <button class="btn-hero-vlc" id="heroVlcBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Open in VLC</span>
+            </button>
+
+            <button class="btn-hero-download" id="heroDownloadBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download</span>
+            </button>
+
+            <button class="btn-hero-secondary" id="heroAddListBtn">
+              <span id="heroAddListIcon">+</span>
+              <span>Watchlist</span>
+            </button>
+
+            <button class="btn-hero-secondary" id="heroInfoBtn">
+              <span>Details</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hotstar-hero-switcher" id="heroSwitcherTray"></div>
+      </section>
+
+      <!-- LIQUID GLASS CATEGORY TILES -->
+      <section class="hubs-section">
+        <div class="hubs-grid" id="universeHubsGrid">
+          <button class="hub-card hub-netmirror" data-hub="netmirror">
+            <div class="hub-glow"></div>
+            <span class="hub-tag">NETMIRROR</span>
+            <strong class="hub-name">NetMirror</strong>
+            <span class="hub-sub">Originals &amp; Global</span>
+          </button>
+
+          <button class="hub-card hub-local" data-hub="local">
+            <div class="hub-glow"></div>
+            <span class="hub-tag">LOCAL STORAGE</span>
+            <strong class="hub-name">4K Vault</strong>
+            <span class="hub-sub" id="hubLocalCount">Direct Playback</span>
+          </button>
+
+          <button class="hub-card hub-moviebox" data-hub="movies">
+            <div class="hub-glow"></div>
+            <span class="hub-tag">CATALOG</span>
+            <strong class="hub-name">Movies</strong>
+            <span class="hub-sub">Cinema &amp; Blockbusters</span>
+          </button>
+
+          <button class="hub-card hub-4khd" data-hub="series">
+            <div class="hub-glow"></div>
+            <span class="hub-tag">SHOWS</span>
+            <strong class="hub-name">TV Series</strong>
+            <span class="hub-sub">Multi-Season</span>
+          </button>
+
+          <button class="hub-card hub-marvel" data-hub="Sci-Fi">
+            <div class="hub-glow"></div>
+            <span class="hub-tag">GENRE</span>
+            <strong class="hub-name">Sci-Fi &amp; Action</strong>
+            <span class="hub-sub">Blockbusters</span>
+          </button>
+
+          <button class="hub-card hub-anime" data-hub="anime">
+            <div class="hub-glow"></div>
+            <span class="hub-tag">SERIES</span>
+            <strong class="hub-name">Anime</strong>
+            <span class="hub-sub">Sub &amp; Dub</span>
+          </button>
+
+          <button class="hub-card hub-live" data-hub="livetv">
+            <div class="hub-glow"></div>
+            <span class="hub-tag">LIVE RELAY</span>
+            <strong class="hub-name">Live TV &amp; Sports</strong>
+            <span class="hub-sub" id="hubLiveCount">300+ Live Sports &amp; Television Feeds</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- CONTENT ROWS -->
+      <div class="content-rows-container" id="contentRowsContainer">
+        <section class="media-row-section" id="rowLocalSection">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Local Library</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" id="rescanLocalBtn">Refresh</button>
+              <button class="row-action-btn" id="openExplorerRowBtn">Open Folder</button>
+              <button class="row-action-btn" data-open-page="local">Open Vault Page</button>
+            </div>
+          </div>
+          <div class="media-rail wide-cards" id="localMediaRail"></div>
+        </section>
+
+        <section class="media-row-section" id="rowContinueSection">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Continue Watching</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" data-open-page="mylist">Watchlist &amp; History</button>
+            </div>
+          </div>
+          <div class="media-rail continue-cards" id="continueWatchingRail"></div>
+        </section>
+
+        <section class="media-row-section" id="rowTop10Section">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Top 10 Today</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" data-open-page="top10">View All Top 10</button>
+            </div>
+          </div>
+          <div class="media-rail top10-rail" id="top10Rail"></div>
+        </section>
+
+        <section class="media-row-section" id="rowNetMirrorSection">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Bollywood &amp; Dual Audio 4K Hits</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" data-open-page="movies">View All Movies</button>
+            </div>
+          </div>
+          <div class="media-rail poster-cards" id="netMirrorRail"></div>
+        </section>
+
+        <section class="media-row-section" id="rowGaiaFlixSection">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Live Sports &amp; 24/7 TV Channels</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" id="refreshGaiaBtn">Refresh Feeds</button>
+              <button class="row-action-btn" data-open-page="livetv">View All Live TV</button>
+            </div>
+          </div>
+          <div class="media-rail wide-cards" id="gaiaFlixRail"></div>
+        </section>
+
+        <section class="media-row-section" id="rowMoviesSection">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Featured Movies</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" data-open-page="movies">Open Movies Page</button>
+            </div>
+          </div>
+          <div class="media-rail poster-cards" id="trendingMoviesRail"></div>
+        </section>
+
+        <section class="media-row-section" id="rowSeriesSection">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Featured Series</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" data-open-page="series">Open Series Page</button>
+            </div>
+          </div>
+          <div class="media-rail poster-cards" id="trendingSeriesRail"></div>
+        </section>
+
+        <section class="media-row-section" id="rowAnimeSection">
+          <div class="row-header">
+            <div>
+              <h2 class="row-title">Anime</h2>
+            </div>
+            <div class="row-actions">
+              <button class="row-action-btn" data-open-page="anime">Open Anime Page</button>
+            </div>
+          </div>
+          <div class="media-rail poster-cards" id="animeRail"></div>
+        </section>
+
+        <div id="dynamicMovieBoxRows" class="dynamic-mb-rows"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       5. FLOATING MINI-PLAYER
+       ===================================================================== -->
+  <div class="yt-mini-player hidden" id="miniPlayerBar">
+    <div class="mini-thumb-wrap" id="miniPlayerExpandBtn">
+      <img id="miniPlayerImg" src="" alt="Now Playing" />
+      <span class="mini-expand-hint">Expand</span>
+    </div>
+    <div class="mini-info">
+      <strong id="miniPlayerTitle">Now Playing</strong>
+      <span id="miniPlayerSub">Playing</span>
+    </div>
+    <div class="mini-controls">
+      <button class="mini-btn" id="miniPlayPauseBtn" title="Play/Pause">Pause</button>
+      <button class="mini-btn vlc" id="miniVlcBtn" title="Open in VLC">VLC</button>
+      <button class="mini-btn" id="miniCloseBtn" title="Close">Close</button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       6. DETAILS & EPISODES MODAL
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="detailsModal">
+    <div class="netflix-modal">
+      <button class="modal-close-btn" id="closeDetailsModalBtn">✕</button>
+      <div class="modal-hero" id="modalHero">
+        <img id="modalBackdropImg" src="" alt="" />
+        <div class="modal-hero-gradient"></div>
+        <div class="modal-hero-content">
+          <div class="watch-badges-row" id="modalBadges"></div>
+          <h2 id="modalTitle">Title</h2>
+          <div class="modal-hero-buttons">
+            <button class="btn-hero-play" id="modalPlayBtn">Play</button>
+            <button class="btn-hero-vlc" id="modalVlcBtn">Open in VLC</button>
+            <button class="btn-hero-download" id="modalDownloadBtn">Download</button>
+            <button class="btn-hero-secondary" id="modalListBtn">+ Watchlist</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="modal-main-col">
+            <div class="hero-meta-row" id="modalMetaRow"></div>
+            <p class="modal-synopsis" id="modalSynopsis"></p>
+          </div>
+          <div class="modal-side-col">
+            <p><strong>Source</strong> <span id="modalProvider">MovieBox CDN</span></p>
+            <p><strong>Genres</strong> <span id="modalGenres">Drama</span></p>
+            <p><strong>Audio</strong> <span id="modalAudio">Original Stereo &amp; 5.1</span></p>
+          </div>
+        </div>
+
+        <div class="modal-audio-section" id="modalAudioSection">
+          <h3>Audio Track &amp; Format</h3>
+          <div class="dubs-pills" id="modalAudioPills"></div>
+        </div>
+
+        <div class="modal-episodes-section" id="modalEpisodesSection">
+          <h3 id="modalStreamsHeading">Available Resolutions &amp; Streams</h3>
+          <div class="modal-episodes-list" id="modalEpisodesList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       7. SETTINGS MODAL
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="settingsModal">
+    <div class="netflix-modal settings-modal-box">
+      <button class="modal-close-btn" id="closeSettingsModalBtn">✕</button>
+      <div class="settings-modal-inner">
+        <h2>Settings</h2>
+        <p class="settings-sub">Player &amp; Custom Stream Configuration</p>
+
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3>Player Configuration</h3>
+            <label class="setting-field">
+              <span>VLC Media Player Path</span>
+              <input type="text" id="settingVlcPath" readonly />
+            </label>
+            <label class="setting-field">
+              <span>Library Directory</span>
+              <input type="text" id="settingTheaterDir" readonly />
+            </label>
+            <div class="setting-toggle-row">
+              <span>Ambient Lighting</span>
+              <input type="checkbox" id="settingAmbientToggle" checked />
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Custom Stream</h3>
+            <label class="setting-field">
+              <span>Title</span>
+              <input type="text" id="customStreamTitle" placeholder="Stream Title" />
+            </label>
+            <label class="setting-field">
+              <span>Stream URL or File Path</span>
+              <input type="text" id="customStreamUrl" placeholder="https://example.com/stream.m3u8" />
+            </label>
+            <div class="setting-btn-row">
+              <button class="btn-hero-play" id="playCustomStreamNowBtn">Play</button>
+              <button class="btn-hero-vlc" id="vlcCustomStreamNowBtn">Open in VLC</button>
+              <button class="btn-hero-secondary" id="saveCustomIptvBtn">Save Channel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       8. PRE-DOWNLOAD CONFIGURATION MODAL (LANGUAGE, AUDIO TYPE, QUALITY + SIZE, FOLDER)
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="downloadConfigModal">
+    <div class="netflix-modal dl-config-modal-box">
+      <button class="modal-close-btn" id="closeDlConfigModalBtn">✕</button>
+      <div class="settings-modal-inner">
+        <div class="dl-cfg-top-header">
+          <div>
+            <h2>Download Options</h2>
+            <p class="settings-sub">Select audio language, audio format, video resolution, and destination folder</p>
+          </div>
+        </div>
+
+        <div class="dl-cfg-media-summary" id="dlCfgMediaSummary">
+          <img id="dlCfgPoster" src="" alt="" class="dl-cfg-poster" />
+          <div class="dl-cfg-media-info">
+            <div class="dl-cfg-media-title" id="dlCfgTitle">Title</div>
+            <div class="dl-cfg-media-sub" id="dlCfgMeta">MovieBox CDN • Multi-Audio</div>
+            <div class="dl-cfg-status-line" id="dlCfgStatusLine">Resolving available audio tracks and stream sizes...</div>
+          </div>
+        </div>
+
+        <!-- Series Season & Episode Selector (Hidden for Movies) -->
+        <div class="dl-cfg-section hidden" id="dlCfgEpisodeSection">
+          <label class="dl-cfg-label">Season &amp; Episode</label>
+          <div class="dl-cfg-series-row">
+            <select id="dlCfgSeasonSelect" class="dl-cfg-select"></select>
+            <select id="dlCfgEpisodeSelect" class="dl-cfg-select"></select>
+          </div>
+        </div>
+
+        <!-- 1. Audio Language & Format Selector -->
+        <div class="dl-cfg-section">
+          <label class="dl-cfg-label">Audio Language</label>
+          <div class="dl-cfg-pills-row" id="dlCfgLanguagePills"></div>
+        </div>
+
+        <div class="dl-cfg-section">
+          <label class="dl-cfg-label">Audio Format / Type</label>
+          <div class="dl-cfg-pills-row" id="dlCfgAudioTypePills">
+            <button type="button" class="dl-cfg-pill active" data-audiotype="AAC 2.0 Stereo">
+              <span>AAC 2.0 Stereo</span>
+              <span class="pill-tag">Original</span>
+            </button>
+            <button type="button" class="dl-cfg-pill" data-audiotype="Dolby Surround 5.1">
+              <span>Dolby Surround 5.1</span>
+              <span class="pill-tag">Spatial</span>
+            </button>
+            <button type="button" class="dl-cfg-pill" data-audiotype="Dialogue Clarity">
+              <span>Dialogue Clarity</span>
+              <span class="pill-tag">Enhanced</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Quality & File Size Selector -->
+        <div class="dl-cfg-section">
+          <label class="dl-cfg-label">Resolution &amp; File Size</label>
+          <div class="dl-cfg-quality-grid" id="dlCfgQualityGrid"></div>
+        </div>
+
+        <!-- 3. Destination Folder Selector -->
+        <div class="dl-cfg-section">
+          <label class="dl-cfg-label">Destination Folder</label>
+          <div class="dl-cfg-folder-row">
+            <input
+              type="text"
+              id="dlCfgFolderInput"
+              class="dl-input folder-path-input"
+              value="D:\Home Theater\Downloads"
+              placeholder="D:\Home Theater\Downloads"
+            />
+            <button type="button" class="btn-hero-secondary dl-cfg-browse-btn" id="dlCfgBrowseBtn">
+              Browse...
+            </button>
+          </div>
+          <div class="dl-cfg-presets-row" id="dlCfgFolderPresets">
+            <button type="button" class="dl-folder-preset active" data-folder="D:\Home Theater\Downloads">Downloads</button>
+            <button type="button" class="dl-folder-preset" data-folder="D:\Home Theater\Movies">Movies</button>
+            <button type="button" class="dl-folder-preset" data-folder="D:\Home Theater\Series">Series</button>
+            <button type="button" class="dl-folder-preset" data-folder="D:\Home Theater">Home Theater</button>
+          </div>
+        </div>
+
+        <div class="dl-cfg-footer">
+          <button type="button" class="btn-hero-secondary" id="dlCfgCancelBtn">Cancel</button>
+          <button type="button" class="btn-hero-play" id="dlCfgConfirmBtn">Start Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       9. DOWNLOAD & STREAM MANAGER MODAL
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="downloadsModal">
+    <div class="netflix-modal downloads-modal-box">
+      <button class="modal-close-btn" id="closeDownloadsModalBtn">✕</button>
+      <div class="settings-modal-inner">
+        <div class="dl-modal-header">
+          <div>
+            <h2>Downloads</h2>
+            <p class="settings-sub">Real-time transfer progress, speed, and local storage management</p>
+          </div>
+          <button class="btn-hero-secondary" id="openDownloadsFolderBtn">Open Folder</button>
+        </div>
+
+        <div class="dl-direct-bar">
+          <input type="text" id="dlDirectTitleInput" class="dl-input title" placeholder="Title" />
+          <input type="text" id="dlDirectUrlInput" class="dl-input url" placeholder="Direct video or stream URL..." />
+          <button class="btn-hero-download" id="dlStartDirectBtn">Download</button>
+          <button class="btn-hero-play" id="dlStreamDirectBtn">Stream</button>
+        </div>
+
+        <div class="downloads-list-container" id="downloadsListContainer">
+          <div class="dl-empty-state">No active downloads.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       10. LOCAL NETWORK QR & MULTI-DEVICE HOSTING MODAL
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="lanShareModal">
+    <div class="netflix-modal lan-modal-box">
+      <button class="modal-close-btn" id="closeLanModalBtn">✕</button>
+      <div class="settings-modal-inner lan-modal-inner">
+        <h2>Connect Other Devices on Wi-Fi</h2>
+        <p class="settings-sub">Scan the QR code or enter the local network link on your phone, tablet, or Smart TV browser to stream from this PC.</p>
+
+        <div class="lan-qr-layout">
+          <div class="lan-qr-card" id="lanQrContainer">
+            <div class="lan-qr-placeholder">Generating QR...</div>
+          </div>
+
+          <div class="lan-info-col">
+            <label class="dl-cfg-label">Primary Local Network Link</label>
+            <div class="lan-url-copy-row">
+              <input type="text" id="lanPrimaryUrlInput" class="dl-input" readonly value="http://localhost:3456" />
+              <button type="button" class="btn-hero-play" id="copyLanUrlBtn">Copy Link</button>
+            </div>
+
+            <div class="lan-interfaces-section">
+              <label class="dl-cfg-label">Detected Network Interfaces</label>
+              <div class="lan-interfaces-list" id="lanInterfacesList"></div>
+            </div>
+
+            <div class="lan-device-badges">
+              <span class="lan-dev-pill">Phones (iOS &amp; Android Touch UI)</span>
+              <span class="lan-dev-pill">iPads &amp; Tablets (Split Dock)</span>
+              <span class="lan-dev-pill">Desktops &amp; Laptops</span>
+              <span class="lan-dev-pill">Smart TVs (D-Pad Remote Focus)</span>
+            </div>
+
+            <div class="lan-tips-box">
+              <strong>How to connect:</strong>
+              <span>Ensure your phone, iPad, laptop, or Smart TV is connected to the same Wi-Fi / LAN network as <strong id="lanHostnameLabel">this PC</strong>, then scan the QR code or open the link. On iOS/Android, use "Add to Home Screen" for a full-screen app experience.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       11. PWA INSTALL AS APP MODAL (FOR PHONES & TABLETS)
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="pwaInstallModal">
+    <div class="netflix-modal pwa-modal-box" style="max-width: 520px;">
+      <button class="modal-close-btn" id="closePwaModalBtn">✕</button>
+      <div class="settings-modal-inner" style="text-align: center; padding: 34px 26px;">
+        <div class="pwa-badge-icon" style="margin: 0 auto 18px; width: 68px; height: 68px;">
+          <img src="/logo.svg" alt="MovieBox" style="width: 44px; height: 44px;" />
+        </div>
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; margin-bottom: 8px;">Run as App on Your Phone</h2>
+        <p class="settings-sub" style="margin-bottom: 22px;">Stream 4K movies, TV series, Netmirror &amp; live sports full-screen without browser address bars or opening cmd!</p>
+        
+        <div id="pwaNativePromptBlock" class="hidden">
+          <button class="btn-hero-play" id="pwaNativeInstallBtn" style="width: 100%; justify-content: center; height: 50px; font-size: 16px;">
+            Install MovieBox Now
+          </button>
+        </div>
+
+        <div id="pwaIosInstructionsBlock" class="lan-tips-box" style="text-align: left; margin-top: 16px;">
+          <strong>How to install on iPhone &amp; iPad (Safari):</strong>
+          <ol style="margin: 10px 0 0 20px; line-height: 1.8; color: #cbd5e1; font-size: 13px;">
+            <li>Tap the <strong>Share</strong> button at the bottom of Safari.</li>
+            <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
+            <li>Tap <strong>Add</strong> in the top-right corner.</li>
+          </ol>
+        </div>
+
+        <div id="pwaAndroidInstructionsBlock" class="lan-tips-box" style="text-align: left; margin-top: 16px;">
+          <strong>How to install on Android &amp; Chrome:</strong>
+          <ol style="margin: 10px 0 0 20px; line-height: 1.8; color: #cbd5e1; font-size: 13px;">
+            <li>Tap the <strong>three dots menu (⋮)</strong> in Chrome.</li>
+            <li>Select <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
+            <li>MovieBox will install directly onto your home screen!</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       12. MOBILE LIQUID-GLASS & CLAYMORPHIC BOTTOM FLOATING DOCK (5-TAB)
+       ===================================================================== -->
+  <nav class="mobile-bottom-dock" id="mobileBottomDock" aria-label="Mobile Navigation">
+    <button class="dock-tab active" data-dock="home">
+      <div class="dock-tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="dock-tab-label">Home</span>
+    </button>
+    <button class="dock-tab" data-dock="movies">
+      <div class="dock-tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="3"/><path d="M7 3v18M17 3v18M2 12h20"/></svg>
+      </div>
+      <span class="dock-tab-label">Movies</span>
+    </button>
+    <button class="dock-tab" data-dock="series">
+      <div class="dock-tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="3"/><path d="M8 21h8M12 20v1"/></svg>
+      </div>
+      <span class="dock-tab-label">Series</span>
+    </button>
+    <button class="dock-tab" data-dock="anime">
+      <div class="dock-tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <span class="dock-tab-label">Anime</span>
+    </button>
+    <button class="dock-tab" data-dock="livetv">
+      <div class="dock-tab-icon live-dock-icon">
+        <span class="dock-live-dot"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      </div>
+      <span class="dock-tab-label">Live TV</span>
+    </button>
+  </nav>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="/app.js?v=20261019_v10"></script>
+</body>
+</html>
