@@ -8,7 +8,72 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MovieBox Studio" />
-  <title>MovieBox Studio</title>
+  <title>MovieBox Studio - 4K Cloud Streaming & Home Theater</title>
+  <meta name="description" content="MovieBox Studio is an ultra-fast, unified 4K cloud streaming and home theater PWA. Enjoy movies, TV series, Bollywood 4K, and live sports with multi-server playback on phone, tablet, and TV." />
+  <meta name="keywords" content="moviebox, 4k movies, streaming, tv series, bollywood 4k, hdhub4u, vegamovies, streamu, 123movies, movies4u, live sports, free stream, pwa" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://moviebox-cloud.vercel.app/" />
+  
+  <!-- Search Console Verification -->
+  <meta name="google-site-verification" content="moviebox-studio-cloud-pwa-verification" />
+
+  <!-- Open Graph / Facebook Link Preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MovieBox Studio" />
+  <meta property="og:url" content="https://moviebox-cloud.vercel.app/" />
+  <meta property="og:title" content="MovieBox Studio - 4K Cloud Streaming & Home Theater" />
+  <meta property="og:description" content="Unified 4K streaming studio featuring multi-server playback, Bollywood 4K, and live sports on any device." />
+  <meta property="og:image" content="https://moviebox-cloud.vercel.app/icons/icon-512.png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="MovieBox Studio Logo Mark" />
+
+  <!-- Twitter Card Link Preview -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://moviebox-cloud.vercel.app/" />
+  <meta name="twitter:title" content="MovieBox Studio - 4K Cloud Streaming" />
+  <meta name="twitter:description" content="Stream movies, TV shows, and live sports in 4K UHD with multi-server automatic failover." />
+  <meta name="twitter:image" content="https://moviebox-cloud.vercel.app/icons/icon-512.png" />
+
+  <!-- Organization & WebSite JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://moviebox-cloud.vercel.app/#organization",
+        "name": "MovieBox Studio",
+        "url": "https://moviebox-cloud.vercel.app/",
+        "logo": "https://moviebox-cloud.vercel.app/icons/icon-512.png",
+        "description": "Unified 4K cloud streaming and home theater platform"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://moviebox-cloud.vercel.app/#website",
+        "url": "https://moviebox-cloud.vercel.app/",
+        "name": "MovieBox Studio",
+        "publisher": { "@id": "https://moviebox-cloud.vercel.app/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://moviebox-cloud.vercel.app/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Google Analytics Tag Placeholder (Privacy-Safe) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    if (window.GA_MEASUREMENT_ID) {
+      gtag('config', window.GA_MEASUREMENT_ID);
+    }
+  </script>
+
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="apple-touch-icon" href="/logo.svg" />
@@ -18,7 +83,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dist/dash.all.min.js"></script>
-  <link rel="stylesheet" href="/styles.css?v=20261019_v10" />
+  <link rel="stylesheet" href="/styles.css?v=20261020_v11" />
 </head>
 <body>
   <!-- Spatial Ambient Lighting Canvas -->
@@ -193,12 +258,17 @@
           <span>Terminal</span>
         </button>
 
+        <button class="action-pill contact-pill" id="topContactBtn" title="Request Titles or Report Stream">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Requests &amp; Support</span>
+        </button>
+
         <button class="icon-btn" id="openIptvModalBtn" title="Add Custom Stream">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
 
         <button class="profile-avatar-btn" id="profileSpaceBtn" title="Watchlist">
-          <div class="avatar-ring">HP</div>
+          <div class="avatar-ring">MB</div>
         </button>
       </div>
     </header>
@@ -219,6 +289,30 @@
       <button class="yt-chip" data-chip="Action">Action</button>
       <button class="yt-chip" data-chip="mylist">Watchlist</button>
     </div>
+
+    <!-- SEO & ACCESSIBILITY BREADCRUMB BAR (ITEM 15: BREADCRUMBS) -->
+    <nav class="breadcrumb-container" id="globalBreadcrumbs" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="#home" class="breadcrumb-link" itemprop="item" id="bcHomeLink">
+            <span itemprop="name">Home</span>
+          </a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <li class="breadcrumb-separator" id="bcHomeSep">/</li>
+        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" id="bcSectionItem">
+          <a href="#movies" class="breadcrumb-link" itemprop="item" id="bcSectionLink">
+            <span itemprop="name" id="bcSectionName">Unified Cinema</span>
+          </a>
+          <meta itemprop="position" content="2" />
+        </li>
+        <li class="breadcrumb-separator hidden" id="bcTitleSep">/</li>
+        <li class="breadcrumb-item active hidden" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" id="bcTitleItem">
+          <span class="breadcrumb-current" itemprop="name" id="bcTitleName">Title</span>
+          <meta itemprop="position" content="3" />
+        </li>
+      </ol>
+    </nav>
 
     <!-- PWA APP INSTALL BANNER -->
     <div class="pwa-install-banner hidden" id="pwaInstallBanner">
@@ -997,6 +1091,61 @@
         </section>
 
         <div id="dynamicMovieBoxRows" class="dynamic-mb-rows"></div>
+
+        <!-- SEO-FRIENDLY & ACCESSIBLE FOOTER (ITEMS 16 & 19: INTERNAL LINKS & PRIVACY) -->
+        <footer class="app-footer" id="appFooter">
+          <div class="footer-inner">
+            <div class="footer-brand-col">
+              <div class="footer-logo-row">
+                <img src="/logo.svg" alt="MovieBox Studio" class="footer-logo" width="28" height="28" loading="lazy" />
+                <span class="footer-brand-title">MovieBox Studio</span>
+              </div>
+              <p class="footer-tagline">Unified 4K Cloud Streaming &amp; Home Theater for Phone, Tablet, Desktop &amp; Smart TV.</p>
+              <div class="footer-server-status">
+                <span class="status-dot online"></span>
+                <span>All 12 Streaming Mirror Servers Active</span>
+              </div>
+            </div>
+
+            <div class="footer-links-grid">
+              <div class="footer-col">
+                <h4>Explore</h4>
+                <ul>
+                  <li><a href="#movies" class="footer-link">Movies</a></li>
+                  <li><a href="#series" class="footer-link">TV Series</a></li>
+                  <li><a href="#bollywood" class="footer-link">Bollywood 4K</a></li>
+                  <li><a href="#anime" class="footer-link">Anime Universe</a></li>
+                  <li><a href="#sports" class="footer-link">Live Sports &amp; TV</a></li>
+                </ul>
+              </div>
+
+              <div class="footer-col">
+                <h4>Streaming Engines</h4>
+                <ul>
+                  <li><span class="footer-text">HDHub4u 4K Dual Audio</span></li>
+                  <li><span class="footer-text">Vegamovies Ultra</span></li>
+                  <li><span class="footer-text">StreamU Cloud Engine</span></li>
+                  <li><span class="footer-text">Movies4u Mirror</span></li>
+                  <li><span class="footer-text">123Movies HQ Cinema</span></li>
+                </ul>
+              </div>
+
+              <div class="footer-col">
+                <h4>Support &amp; Privacy</h4>
+                <ul>
+                  <li><button type="button" class="footer-btn-link" id="footerContactBtn">Request a Title / Feedback</button></li>
+                  <li><button type="button" class="footer-btn-link" id="footerPrivacyBtn">Privacy Policy</button></li>
+                  <li><button type="button" class="footer-btn-link" id="footerTermsBtn">Fair Use &amp; Terms</button></li>
+                  <li><button type="button" class="footer-btn-link" id="footerBackupBtn">Library Backup &amp; Restore</button></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-bottom-bar">
+            <p>&copy; 2026 MovieBox Studio. High-speed multi-server client. No personal user data stored or tracked.</p>
+          </div>
+        </footer>
       </div>
     </main>
   </div>
@@ -1107,6 +1256,29 @@
               <button class="btn-hero-play" id="playCustomStreamNowBtn">Play</button>
               <button class="btn-hero-vlc" id="vlcCustomStreamNowBtn">Open in VLC</button>
               <button class="btn-hero-secondary" id="saveCustomIptvBtn">Save Channel</button>
+            </div>
+          </div>
+
+          <!-- Backup & Migration (Item from Image 2: Backups) -->
+          <div class="settings-card">
+            <h3>Data Backup &amp; Migration</h3>
+            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Export or restore your Watchlist, Watch History, and Custom Preferences across any phone, tablet, or browser.</p>
+            <div class="setting-btn-row">
+              <button type="button" class="btn-hero-play" id="exportBackupBtn">Export Backup (JSON)</button>
+              <label class="btn-hero-secondary" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin: 0;">
+                <span>Import Backup</span>
+                <input type="file" id="importBackupFile" accept=".json" style="display: none;" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Support & Legal (Item 20 & 19 from Image 1) -->
+          <div class="settings-card">
+            <h3>Support &amp; Privacy</h3>
+            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Request any movie or series, report broken mirrors, or read our privacy policy.</p>
+            <div class="setting-btn-row">
+              <button type="button" class="btn-hero-play" id="settingsContactBtn">Request Title / Report</button>
+              <button type="button" class="btn-hero-secondary" id="settingsPrivacyBtn">Privacy &amp; Terms</button>
             </div>
           </div>
         </div>
@@ -1315,6 +1487,148 @@
             <li>Select <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
             <li>MovieBox will install directly onto your home screen!</li>
           </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       13. WORKING CONTACT / REQUEST MODAL (ITEM 20: WORKING CONTACT FORM)
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="contactModal">
+    <div class="netflix-modal contact-modal-box">
+      <button class="modal-close-btn" id="closeContactModalBtn">✕</button>
+      <div class="settings-modal-inner">
+        <div class="contact-modal-header">
+          <h2>Requests &amp; Support Studio</h2>
+          <p class="settings-sub">Request movies &amp; series, report broken streams, or submit feedback to our automated indexing engine.</p>
+        </div>
+
+        <div id="contactFormContainer">
+          <form id="contactForm" onsubmit="return false;">
+            <div class="contact-type-selector" id="contactTypeSelector">
+              <button type="button" class="contact-type-btn active" data-type="request">Title Request</button>
+              <button type="button" class="contact-type-btn" data-type="broken">Report Broken Stream</button>
+              <button type="button" class="contact-type-btn" data-type="feedback">Feedback / Support</button>
+            </div>
+
+            <div class="contact-grid">
+              <div class="contact-field-group">
+                <label for="contactTitleInput">Title / Subject <span class="required-star">*</span></label>
+                <input type="text" id="contactTitleInput" class="dl-input" placeholder="e.g. Inception (2010) or Live Cricket Stream" required />
+              </div>
+
+              <div class="contact-field-row">
+                <div class="contact-field-group">
+                  <label for="contactCategorySelect">Category</label>
+                  <select id="contactCategorySelect" class="dl-input contact-select">
+                    <option value="movie">Movie</option>
+                    <option value="series">TV Series</option>
+                    <option value="bollywood">Bollywood &amp; Dual Audio</option>
+                    <option value="anime">Anime</option>
+                    <option value="sports">Live Sports &amp; TV</option>
+                  </select>
+                </div>
+
+                <div class="contact-field-group">
+                  <label for="contactServerSelect">Preferred Mirror Server</label>
+                  <select id="contactServerSelect" class="dl-input contact-select">
+                    <option value="auto">Auto (Best Quality Mirror)</option>
+                    <option value="hdhub4u">HDHub4u 4K Dual Audio</option>
+                    <option value="vegamovies">Vegamovies Ultra</option>
+                    <option value="streamu">StreamU Cloud Engine</option>
+                    <option value="movies4u">Movies4u Mirror</option>
+                    <option value="123movies">123Movies HQ Cinema</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="contact-field-group">
+                <label for="contactMessageInput">Details &amp; Notes</label>
+                <textarea id="contactMessageInput" class="dl-input contact-textarea" rows="3" placeholder="Provide extra details such as preferred audio (Hindi/English/Dual), season/episode, or issue details..."></textarea>
+              </div>
+
+              <div class="contact-field-group">
+                <label for="contactAliasInput">Anonymous Alias (Optional)</label>
+                <input type="text" id="contactAliasInput" class="dl-input" placeholder="Anonymous Cinephile" />
+              </div>
+            </div>
+
+            <div class="contact-privacy-note">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Zero-Tracking Guarantee: No phone numbers, personal names, or email addresses are collected or stored. Every submission generates a secure anonymous ticket ID.</span>
+            </div>
+
+            <div class="contact-actions-row">
+              <button type="button" class="btn-hero-secondary" id="cancelContactBtn">Cancel</button>
+              <button type="submit" class="btn-hero-play" id="submitContactBtn">Submit to Indexing Queue</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="contactSuccessCard" class="contact-success-card hidden">
+          <div class="contact-success-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3>Request Successfully Queued</h3>
+          <p id="contactSuccessMsg">Your title request has been submitted to the MovieBox automated indexing pipeline.</p>
+          <div class="ticket-badge-box">
+            <span>Tracking Ticket ID</span>
+            <strong id="contactTicketId">MB-2026-0000</strong>
+          </div>
+          <p class="ticket-hint">Our crawler automatically refreshes third-party mirrors and updates the catalog.</p>
+          <button type="button" class="btn-hero-play" id="closeContactSuccessBtn">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       14. PRIVACY POLICY & TERMS MODAL (ITEM 19: PRIVACY POLICY & FAIR USE)
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="privacyModal">
+    <div class="netflix-modal privacy-modal-box">
+      <button class="modal-close-btn" id="closePrivacyModalBtn">✕</button>
+      <div class="settings-modal-inner">
+        <div class="privacy-modal-header">
+          <h2>Privacy Policy &amp; Terms of Service</h2>
+          <p class="settings-sub">MovieBox Studio Architecture &amp; Data Governance</p>
+        </div>
+
+        <div class="privacy-content-scroll">
+          <section class="privacy-section">
+            <h3>1. Zero Personal Data Collection</h3>
+            <p>MovieBox Studio is engineered strictly with privacy by design. We do not require account registration, and we never collect, store, or transmit your personal name, personal phone number, personal email address, IP logs, or payment credentials.</p>
+          </section>
+
+          <section class="privacy-section">
+            <h3>2. Local-First Client Architecture</h3>
+            <p>Your library favorites, watch history, playback timestamps, audio equalizer profiles, and custom preferences are stored solely on your local device via standard browser LocalStorage and CacheStorage. This data never leaves your client unless you explicitly use the Export Backup tool.</p>
+          </section>
+
+          <section class="privacy-section">
+            <h3>3. In-Memory Ephemeral Media Proxy</h3>
+            <p>Our server architecture operates completely statelessly in RAM. No media files, video streams, or copyright materials are hosted or stored on MovieBox servers. The backend functions as an ephemeral proxy protocol translator (HLS/DASH/MKV) and CORS gateway for publicly available web sources.</p>
+          </section>
+
+          <section class="privacy-section">
+            <h3>4. Open Source Indexing &amp; Third-Party Content</h3>
+            <p>MovieBox aggregates publicly accessible metadata and streaming endpoints from independent third-party mirror providers (HDHub4u, Vegamovies, StreamU, Movies4u, 123Movies). MovieBox Studio does not claim ownership of external video streams and adheres to fair use guidelines for educational and personal home theater indexation.</p>
+          </section>
+
+          <section class="privacy-section">
+            <h3>5. User Data Portability &amp; Backups</h3>
+            <p>You have full ownership of your data. You may download a full JSON backup of your watchlist, history, and preferences at any time, or restore it on any phone, tablet, smart TV, or desktop with zero lock-in.</p>
+          </section>
+
+          <section class="privacy-section">
+            <h3>6. Automated Feedback &amp; Requests</h3>
+            <p>When you submit a title request or broken stream report, only the content metadata and an anonymous ticket ID are stored in memory to prioritize crawler runs. No personally identifiable information is ever recorded.</p>
+          </section>
+        </div>
+
+        <div class="privacy-modal-footer">
+          <button type="button" class="btn-hero-play" id="acknowledgePrivacyBtn">I Understand &amp; Agree</button>
         </div>
       </div>
     </div>

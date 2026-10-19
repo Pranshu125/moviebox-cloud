@@ -19,7 +19,7 @@ for (const file of uiFiles) {
   const destRoot = path.join(rootDir, file);
   if (fs.statSync(src).isFile()) {
     fs.copyFileSync(src, destPublic);
-    if (['index.html', 'styles.css', 'app.js', 'sw.js', 'manifest.json', 'logo.svg', 'favicon.ico'].includes(file)) {
+    if (['index.html', 'styles.css', 'app.js', 'sw.js', 'manifest.json', 'logo.svg', 'favicon.ico', 'robots.txt', 'sitemap.xml'].includes(file)) {
       fs.copyFileSync(src, destRoot);
     }
   }

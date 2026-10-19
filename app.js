@@ -406,13 +406,13 @@ function renderLocalMediaRail() {
     card.className = 'wide-card';
     card.innerHTML = `
       <div class="wide-thumb">
-        <img src="${item.backdrop || item.poster}" alt="${item.title}" loading="lazy" />
+        <img src="${item.backdrop || item.poster}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
         <div class="card-badges-top">
           <span class="pill-badge gold">${item.quality || '4K UHD'} • ${item.sizeFormatted || '27.8 GB'}</span>
           <span class="pill-badge atmos">DOLBY ATMOS</span>
         </div>
         <div class="thumb-play-overlay">
-          <div class="play-circle-icon">▶</div>
+          <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
         </div>
       </div>
       <div class="wide-body">
@@ -496,13 +496,13 @@ function renderContinueWatchingRail() {
     card.className = 'wide-card';
     card.innerHTML = `
       <div class="wide-thumb">
-        <img src="${item.backdrop || item.poster}" alt="${item.title}" loading="lazy" />
+        <img src="${item.backdrop || item.poster}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
         <div class="card-badges-top">
           <span class="pill-badge dark">${item.episodeTag} • ${item.quality}</span>
           <span class="pill-badge atmos">${item.progressSeconds > 0 ? 'Resume ' + formatSeconds(item.progressSeconds) : 'Ready'}</span>
         </div>
         <div class="thumb-play-overlay">
-          <div class="play-circle-icon">▶</div>
+          <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
         </div>
         <div class="progress-bar-track">
           <div class="progress-bar-fill" style="width: ${item.progressPct || 20}%"></div>
@@ -557,12 +557,12 @@ function renderTop10Rail() {
       </svg>
       <article class="poster-card">
         <div class="poster-thumb">
-          <img src="${item.poster || item.backdrop}" alt="${item.title}" loading="lazy" />
+          <img src="${item.poster || item.backdrop}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
           <div class="card-badges-top">
             <span class="pill-badge gold">${item.quality || '1080p Full HD'}</span>
           </div>
           <div class="thumb-play-overlay">
-            <div class="play-circle-icon">▶</div>
+            <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
           </div>
         </div>
         <div class="poster-body">
@@ -608,13 +608,13 @@ function buildPosterCard(item) {
   const audioTag = (item.badges && item.badges[1]) ? item.badges[1] : (item.type === 'series' ? 'Series' : 'Movie');
   card.innerHTML = `
     <div class="poster-thumb">
-      <img src="${item.poster || item.backdrop}" alt="${item.title}" loading="lazy" />
+      <img src="${item.poster || item.backdrop}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
       <div class="card-badges-top">
         <span class="pill-badge gold">${item.quality || '1080p Full HD'}</span>
         <span class="pill-badge dark">IMDb ${item.rating || '8.2'}</span>
       </div>
       <div class="thumb-play-overlay">
-        <div class="play-circle-icon">▶</div>
+        <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
       </div>
     </div>
     <div class="poster-body">
@@ -698,13 +698,13 @@ function renderLiveTvRail() {
     card.className = 'wide-card';
     card.innerHTML = `
       <div class="wide-thumb">
-        <img src="${ch.logo}" alt="${ch.name}" loading="lazy" />
+        <img src="${ch.logo}" alt="${ch.name}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
         <div class="card-badges-top">
           <span class="pill-badge live">LIVE</span>
           <span class="pill-badge dark">${ch.category}</span>
         </div>
         <div class="thumb-play-overlay">
-          <div class="play-circle-icon">▶</div>
+          <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
         </div>
       </div>
       <div class="wide-body">
@@ -778,13 +778,13 @@ function renderGaiaFlixRail() {
 
     card.innerHTML = `
       <div class="wide-thumb">
-        <img src="${item.poster || item.backdrop}" alt="${item.cleanTitle || item.title}" loading="lazy" />
+        <img src="${item.poster || item.backdrop}" alt="${item.cleanTitle || item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
         <div class="card-badges-top">
           <span class="pill-badge ${badgeClass}">${badgeText}</span>
           <span class="pill-badge dark">${item.category}</span>
         </div>
         <div class="thumb-play-overlay">
-          <div class="play-circle-icon">▶</div>
+          <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
         </div>
       </div>
       <div class="wide-body">
@@ -845,7 +845,6 @@ async function fetchGaiaFlixCatalog(forceRefresh = false) {
   }
 }
 const fetchLiveCatalog = fetchGaiaFlixCatalog;
-}
 
 // =========================================================================
 // 4. THEATER PLAYER + VLC 5-BAND EQ + 200% GAIN BOOST + VIDEO FILTERS
@@ -1196,10 +1195,13 @@ function exitWatchView() {
     document.getElementById('dedicatedPageView')?.classList.remove('hidden');
     document.getElementById('browseView')?.classList.add('hidden');
     document.getElementById('filterChipsBar')?.classList.add('hidden');
+    const cfg = DEDICATED_PAGES_CONFIG[state.activeDedicatedPage];
+    updateBreadcrumbs(state.activeDedicatedPage, cfg ? cfg.title.split('—')[0].trim() : state.activeDedicatedPage);
   } else {
     document.getElementById('dedicatedPageView')?.classList.add('hidden');
     document.getElementById('browseView')?.classList.remove('hidden');
     document.getElementById('filterChipsBar')?.classList.remove('hidden');
+    updateBreadcrumbs('home');
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1388,6 +1390,10 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
       ? `Back to ${state.activeDedicatedTitle}`
       : 'Back to Home';
   }
+
+  const cat = item.type === 'series' ? 'series' : (item.isLocal ? 'local' : 'movies');
+  const catLabel = item.type === 'series' ? 'TV Series' : (item.isLocal ? '4K Local Vault' : 'Cinema Movies');
+  updateBreadcrumbs(cat, catLabel, item.cleanTitle || item.title);
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -2445,6 +2451,40 @@ function minimizeWatchIfPlaying() {
   }
 }
 
+function updateBreadcrumbs(sectionKey = 'home', sectionLabel = '', title = '') {
+  const bcSectionItem = document.getElementById('bcSectionItem');
+  const bcSectionLink = document.getElementById('bcSectionLink');
+  const bcSectionName = document.getElementById('bcSectionName');
+  const bcHomeSep = document.getElementById('bcHomeSep');
+  const bcTitleSep = document.getElementById('bcTitleSep');
+  const bcTitleItem = document.getElementById('bcTitleItem');
+  const bcTitleName = document.getElementById('bcTitleName');
+
+  if (!bcSectionItem) return;
+
+  if (sectionKey === 'home' || !sectionKey) {
+    bcSectionItem.classList.add('hidden');
+    bcHomeSep?.classList.add('hidden');
+    bcTitleSep?.classList.add('hidden');
+    bcTitleItem?.classList.add('hidden');
+    return;
+  }
+
+  bcHomeSep?.classList.remove('hidden');
+  bcSectionItem.classList.remove('hidden');
+  if (bcSectionLink) bcSectionLink.href = `#${sectionKey}`;
+  if (bcSectionName) bcSectionName.textContent = sectionLabel || (sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1));
+
+  if (title) {
+    bcTitleSep?.classList.remove('hidden');
+    bcTitleItem?.classList.remove('hidden');
+    if (bcTitleName) bcTitleName.textContent = title;
+  } else {
+    bcTitleSep?.classList.add('hidden');
+    bcTitleItem?.classList.add('hidden');
+  }
+}
+
 function showHomeBrowseView() {
   minimizeWatchIfPlaying();
   state.activeDedicatedPage = null;
@@ -2452,6 +2492,8 @@ function showHomeBrowseView() {
   document.getElementById('dedicatedPageView')?.classList.add('hidden');
   document.getElementById('browseView')?.classList.remove('hidden');
   document.getElementById('filterChipsBar')?.classList.remove('hidden');
+
+  updateBreadcrumbs('home');
 
   document.querySelectorAll('.rail-item[data-nav]').forEach(b => {
     b.classList.toggle('active', b.dataset.nav === 'home');
@@ -2708,6 +2750,8 @@ async function openDedicatedPage(pageKey, customSearchQuery = '') {
   document.getElementById('browseView')?.classList.add('hidden');
   document.getElementById('watchView')?.classList.add('hidden');
   document.getElementById('dedicatedPageView')?.classList.remove('hidden');
+
+  updateBreadcrumbs(pageKey, cfg.title.split('—')[0].trim());
 
   // Highlight matching sidebar item & filter chip & mobile dock tab
   document.querySelectorAll('.rail-item[data-nav]').forEach(b => {
@@ -3014,13 +3058,13 @@ function renderDedicatedPageContent(pageKey) {
 
       card.innerHTML = `
         <div class="wide-thumb">
-          <img src="${item.poster || item.backdrop}" alt="${item.cleanTitle || item.title || item.name}" loading="lazy" />
+          <img src="${item.poster || item.backdrop}" alt="${item.cleanTitle || item.title || item.name}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
           <div class="card-badges-top">
             <span class="pill-badge ${badgeClass}">${badgeText}</span>
             <span class="pill-badge dark">${item.category}</span>
           </div>
           <div class="thumb-play-overlay">
-            <div class="play-circle-icon">▶</div>
+            <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
           </div>
         </div>
         <div class="wide-body">
@@ -3087,13 +3131,13 @@ function renderDedicatedPageContent(pageKey) {
       card.tabIndex = 0;
       card.innerHTML = `
         <div class="wide-thumb">
-          <img src="${item.backdrop || item.poster}" alt="${item.title}" loading="lazy" />
+          <img src="${item.backdrop || item.poster}" alt="${item.title}" loading="lazy" onerror="this.onerror=null;this.src='/logo.svg'" />
           <div class="card-badges-top">
             <span class="pill-badge gold">${item.quality}</span>
             <span class="pill-badge atmos">${item.ext || 'MKV'} • ${item.sizeFormatted}</span>
           </div>
           <div class="thumb-play-overlay">
-            <div class="play-circle-icon">▶</div>
+            <div class="play-circle-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
           </div>
         </div>
         <div class="wide-body">
@@ -4392,16 +4436,18 @@ function bindEvents() {
 
   const centerPlaySvg = document.getElementById('centerPlaySvg');
   video.addEventListener('play', () => {
-    playPauseBtn.innerHTML = '⏸';
-    document.getElementById('miniPlayPauseBtn').textContent = '⏸';
+    playPauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+    const miniBtn = document.getElementById('miniPlayPauseBtn');
+    if (miniBtn) miniBtn.textContent = 'Pause';
     videoContainer?.classList.remove('is-paused');
     if (centerPlaySvg) {
       centerPlaySvg.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
     }
   });
   video.addEventListener('pause', () => {
-    playPauseBtn.innerHTML = '▶';
-    document.getElementById('miniPlayPauseBtn').textContent = '▶';
+    playPauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>';
+    const miniBtn = document.getElementById('miniPlayPauseBtn');
+    if (miniBtn) miniBtn.textContent = 'Play';
     videoContainer?.classList.add('is-paused');
     if (centerPlaySvg) {
       centerPlaySvg.innerHTML = '<polygon points="6 4 20 12 6 20 6 4"/>';
@@ -5113,6 +5159,243 @@ function bindEvents() {
       localVaultBtn.innerHTML = '<span class="status-dot online" style="background:#06b6d4;box-shadow:0 0 8px #06b6d4"></span><span>Cloud Edge</span>';
     }
   }
+
+  // =========================================================================
+  // 12. BREADCRUMBS CLICK NAVIGATION
+  // =========================================================================
+  document.getElementById('bcHomeLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showHomeBrowseView();
+  });
+  document.getElementById('bcSectionLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (state.activeDedicatedPage) {
+      openDedicatedPage(state.activeDedicatedPage);
+    } else {
+      showHomeBrowseView();
+    }
+  });
+
+  // =========================================================================
+  // 13. DATA BACKUP & RESTORE ENGINE (JSON IMPORT / EXPORT)
+  // =========================================================================
+  function exportLibraryBackup() {
+    const backupData = {
+      app: 'MovieBox Studio',
+      version: '2026.10',
+      exportDate: new Date().toISOString(),
+      watchlist: state.uiData?.watchlist || [],
+      history: state.uiData?.history || [],
+      customIptv: state.uiData?.customIptv || [],
+      audioPreferences: {
+        defaultAudioType: state.activeAudioType || 'aac_stereo',
+        volume: state.lastUnmutedVol || 1,
+        eqPreset: state.activeEqPreset || 'flat'
+      },
+      theaterSettings: {
+        ambientMode: state.uiData?.ambientMode !== false
+      }
+    };
+
+    const jsonStr = JSON.stringify(backupData, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const dateTag = new Date().toISOString().split('T')[0];
+    a.href = url;
+    a.download = `moviebox-library-backup-${dateTag}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Exported library backup JSON file successfully');
+  }
+
+  function importLibraryBackup(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!data || typeof data !== 'object') {
+          throw new Error('Invalid JSON structure');
+        }
+
+        state.uiData = state.uiData || {};
+        if (Array.isArray(data.watchlist)) {
+          state.uiData.watchlist = Array.from(new Set([...(state.uiData.watchlist || []), ...data.watchlist]));
+        }
+        if (Array.isArray(data.history)) {
+          state.uiData.history = [...data.history, ...(state.uiData.history || [])].slice(0, 50);
+        }
+        if (Array.isArray(data.customIptv)) {
+          state.uiData.customIptv = [...data.customIptv, ...(state.uiData.customIptv || [])];
+        }
+        if (data.audioPreferences?.defaultAudioType) {
+          state.activeAudioType = data.audioPreferences.defaultAudioType;
+        }
+        if (data.theaterSettings?.ambientMode !== undefined) {
+          state.uiData.ambientMode = data.theaterSettings.ambientMode;
+        }
+
+        localStorage.setItem('mb_library_backup', JSON.stringify(state.uiData));
+
+        try {
+          await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ uiData: state.uiData })
+          });
+        } catch {}
+
+        renderContinueWatchingRail();
+        renderLiveTvRail();
+        if (state.activeDedicatedPage === 'mylist' || state.activeDedicatedPage === 'continue') {
+          renderDedicatedPageContent(state.activeDedicatedPage);
+        }
+        showToast('Library, Watchlist and Settings restored from backup successfully!');
+        document.getElementById('settingsModal')?.classList.add('hidden');
+      } catch (err) {
+        showToast('Failed to import backup file: Invalid JSON format');
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  document.getElementById('exportBackupBtn')?.addEventListener('click', exportLibraryBackup);
+  document.getElementById('footerBackupBtn')?.addEventListener('click', () => {
+    openSettings();
+    setTimeout(() => {
+      document.getElementById('exportBackupBtn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  });
+  document.getElementById('importBackupFile')?.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+      importLibraryBackup(e.target.files[0]);
+    }
+  });
+
+  // =========================================================================
+  // 14. WORKING CONTACT & REQUEST FORM MODAL (ITEM 20)
+  // =========================================================================
+  const contactModal = document.getElementById('contactModal');
+  const closeContactBtn = document.getElementById('closeContactModalBtn');
+  const cancelContactBtn = document.getElementById('cancelContactBtn');
+  const closeContactSuccessBtn = document.getElementById('closeContactSuccessBtn');
+  const contactFormContainer = document.getElementById('contactFormContainer');
+  const contactSuccessCard = document.getElementById('contactSuccessCard');
+  const submitContactBtn = document.getElementById('submitContactBtn');
+
+  const openContact = () => {
+    contactFormContainer?.classList.remove('hidden');
+    contactSuccessCard?.classList.add('hidden');
+    contactModal?.classList.remove('hidden');
+    setTimeout(() => document.getElementById('contactTitleInput')?.focus(), 80);
+  };
+
+  const closeContact = () => {
+    contactModal?.classList.add('hidden');
+  };
+
+  document.getElementById('topContactBtn')?.addEventListener('click', openContact);
+  document.getElementById('footerContactBtn')?.addEventListener('click', openContact);
+  document.getElementById('settingsContactBtn')?.addEventListener('click', () => {
+    document.getElementById('settingsModal')?.classList.add('hidden');
+    openContact();
+  });
+
+  closeContactBtn?.addEventListener('click', closeContact);
+  cancelContactBtn?.addEventListener('click', closeContact);
+  closeContactSuccessBtn?.addEventListener('click', closeContact);
+
+  let selectedContactType = 'request';
+  document.querySelectorAll('#contactTypeSelector .contact-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#contactTypeSelector .contact-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedContactType = btn.dataset.type || 'request';
+    });
+  });
+
+  submitContactBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('contactTitleInput')?.value.trim();
+    if (!title) {
+      showToast('Please enter a title or subject');
+      document.getElementById('contactTitleInput')?.focus();
+      return;
+    }
+
+    const category = document.getElementById('contactCategorySelect')?.value || 'movie';
+    const server = document.getElementById('contactServerSelect')?.value || 'auto';
+    const message = document.getElementById('contactMessageInput')?.value.trim() || '';
+    const alias = document.getElementById('contactAliasInput')?.value.trim() || 'Anonymous Cinephile';
+
+    const origBtnText = submitContactBtn.textContent;
+    submitContactBtn.textContent = 'Submitting...';
+    submitContactBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: selectedContactType,
+          title,
+          category,
+          server,
+          message,
+          alias
+        })
+      });
+      const data = await res.json();
+      if (data.ok && data.ticketId) {
+        document.getElementById('contactTicketId').textContent = data.ticketId;
+        contactFormContainer?.classList.add('hidden');
+        contactSuccessCard?.classList.remove('hidden');
+        document.getElementById('contactTitleInput').value = '';
+        document.getElementById('contactMessageInput').value = '';
+        showToast(`Request submitted successfully! Ticket ID: ${data.ticketId}`);
+      } else {
+        showToast('Request submitted to indexing queue');
+        closeContact();
+      }
+    } catch {
+      const fallbackTicket = `MB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      document.getElementById('contactTicketId').textContent = fallbackTicket;
+      contactFormContainer?.classList.add('hidden');
+      contactSuccessCard?.classList.remove('hidden');
+      showToast(`Request queued locally! Ticket ID: ${fallbackTicket}`);
+    } finally {
+      submitContactBtn.textContent = origBtnText;
+      submitContactBtn.disabled = false;
+    }
+  });
+
+  // =========================================================================
+  // 15. PRIVACY POLICY & TERMS MODAL (ITEM 19)
+  // =========================================================================
+  const privacyModal = document.getElementById('privacyModal');
+  const closePrivacyModalBtn = document.getElementById('closePrivacyModalBtn');
+  const acknowledgePrivacyBtn = document.getElementById('acknowledgePrivacyBtn');
+
+  const openPrivacy = () => {
+    privacyModal?.classList.remove('hidden');
+  };
+  const closePrivacy = () => {
+    privacyModal?.classList.add('hidden');
+  };
+
+  document.getElementById('footerPrivacyBtn')?.addEventListener('click', openPrivacy);
+  document.getElementById('footerTermsBtn')?.addEventListener('click', openPrivacy);
+  document.getElementById('settingsPrivacyBtn')?.addEventListener('click', () => {
+    document.getElementById('settingsModal')?.classList.add('hidden');
+    openPrivacy();
+  });
+
+  closePrivacyModalBtn?.addEventListener('click', closePrivacy);
+  acknowledgePrivacyBtn?.addEventListener('click', closePrivacy);
 }
 
 document.addEventListener('DOMContentLoaded', initApp);

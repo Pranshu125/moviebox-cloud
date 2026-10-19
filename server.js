@@ -46,8 +46,13 @@ const STATIC_IN_MEMORY = {
   '/styles.css': readFirstExisting([path.join(APP_DIR, 'public', 'styles.css'), path.join(APP_DIR, 'ui', 'styles.css'), path.join(APP_DIR, 'styles.css')]),
   '/app.js': readFirstExisting([path.join(APP_DIR, 'public', 'app.js'), path.join(APP_DIR, 'ui', 'app.js'), path.join(APP_DIR, 'app.js')]),
   '/sw.js': readFirstExisting([path.join(APP_DIR, 'public', 'sw.js'), path.join(APP_DIR, 'ui', 'sw.js'), path.join(APP_DIR, 'sw.js')]),
-  '/manifest.json': readFirstExisting([path.join(APP_DIR, 'public', 'manifest.json'), path.join(APP_DIR, 'ui', 'manifest.json'), path.join(APP_DIR, 'manifest.json')])
+  '/manifest.json': readFirstExisting([path.join(APP_DIR, 'public', 'manifest.json'), path.join(APP_DIR, 'ui', 'manifest.json'), path.join(APP_DIR, 'manifest.json')]),
+  '/robots.txt': readFirstExisting([path.join(APP_DIR, 'public', 'robots.txt'), path.join(APP_DIR, 'ui', 'robots.txt')]),
+  '/sitemap.xml': readFirstExisting([path.join(APP_DIR, 'public', 'sitemap.xml'), path.join(APP_DIR, 'ui', 'sitemap.xml')])
 };
+
+// In-Memory store for Contact Requests & Stream Issue tickets (Working Contact Form - Item 20)
+const feedbackStore = [];
 
 // MovieBox-TUI native AppData paths on Windows / Cloud tmpdir
 const APPDATA = process.env.APPDATA || (IS_VERCEL ? path.join(os.tmpdir(), 'roaming') : path.join(process.env.USERPROFILE || '', 'AppData', 'Roaming'));
@@ -819,6 +824,131 @@ async function handleRequest(req, res) {
   pathname = pathname.replace(/\/+/g, '/');
   if (pathname.length > 1 && pathname.endsWith('/')) {
     pathname = pathname.slice(0, -1);
+  }
+
+  // --------------------------------------------------------------------------
+  // A000. GET /robots.txt & GET /sitemap.xml — SEO Crawling & Indexing
+  // --------------------------------------------------------------------------
+  if (pathname === '/robots.txt' && req.method === 'GET') {
+    res.writeHead(200, {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400'
+    });
+    return res.end(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://${req.headers.host || 'moviebox-cloud.vercel.app'}/sitemap.xml\n`);
+  }
+
+  if (pathname === '/sitemap.xml' && req.method === 'GET') {
+    res.writeHead(200, {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400'
+    });
+    const today = new Date().toISOString().split('T')[0];
+    const host = req.headers.host || 'moviebox-cloud.vercel.app';
+    const proto = req.headers['x-forwarded-proto'] || (IS_VERCEL ? 'https' : 'http');
+    return res.end(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${proto}://${host}/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${proto}://${host}/#movies</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${proto}://${host}/#series</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${proto}://${host}/#bollywood</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${proto}://${host}/#sports</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${proto}://${host}/#contact</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>${proto}://${host}/#privacy</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>`);
+  }
+
+  // --------------------------------------------------------------------------
+  // Legacy 301 Redirects (Item 10: 301 Redirects)
+  // --------------------------------------------------------------------------
+  if (pathname === '/gaiaflix' || pathname === '/gaiaflix/live') {
+    res.writeHead(301, { Location: '/#sports' });
+    return res.end();
+  }
+  if (pathname === '/netmirror') {
+    res.writeHead(301, { Location: '/#bollywood' });
+    return res.end();
+  }
+  if (pathname === '/watch') {
+    res.writeHead(301, { Location: '/#movies' });
+    return res.end();
+  }
+
+  // --------------------------------------------------------------------------
+  // A001. POST & GET /api/feedback — Working Contact Form & Request Center (Item 20)
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/feedback' && req.method === 'POST') {
+    try {
+      const body = await readRequestBody(req);
+      const ticketId = 'MB-' + Date.now().toString(36).toUpperCase() + '-' + crypto.randomBytes(2).toString('hex').toUpperCase();
+      const entry = {
+        id: ticketId,
+        type: String(body.type || 'request'),
+        title: String(body.title || '').trim().slice(0, 200),
+        provider: String(body.provider || 'all'),
+        message: String(body.message || '').trim().slice(0, 2000),
+        alias: String(body.alias || 'Anonymous Viewer').trim().slice(0, 50),
+        createdAt: new Date().toISOString()
+      };
+      feedbackStore.unshift(entry);
+      if (feedbackStore.length > 200) feedbackStore.length = 200;
+
+      try {
+        const feedbackFile = path.join(IS_VERCEL ? os.tmpdir() : HOME_THEATER_DIR, 'feedback-requests.json');
+        fs.writeFileSync(feedbackFile, JSON.stringify(feedbackStore.slice(0, 50), null, 2));
+      } catch {}
+
+      return sendJson(res, 200, {
+        ok: true,
+        ticketId,
+        message: 'Your request has been logged successfully into our automated indexing pipeline.',
+        entry
+      });
+    } catch (err) {
+      return sendJson(res, 400, { ok: false, error: err.message });
+    }
+  }
+
+  if (pathname === '/api/feedback' && req.method === 'GET') {
+    return sendJson(res, 200, {
+      ok: true,
+      count: feedbackStore.length,
+      requests: feedbackStore.slice(0, 20)
+    });
   }
 
   // --------------------------------------------------------------------------

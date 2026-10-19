@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://moviebox-cloud.vercel.app/sitemap.xml
