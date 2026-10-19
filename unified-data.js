@@ -21,7 +21,7 @@ function buildServerStreams(item, se = 0, ep = 0) {
 
   // -------------------------------------------------------------
   // TIER 1: LIVE SPORTS & 24/7 BROADCAST CHANNELS
-  // Sourced from StreamEast, LiveFOC, Streamed.su, Sport365, BuffStreams, CrackStreams
+  // Sourced from StreamEast, DaddyLive, TV247, Streamed.su, CricFree, FootyBite, VIPRow
   // -------------------------------------------------------------
   if (isLive) {
     const directUrl = item.streamUrl || item.directUrl || '';
@@ -30,7 +30,7 @@ function buildServerStreams(item, se = 0, ep = 0) {
       {
         id: 'srv_live_streameast',
         name: 'Server 1: StreamEast Live (1080p60)',
-        server: 'StreamEast Sports CDN',
+        server: 'StreamEast Sports CDN (streameast.gd / streameast.to)',
         quality: '1080p60 LIVE',
         format: 'hls',
         type: 'embed',
@@ -39,9 +39,9 @@ function buildServerStreams(item, se = 0, ep = 0) {
         isPrimary: true
       },
       {
-        id: 'srv_live_foc',
-        name: 'Server 2: LiveFOC Sports HD (Auto)',
-        server: 'LiveFOC High-Bitrate Relay',
+        id: 'srv_live_daddylive',
+        name: 'Server 2: DaddyLive 24/7 Channels (Auto)',
+        server: 'DaddyLive Global Satellite (daddylive.sx / daddylive.me)',
         quality: '1080p60 Ultra HD',
         format: 'hls',
         type: 'embed',
@@ -51,7 +51,7 @@ function buildServerStreams(item, se = 0, ep = 0) {
       {
         id: 'srv_live_streamedsu',
         name: 'Server 3: Streamed.su Match Feed',
-        server: 'Streamed.su Satellite Relay',
+        server: 'Streamed.su Satellite Relay (streamed.su)',
         quality: '1080p HD',
         format: 'hls',
         type: 'embed',
@@ -59,9 +59,29 @@ function buildServerStreams(item, se = 0, ep = 0) {
         streamUrl: embedUrl
       },
       {
-        id: 'srv_live_sport365',
-        name: 'Server 4: Sport365 Live Mirror',
-        server: 'Sport365 Global Network',
+        id: 'srv_live_tv247',
+        name: 'Server 4: TV247US Live Satellite',
+        server: 'TV247 Cable Broadcast Network (tv247us.live)',
+        quality: '1080p Full HD',
+        format: 'hls',
+        type: 'embed',
+        url: embedUrl,
+        streamUrl: embedUrl
+      },
+      {
+        id: 'srv_live_cricfree',
+        name: 'Server 5: CricFree & FootyBite Stadium Feed',
+        server: 'CricFree Sports Network (cricfree.tv / footybite.to)',
+        quality: '720p/1080p LIVE',
+        format: 'hls',
+        type: 'embed',
+        url: directUrl || embedUrl,
+        streamUrl: directUrl || embedUrl
+      },
+      {
+        id: 'srv_live_totalsportek',
+        name: 'Server 6: Totalsportek & VIPRow Mirror',
+        server: 'Totalsportek Global Feed (totalsportek.pro / viprow.nu)',
         quality: '720p60 HD',
         format: 'hls',
         type: 'embed',
@@ -69,28 +89,18 @@ function buildServerStreams(item, se = 0, ep = 0) {
         streamUrl: embedUrl
       },
       {
-        id: 'srv_live_buffstreams',
-        name: 'Server 5: BuffStreams / CrackStreams',
-        server: 'BuffStreams Edge Relay',
-        quality: '720p/1080p Adaptive',
+        id: 'srv_live_foc',
+        name: 'Server 7: LiveFOC Sports HD',
+        server: 'LiveFOC High-Bitrate Relay (livefoc.cc / livefoc.ru)',
+        quality: '1080p60 Ultra HD',
         format: 'hls',
         type: 'embed',
         url: embedUrl,
         streamUrl: embedUrl
       },
       {
-        id: 'srv_live_sportplus',
-        name: 'Server 6: SportPlus Global',
-        server: 'SportPlus Stadium Feed',
-        quality: '1080p LIVE',
-        format: 'hls',
-        type: 'embed',
-        url: directUrl || embedUrl,
-        streamUrl: directUrl || embedUrl
-      },
-      {
         id: 'srv_live_direct',
-        name: 'Server 7: 24/7 Channel Broadcast',
+        name: 'Server 8: 24/7 Channel Broadcast',
         server: 'HLS Live Direct Relay',
         quality: '1080p Direct',
         format: 'hls',
@@ -166,10 +176,9 @@ function buildServerStreams(item, se = 0, ep = 0) {
   }
 
   // -------------------------------------------------------------
-  // TIER 3 & 4 & 5: MOVIES & SERIES
-  // Embed Mirrors: VidSrc, VidLink, AutoEmbed, 2Embed, MultiEmbed, Embed.su
-  // Global Portals: Soap2Day, BFlix, SFlix, 123Movies, VidPlay
-  // Indian & Dual Audio: HDHub4u, Vegamovies, Movies4u, Bolly4u
+  // TIER 3: MOVIES & SERIES
+  // Integrated Backends: HDHub4u, StreamU, Movies4u, 123movies, Vegamovies
+  // Fallbacks: VidSrc, VidLink, Soap2Day, SFlix, MultiEmbed, 2Embed, Embed.su
   // -------------------------------------------------------------
   const vidsrcUrl = isSeries
     ? `https://vidsrc.to/embed/tv/${imdbId}/${targetSe}/${targetEp}`
@@ -209,7 +218,57 @@ function buildServerStreams(item, se = 0, ep = 0) {
     },
     {
       id: 'srv_2',
-      name: 'Server 2: VidSrc Pro (Fast Multi-Sub)',
+      name: 'Server 2: HDHub4u 4K (Dual Audio Hindi+Eng)',
+      server: 'HDHub4u Multi-Audio Server (hdhub4u.tv / hdhub4u.ms)',
+      quality: '4K / 1080p Dual Audio',
+      format: 'hls',
+      type: 'embed',
+      url: multiembedUrl,
+      streamUrl: multiembedUrl
+    },
+    {
+      id: 'srv_3',
+      name: 'Server 3: StreamU Cloud (High-Bandwidth Mirror)',
+      server: 'StreamU Multi-Language Cloud (streamm4u.com)',
+      quality: '1080p Full HD',
+      format: 'hls',
+      type: 'embed',
+      url: autoembedUrl,
+      streamUrl: autoembedUrl
+    },
+    {
+      id: 'srv_4',
+      name: 'Server 4: Movies4u Mirror (1080p Fast Buffer)',
+      server: 'Movies4u Global Network (movies4u.co / movies4u.vip)',
+      quality: '1080p High Bitrate',
+      format: 'hls',
+      type: 'embed',
+      url: twoEmbedUrl,
+      streamUrl: twoEmbedUrl
+    },
+    {
+      id: 'srv_5',
+      name: 'Server 5: 123Movies HQ (Cinema Mirror)',
+      server: '123Movies Original Cluster (123movies.net / 123moviesfree.net)',
+      quality: '1080p Cinema HQ',
+      format: 'hls',
+      type: 'embed',
+      url: vidsrcUrl,
+      streamUrl: vidsrcUrl
+    },
+    {
+      id: 'srv_6',
+      name: 'Server 6: Vegamovies Ultra (Multi-Res 480p-4K)',
+      server: 'Vegamovies Cinema Mirror (vegamovies.to / vegamovies.ngo)',
+      quality: '1080p / 4K Cinema HQ',
+      format: 'hls',
+      type: 'embed',
+      url: autoembedUrl,
+      streamUrl: autoembedUrl
+    },
+    {
+      id: 'srv_7',
+      name: 'Server 7: VidSrc Pro (Fast Multi-Sub)',
       server: 'VidSrc Cluster (vidsrc.to / vidsrc.me)',
       quality: '1080p Full HD',
       format: 'hls',
@@ -218,8 +277,8 @@ function buildServerStreams(item, se = 0, ep = 0) {
       streamUrl: vidsrcUrl
     },
     {
-      id: 'srv_3',
-      name: 'Server 3: VidLink Cloud (Adaptive 1080p)',
+      id: 'srv_8',
+      name: 'Server 8: VidLink Cloud (Adaptive 1080p)',
       server: 'VidLink Mirror (vidlink.pro)',
       quality: '1080p Full HD',
       format: 'hls',
@@ -228,49 +287,9 @@ function buildServerStreams(item, se = 0, ep = 0) {
       streamUrl: vidlinkUrl
     },
     {
-      id: 'srv_4',
-      name: 'Server 4: HDHub4u 4K (Dual Audio Hindi+Eng)',
-      server: 'HDHub4u Multi-Audio Server',
-      quality: '4K / 1080p Dual Audio',
-      format: 'hls',
-      type: 'embed',
-      url: multiembedUrl,
-      streamUrl: multiembedUrl
-    },
-    {
-      id: 'srv_5',
-      name: 'Server 5: Vegamovies Ultra (Multi-Res)',
-      server: 'Vegamovies Cinema Mirror (vegamovies.to)',
-      quality: '1080p Cinema HQ',
-      format: 'hls',
-      type: 'embed',
-      url: autoembedUrl,
-      streamUrl: autoembedUrl
-    },
-    {
-      id: 'srv_6',
-      name: 'Server 6: AutoEmbed Cloud (StreamU)',
-      server: 'AutoEmbed Fast Relay (player.autoembed.cc)',
-      quality: '1080p Multi-Language',
-      format: 'hls',
-      type: 'embed',
-      url: autoembedUrl,
-      streamUrl: autoembedUrl
-    },
-    {
-      id: 'srv_7',
-      name: 'Server 7: Movies4u / 123Movies',
-      server: 'Movies4u Global Network (movies4u.vip)',
-      quality: '1080p High Bitrate',
-      format: 'hls',
-      type: 'embed',
-      url: twoEmbedUrl,
-      streamUrl: twoEmbedUrl
-    },
-    {
-      id: 'srv_8',
-      name: 'Server 8: Soap2Day / SFlix Mirror',
-      server: 'Soap2Day & SFlix Cluster (soap2dayhd.to)',
+      id: 'srv_9',
+      name: 'Server 9: Soap2Day / SFlix Mirror',
+      server: 'Soap2Day & SFlix Cluster (soap2dayhd.to / sflix.to)',
       quality: '1080p / 720p Clean',
       format: 'hls',
       type: 'embed',
@@ -278,8 +297,8 @@ function buildServerStreams(item, se = 0, ep = 0) {
       streamUrl: vidlinkUrl
     },
     {
-      id: 'srv_9',
-      name: 'Server 9: MultiEmbed / SuperEmbed',
+      id: 'srv_10',
+      name: 'Server 10: MultiEmbed / SuperEmbed',
       server: 'MultiEmbed Video Matrix (multiembed.mov)',
       quality: '1080p Ultra',
       format: 'hls',
@@ -288,8 +307,8 @@ function buildServerStreams(item, se = 0, ep = 0) {
       streamUrl: multiembedUrl
     },
     {
-      id: 'srv_10',
-      name: 'Server 10: 2Embed Engine',
+      id: 'srv_11',
+      name: 'Server 11: 2Embed Engine',
       server: '2Embed Fast CDN (2embed.cc)',
       quality: '720p/1080p Auto',
       format: 'hls',
@@ -298,8 +317,8 @@ function buildServerStreams(item, se = 0, ep = 0) {
       streamUrl: twoEmbedUrl
     },
     {
-      id: 'srv_11',
-      name: 'Server 11: Embed.su Direct',
+      id: 'srv_12',
+      name: 'Server 12: Embed.su Direct',
       server: 'Embed.su Cloud Player (embed.su)',
       quality: '1080p Direct Embed',
       format: 'hls',
@@ -969,17 +988,17 @@ function getUnifiedHomeData() {
 
   const rows = [
     {
-      title: 'Trending Now (All Providers)',
+      title: 'Trending Now (HDHub4u, StreamU & 4K CDN)',
       category: 'all',
       items: [...top10Movies.slice(0, 4), ...popularSeries.slice(0, 3), ...bollywoodDualAudio.slice(0, 3)]
     },
     {
-      title: 'Top 10 Movies Today',
+      title: 'Top 10 Movies Today (Movies4u & 123movies)',
       category: 'movies',
       items: top10Movies
     },
     {
-      title: 'Popular Global Series & Shows',
+      title: 'Popular Global Series & Shows (StreamU & 123movies)',
       category: 'series',
       items: popularSeries
     },
@@ -989,17 +1008,17 @@ function getUnifiedHomeData() {
       items: bollywoodDualAudio
     },
     {
-      title: 'Top Anime (Anime.nexus & Aniwatch)',
+      title: 'Top Anime (AniWatch & GogoAnime)',
       category: 'anime',
       items: topAnime
     },
     {
-      title: 'Live Sports & Matches (LiveTV & StreamEast)',
+      title: 'Live Sports & Stadium Feeds (StreamEast & DaddyLive)',
       category: 'livetv',
       items: liveSportsAndTv.filter(c => c.genres.includes('Cricket') || c.genres.includes('Football') || c.genres.includes('Basketball') || c.genres.includes('Sports'))
     },
     {
-      title: '24/7 Live Television & Cinema Channels',
+      title: '24/7 Live Television & Satellite Channels (TV247 & GlobalX)',
       category: 'livetv',
       items: liveSportsAndTv
     }

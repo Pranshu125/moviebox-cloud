@@ -1973,9 +1973,15 @@ async function handleRequest(req, res) {
         } catch {}
       }
 
+      const multiProviderServers = buildServerStreams({ subjectId: activeSubjectId, title: 'Stream', cleanTitle: 'Stream' }, se, ep);
       if (resolvedStreams.length === 0) {
-        const fallbackStreams = buildServerStreams({ subjectId: activeSubjectId, title: 'Stream', cleanTitle: 'Stream' }, se, ep);
-        resolvedStreams.push(...fallbackStreams);
+        resolvedStreams.push(...multiProviderServers);
+      } else {
+        for (const s of multiProviderServers) {
+          if (!s.isPrimary) {
+            resolvedStreams.push(s);
+          }
+        }
       }
 
       return sendJson(res, 200, {
