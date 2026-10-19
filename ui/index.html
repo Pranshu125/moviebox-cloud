@@ -206,17 +206,17 @@
     <!-- LIQUID GLASS SEGMENTED FILTER BAR -->
     <div class="yt-chips-bar" id="filterChipsBar">
       <button class="yt-chip active" data-chip="all">All</button>
-      <button class="yt-chip chip-netmirror" data-chip="netmirror">NetMirror</button>
-      <button class="yt-chip chip-gaiaflix" data-chip="gaiaflix">GaiaFlix Live</button>
-      <button class="yt-chip chip-special" data-chip="local">Local 4K</button>
+      <button class="yt-chip" data-chip="movies">Movies</button>
+      <button class="yt-chip" data-chip="series">Series</button>
+      <button class="yt-chip" data-chip="bollywood">Bollywood &amp; Dual Audio</button>
+      <button class="yt-chip" data-chip="anime">Anime</button>
+      <button class="yt-chip" data-chip="livetv">Live Sports &amp; TV</button>
+      <button class="yt-chip chip-special" data-chip="local">4K Library</button>
       <button class="yt-chip" data-chip="continue">Continue Watching</button>
       <button class="yt-chip" data-chip="top10">Top 10</button>
       <button class="yt-chip" data-chip="atmos">Dolby Atmos</button>
       <button class="yt-chip" data-chip="Sci-Fi">Sci-Fi</button>
       <button class="yt-chip" data-chip="Action">Action</button>
-      <button class="yt-chip" data-chip="series">Series</button>
-      <button class="yt-chip" data-chip="anime">Anime</button>
-      <button class="yt-chip" data-chip="livetv">Live TV</button>
       <button class="yt-chip" data-chip="mylist">Watchlist</button>
     </div>
 
@@ -282,7 +282,7 @@
                 poster="https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1920&q=85"
               ></video>
 
-              <!-- GaiaFlix Direct Stream / Channel Embed Frame -->
+              <!-- Direct Stream / Multi-Server Embed Frame -->
               <iframe
                 id="streamEmbedFrame"
                 class="stream-embed-frame hidden"
@@ -844,11 +844,11 @@
       <!-- LIQUID GLASS CATEGORY TILES -->
       <section class="hubs-section">
         <div class="hubs-grid" id="universeHubsGrid">
-          <button class="hub-card hub-netmirror" data-hub="netmirror">
+          <button class="hub-card hub-bollywood" data-hub="bollywood">
             <div class="hub-glow"></div>
-            <span class="hub-tag">NETMIRROR</span>
-            <strong class="hub-name">NetMirror</strong>
-            <span class="hub-sub">Originals &amp; Global</span>
+            <span class="hub-tag">DUAL AUDIO</span>
+            <strong class="hub-name">Bollywood 4K</strong>
+            <span class="hub-sub">HDHub4u &amp; Vegamovies</span>
           </button>
 
           <button class="hub-card hub-local" data-hub="local">
@@ -935,29 +935,29 @@
           <div class="media-rail top10-rail" id="top10Rail"></div>
         </section>
 
-        <section class="media-row-section" id="rowNetMirrorSection">
+        <section class="media-row-section" id="rowBollywoodSection">
           <div class="row-header">
             <div>
               <h2 class="row-title">Bollywood &amp; Dual Audio 4K Hits</h2>
             </div>
             <div class="row-actions">
-              <button class="row-action-btn" data-open-page="movies">View All Movies</button>
+              <button class="row-action-btn" data-open-page="bollywood">View All Bollywood</button>
             </div>
           </div>
-          <div class="media-rail poster-cards" id="netMirrorRail"></div>
+          <div class="media-rail poster-cards" id="bollywoodRail"></div>
         </section>
 
-        <section class="media-row-section" id="rowGaiaFlixSection">
+        <section class="media-row-section" id="rowLiveSportsSection">
           <div class="row-header">
             <div>
               <h2 class="row-title">Live Sports &amp; 24/7 TV Channels</h2>
             </div>
             <div class="row-actions">
-              <button class="row-action-btn" id="refreshGaiaBtn">Refresh Feeds</button>
+              <button class="row-action-btn" id="refreshLiveSportsBtn">Refresh Feeds</button>
               <button class="row-action-btn" data-open-page="livetv">View All Live TV</button>
             </div>
           </div>
-          <div class="media-rail wide-cards" id="gaiaFlixRail"></div>
+          <div class="media-rail wide-cards" id="liveSportsRail"></div>
         </section>
 
         <section class="media-row-section" id="rowMoviesSection">
@@ -1291,7 +1291,7 @@
           <img src="/logo.svg" alt="MovieBox" style="width: 44px; height: 44px;" />
         </div>
         <h2 style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; margin-bottom: 8px;">Run as App on Your Phone</h2>
-        <p class="settings-sub" style="margin-bottom: 22px;">Stream 4K movies, TV series, Netmirror &amp; live sports full-screen without browser address bars or opening cmd!</p>
+        <p class="settings-sub" style="margin-bottom: 22px;">Stream 4K movies, TV series, dual audio &amp; live sports full-screen without browser address bars or opening cmd!</p>
         
         <div id="pwaNativePromptBlock" class="hidden">
           <button class="btn-hero-play" id="pwaNativeInstallBtn" style="width: 100%; justify-content: center; height: 50px; font-size: 16px;">

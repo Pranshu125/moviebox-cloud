@@ -3,7 +3,7 @@
    Provides instant app launching on phones, tablets, and desktops
    ============================================================================ */
 
-const CACHE_NAME = 'moviebox-pwa-v3.0';
+const CACHE_NAME = 'moviebox-pwa-v3.1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

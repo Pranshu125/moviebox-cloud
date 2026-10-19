@@ -3692,58 +3692,34 @@ body {
   white-space: nowrap !important;
 }
 
-/* 10.4 NetMirror Branding & Hub Styles */
-.yt-chip.chip-netmirror {
-  border-color: rgba(244, 63, 94, 0.42) !important;
-  background: linear-gradient(135deg, rgba(225, 29, 72, 0.28) 0%, rgba(255, 255, 255, 0.06) 100%) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36), 0 4px 12px rgba(0, 0, 0, 0.45) !important;
-  color: #ffe4e6 !important;
-}
-.yt-chip.chip-netmirror.active {
-  background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%) !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.65) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 6px 20px rgba(225, 29, 72, 0.45) !important;
-}
+/* 10.4 Bollywood & Dual Audio 4K Theme */
+.hub-card.hub-bollywood,
 .hub-card.hub-netmirror {
   border-color: rgba(244, 63, 94, 0.36) !important;
   background: linear-gradient(135deg, rgba(225, 29, 72, 0.24) 0%, rgba(255, 255, 255, 0.06) 45%, rgba(15, 19, 30, 0.88) 100%) !important;
 }
+.hub-card.hub-bollywood:hover,
 .hub-card.hub-netmirror:hover {
   border-color: rgba(251, 113, 133, 0.65) !important;
   box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), 0 18px 40px rgba(225, 29, 72, 0.32) !important;
 }
+.hub-bollywood .hub-glow {
+  background: radial-gradient(circle at top right, #f43f5e, transparent 70%);
+}
 
-/* GaiaFlix.live Glass & Emerald Theme */
-.yt-chip.chip-gaiaflix {
-  border-color: rgba(16, 185, 129, 0.38) !important;
-  color: #34d399 !important;
-  background: rgba(16, 185, 129, 0.08) !important;
-}
-.yt-chip.chip-gaiaflix:hover {
-  background: rgba(16, 185, 129, 0.18) !important;
-  border-color: rgba(52, 211, 153, 0.6) !important;
-  color: #ffffff !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(16, 185, 129, 0.25) !important;
-}
-.yt-chip.chip-gaiaflix.active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.65) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 6px 20px rgba(16, 185, 129, 0.45) !important;
-}
-.hub-card.hub-gaiaflix {
+/* 10.5 Live Sports & Channels Emerald Theme */
+.hub-card.hub-live {
   border-color: rgba(16, 185, 129, 0.36) !important;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(255, 255, 255, 0.06) 45%, rgba(12, 24, 18, 0.88) 100%) !important;
 }
-.hub-card.hub-gaiaflix:hover {
+.hub-card.hub-live:hover {
   border-color: rgba(52, 211, 153, 0.7) !important;
   box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), 0 18px 40px rgba(16, 185, 129, 0.35) !important;
 }
-.hub-gaiaflix .hub-glow {
+.hub-live .hub-glow {
   background: radial-gradient(circle at top right, #10b981, transparent 70%);
 }
-.row-accent-dot.gaiaflix {
+.row-accent-dot.live {
   background: #10b981 !important;
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.9) !important;
 }

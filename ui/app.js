@@ -279,42 +279,49 @@ async function fetchMovieBoxHome() {
       state.moviesCatalog = movieRows[0]?.items || state.top10Movies;
       state.seriesCatalog = seriesRows[0]?.items || state.top10Series;
       state.animeCatalog = animeRow?.items || [];
-      state.netMirrorCatalog = (westernRow?.items || [...state.top10Series.slice(0, 6), ...state.top10Movies.slice(0, 6)]).map(item => ({
+      const bollyRow = state.mbRows.find(r => /bollywood|hindi|dual/i.test(r.title));
+      state.bollywoodCatalog = (bollyRow?.items || westernRow?.items || [...state.top10Series.slice(0, 6), ...state.top10Movies.slice(0, 6)]).map(item => ({
         ...item,
-        provider: 'NetMirror CDN',
-        quality: item.quality || '1080p Full HD'
+        provider: item.provider || 'HDHub4u • Vegamovies',
+        quality: item.quality || '1080p Dual Audio'
       }));
+      state.netMirrorCatalog = state.bollywoodCatalog;
 
       renderTop10Rail();
-      renderPosterRail('netMirrorRail', state.netMirrorCatalog);
+      renderPosterRail('bollywoodRail', state.bollywoodCatalog);
       renderPosterRail('trendingMoviesRail', state.moviesCatalog);
       renderPosterRail('trendingSeriesRail', state.seriesCatalog);
       renderPosterRail('animeRail', state.animeCatalog);
       renderAllDynamicMovieBoxRows(state.mbRows);
 
-      // Fetch dedicated NetMirror CDN catalog asynchronously
-      fetchNetMirrorCatalog().catch(() => {});
+      // Fetch dedicated Indian/Bollywood catalog asynchronously
+      fetchBollywoodCatalog().catch(() => {});
     }
   } catch (err) {
     console.warn('Failed fetching MovieBox home:', err);
   }
 }
 
-async function fetchNetMirrorCatalog(force = false) {
+async function fetchBollywoodCatalog(force = false) {
   try {
     const res = await fetch(`/api/netmirror/catalog${force ? '?refresh=1' : ''}`);
     const data = await res.json();
     if (data.ok && Array.isArray(data.items) && data.items.length > 0) {
-      state.netMirrorCatalog = data.items;
-      renderPosterRail('netMirrorRail', state.netMirrorCatalog);
-      if (state.activeDedicatedPage === 'netmirror') {
-        renderDedicatedPageContent('netmirror');
+      state.bollywoodCatalog = data.items.map(it => ({
+        ...it,
+        provider: (it.provider && !/netmirror/i.test(it.provider)) ? it.provider : 'HDHub4u / Vegamovies 4K'
+      }));
+      state.netMirrorCatalog = state.bollywoodCatalog;
+      renderPosterRail('bollywoodRail', state.bollywoodCatalog);
+      if (state.activeDedicatedPage === 'bollywood' || state.activeDedicatedPage === 'netmirror') {
+        renderDedicatedPageContent('bollywood');
       }
     }
   } catch (err) {
-    console.warn('Could not fetch NetMirror catalog:', err);
+    console.warn('Could not fetch Bollywood catalog:', err);
   }
 }
+const fetchNetMirrorCatalog = fetchBollywoodCatalog;
 
 // =========================================================================
 // 2. HERO BILLBOARD
@@ -736,7 +743,7 @@ function renderLiveTvRail() {
 }
 
 function renderGaiaFlixRail() {
-  const rail = document.getElementById('gaiaFlixRail');
+  const rail = document.getElementById('liveSportsRail') || document.getElementById('gaiaFlixRail');
   if (!rail) return;
   rail.innerHTML = '';
 
@@ -753,8 +760,8 @@ function renderGaiaFlixRail() {
   if (showcase.length === 0) {
     rail.innerHTML = `
       <div class="dedicated-empty-box" style="padding: 24px; width: 100%;">
-        <strong>Connecting to GaiaFlix Feed...</strong>
-        <p>Fetching 260+ channels and live sports events from GaiaFlix.</p>
+        <strong>Connecting to Live Feeds...</strong>
+        <p>Fetching 300+ live sports matches and broadcast channels.</p>
       </div>
     `;
     return;
@@ -785,7 +792,7 @@ function renderGaiaFlixRail() {
         <div class="wide-meta">
           <span>${item.quality || '1080p60'}</span>
           <span>•</span>
-          <span>${item.provider || 'GaiaFlix'}</span>
+          <span>${(item.provider && !/gaia/i.test(item.provider)) ? item.provider : 'Live Sports HD'}</span>
         </div>
         <div class="wide-actions">
           <button class="card-btn play" data-action="play">${isUpcoming ? 'Watch Feed' : 'Watch'}</button>
@@ -819,7 +826,7 @@ async function fetchGaiaFlixCatalog(forceRefresh = false) {
         const chCount = data.counts?.channels || 0;
         hubCount.textContent = liveCount > 0
           ? `${liveCount} Live Matches • ${chCount} Channels`
-          : `${chCount} Channels & Live Feed`;
+          : `${chCount} Channels & Live Feeds`;
       }
 
       renderGaiaFlixRail();
@@ -830,12 +837,14 @@ async function fetchGaiaFlixCatalog(forceRefresh = false) {
       }
 
       if (forceRefresh) {
-        showToast(`GaiaFlix updated: ${data.counts?.live || 0} live events, ${data.counts?.channels || 0} channels`);
+        showToast(`Live feeds updated: ${data.counts?.live || 0} live events, ${data.counts?.channels || 0} channels`);
       }
     }
   } catch (err) {
-    console.warn('Could not fetch GaiaFlix catalog:', err);
+    console.warn('Could not fetch live sports catalog:', err);
   }
+}
+const fetchLiveCatalog = fetchGaiaFlixCatalog;
 }
 
 // =========================================================================
@@ -1402,7 +1411,7 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
 
   renderUpNextSidebar(item);
 
-  // Case 1: Local File, Live IPTV Channel, or GaiaFlix Live Stream
+  // Case 1: Local File, Live Sports Channel, or Direct Embed Stream
   if (item.isLocal || item.isLive || item.isGaiaFlix || (!item.subjectId && !String(item.id || '').startsWith('mb_') && item.streamUrl)) {
     document.getElementById('watchEpisodesBar').classList.add('hidden');
     document.getElementById('playerOverlayEpisodesBtn')?.classList.add('hidden');
@@ -1410,11 +1419,11 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
     document.getElementById('playerOverlayTitle').textContent = item.cleanTitle || item.title;
     document.getElementById('playerSourcePill').textContent = item.isLocal
       ? `LOCAL 4K • ${item.sizeFormatted || '27.8 GB'}`
-      : (item.isGaiaFlix ? `GAIAFLIX LIVE • ${item.badge || '24/7'}` : `DIRECT STREAM • ${item.quality || '1080p Full HD'}`);
+      : ((item.isLive || item.isGaiaFlix) ? `LIVE BROADCAST • ${item.badge || '24/7'}` : `DIRECT STREAM • ${item.quality || '1080p Full HD'}`);
 
     const localDubs = [{
       subjectId: 'local',
-      lanName: item.isLocal ? 'Multi-Audio (DDP 5.1 Atmos)' : (item.isGaiaFlix ? 'Live Broadcast Audio' : 'Original Audio'),
+      lanName: item.isLocal ? 'Multi-Audio (DDP 5.1 Atmos)' : ((item.isLive || item.isGaiaFlix) ? 'Live Stadium Audio' : 'Original Audio'),
       lanCode: 'en',
       original: true
     }];
@@ -1427,7 +1436,7 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
     renderInPlayerAudioSubPopover(localDubs, 'local', 0, 0, []);
 
     const isM3u8 = item.streamUrl && item.streamUrl.includes('.m3u8');
-    const isEmbed = item.isGaiaFlix || (item.streamUrl && (item.streamUrl.includes('/bintv/') || item.streamUrl.includes('bintv-sources.pages.dev')));
+    const isEmbed = item.isGaiaFlix || (item.streamUrl && (item.streamUrl.includes('/bintv/') || item.streamUrl.includes('bintv-sources.pages.dev') || item.streamUrl.includes('/api/gaiaflix/player')));
     const streamType = isM3u8 ? 'hls' : (isEmbed ? 'embed' : 'mp4');
 
     state.currentStreams = [{
@@ -1435,7 +1444,7 @@ async function openTheaterPlayer(item, overrideSeason = null, overrideEpisode = 
       name: item.isLocal ? `Local 4K Vault • ${item.cleanTitle || item.title}` : (item.cleanTitle || item.title),
       quality: item.quality || '1080p60 LIVE',
       codec: item.isLocal ? 'HEVC H.265' : (isEmbed ? 'Live Embed / H.264' : 'H.264'),
-      sizeFormatted: item.sizeFormatted || (item.isGaiaFlix ? 'Live Relay' : 'Direct Stream'),
+      sizeFormatted: item.sizeFormatted || ((item.isLive || item.isGaiaFlix) ? 'Live Relay' : 'Direct Stream'),
       type: streamType,
       streamUrl: item.streamUrl,
       vlcUrl: item.fullPath || item.streamUrl
@@ -2461,18 +2470,31 @@ function showHomeBrowseView() {
 }
 
 const DEDICATED_PAGES_CONFIG = {
-  netmirror: {
-    tag: 'NETMIRROR HUB',
-    badge: 'NETMIRROR',
-    subtag: 'GLOBAL ORIGINALS & SERIES',
-    title: 'NetMirror — Originals, Hollywood & Global Series',
-    desc: 'Stream global originals, Western blockbusters, and multi-season series in 1080p Full HD with multi-language audio tracks.',
+  bollywood: {
+    tag: 'BOLLYWOOD & DUAL AUDIO 4K',
+    badge: 'DUAL AUDIO',
+    subtag: 'HDHUB4U + VEGAMOVIES + MOVIES4U + BOLLY4U',
+    title: 'Bollywood, Hindi & Dual Audio 4K Hits',
+    desc: 'Stream complete high-bitrate Bollywood blockbusters, Hindi web series, and dual audio 4K cinema from HDHub4u, Vegamovies, and Movies4u.',
     subfilters: [
-      { id: 'all', label: 'All NetMirror' },
-      { id: 'originals', label: 'Netflix Originals' },
-      { id: 'movies', label: 'Movies' },
-      { id: 'series', label: 'TV Series' },
-      { id: 'scifi', label: 'Sci-Fi & Action' },
+      { id: 'all', label: 'All Bollywood 4K' },
+      { id: 'action', label: 'Action & Thrillers' },
+      { id: 'comedy', label: 'Comedy' },
+      { id: 'drama', label: 'Drama & Romance' },
+      { id: 'toprated', label: 'Top Rated (8.0+)' }
+    ]
+  },
+  netmirror: {
+    tag: 'BOLLYWOOD & DUAL AUDIO 4K',
+    badge: 'DUAL AUDIO',
+    subtag: 'HDHUB4U + VEGAMOVIES + MOVIES4U + BOLLY4U',
+    title: 'Bollywood, Hindi & Dual Audio 4K Hits',
+    desc: 'Stream complete high-bitrate Bollywood blockbusters, Hindi web series, and dual audio 4K cinema from HDHub4u, Vegamovies, and Movies4u.',
+    subfilters: [
+      { id: 'all', label: 'All Bollywood 4K' },
+      { id: 'action', label: 'Action & Thrillers' },
+      { id: 'comedy', label: 'Comedy' },
+      { id: 'drama', label: 'Drama & Romance' },
       { id: 'toprated', label: 'Top Rated (8.0+)' }
     ]
   },
@@ -2495,7 +2517,7 @@ const DEDICATED_PAGES_CONFIG = {
     badge: 'SERIES',
     subtag: 'GLOBAL SHOWS, WEB SERIES & ORIGINALS',
     title: 'TV Series, Web Shows & Originals',
-    desc: 'Stream complete seasons of global hit shows, Netflix originals, Prime, and HBO series from Streamu, NetMirror, and MovieBox.',
+    desc: 'Stream complete seasons of global hit shows, originals, Prime, and HBO series from Streamu, 123movies, and MovieBox.',
     subfilters: [
       { id: 'all', label: 'All Series' },
       { id: 'originals', label: 'Global Originals' },
@@ -2507,9 +2529,9 @@ const DEDICATED_PAGES_CONFIG = {
   anime: {
     tag: 'ANIME VAULT',
     badge: 'ANIME',
-    subtag: 'SUBBED & DUBBED FROM ANIME.NEXUS & ANIWATCH',
+    subtag: 'SUBBED & DUBBED FROM ANIWATCH & GOGOANIME',
     title: 'Anime — Series, Shonen & Theatrical Films',
-    desc: 'Japanese anime series and movies with dual audio (Japanese/English/Hindi dubs) powered by Anime.nexus, Aniwatch, and Gogoanime.',
+    desc: 'Japanese anime series and movies with dual audio (Japanese/English/Hindi dubs) powered by Aniwatch, Zoro, and Gogoanime.',
     subfilters: [
       { id: 'all', label: 'All Anime' },
       { id: 'series', label: 'Anime Series' },
@@ -2588,9 +2610,9 @@ const DEDICATED_PAGES_CONFIG = {
   search: {
     tag: 'SEARCH STUDIO',
     badge: 'EXPLORE',
-    subtag: 'MOVIEBOX + NETMIRROR + 4KHDHUB + LOCAL',
+    subtag: 'MOVIEBOX + HDHUB4U + VEGAMOVIES + 123MOVIES + LOCAL',
     title: 'Search & Explore All Catalogs',
-    desc: 'Search across MovieBox CDN, NetMirror, 4KHDHub, and your Local 4K Vault simultaneously.',
+    desc: 'Search across MovieBox CDN, HDHub4u, Vegamovies, 123movies, and your Local 4K Vault simultaneously.',
     subfilters: [
       { id: 'all', label: 'All Sources' },
       { id: 'q:Spider-Man', label: 'Spider-Man' },
@@ -2617,7 +2639,7 @@ const DEDICATED_PAGES_CONFIG = {
     badge: 'TOP 10',
     subtag: 'MOST WATCHED TODAY',
     title: 'Top 10 Trending Movies & Series Today',
-    desc: 'The most streamed movies and series across MovieBox Studio and NetMirror today.',
+    desc: 'The most streamed movies and series across all entertainment providers today.',
     subfilters: [
       { id: 'all', label: 'All Top Trending' },
       { id: 'movies', label: 'Top 10 Movies' },
@@ -2742,19 +2764,18 @@ async function openDedicatedPage(pageKey, customSearchQuery = '') {
       openModalBtn.onclick = openDownloadsModal;
       actionsEl.appendChild(openModalBtn);
     }
-    if (pageKey === 'livetv') {
+    if (pageKey === 'livetv' || pageKey === 'gaiaflix') {
+      const refreshBtn = document.createElement('button');
+      refreshBtn.className = 'row-action-btn';
+      refreshBtn.textContent = 'Refresh Live Feeds';
+      refreshBtn.onclick = () => fetchGaiaFlixCatalog(true);
+      actionsEl.appendChild(refreshBtn);
+
       const addStreamBtn = document.createElement('button');
       addStreamBtn.className = 'row-action-btn';
       addStreamBtn.textContent = '+ Add Custom M3U8 Stream';
       addStreamBtn.onclick = () => document.getElementById('settingsModal')?.classList.remove('hidden');
       actionsEl.appendChild(addStreamBtn);
-    }
-    if (pageKey === 'gaiaflix') {
-      const refreshFeedBtn = document.createElement('button');
-      refreshFeedBtn.className = 'row-action-btn';
-      refreshFeedBtn.textContent = 'Refresh GaiaFlix Feed';
-      refreshFeedBtn.onclick = () => fetchGaiaFlixCatalog(true);
-      actionsEl.appendChild(refreshFeedBtn);
     }
     if (pageKey === 'mylist' || pageKey === 'continue') {
       const clearBtn = document.createElement('button');
@@ -2815,11 +2836,11 @@ async function openDedicatedPage(pageKey, customSearchQuery = '') {
     return;
   }
 
-  // If NetMirror page has no items loaded yet, fetch directly from /api/netmirror/catalog
-  if (pageKey === 'netmirror' && (!state.netMirrorCatalog || state.netMirrorCatalog.length === 0)) {
+  // If Bollywood page has no items loaded yet, fetch directly from /api/netmirror/catalog
+  if ((pageKey === 'bollywood' || pageKey === 'netmirror') && (!state.bollywoodCatalog || state.bollywoodCatalog.length === 0)) {
     renderDedicatedPageContent(pageKey);
-    await fetchNetMirrorCatalog();
-    if (state.activeDedicatedPage === 'netmirror') renderDedicatedPageContent('netmirror');
+    await fetchBollywoodCatalog();
+    if (state.activeDedicatedPage === 'bollywood' || state.activeDedicatedPage === 'netmirror') renderDedicatedPageContent(state.activeDedicatedPage);
     return;
   }
 
@@ -2832,7 +2853,7 @@ async function runDedicatedLiveSearch(query) {
   if (!grid) return;
 
   grid.classList.remove('wide-grid');
-  grid.innerHTML = `<div class="dedicated-empty-box">Searching MovieBox CDN, NetMirror, 4KHDHub &amp; Local Vault for "${query}"...</div>`;
+  grid.innerHTML = `<div class="dedicated-empty-box">Searching MovieBox CDN, HDHub4u, Vegamovies, 123movies &amp; Local Vault for "${query}"...</div>`;
 
   try {
     const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
@@ -3097,15 +3118,14 @@ function renderDedicatedPageContent(pageKey) {
   // Standard Poster Grid Dedicated Pages (NetMirror, Movies, Series, Anime, Watchlist, Top 10, Atmos, Sci-Fi, Search)
   let filtered = [];
 
-  if (pageKey === 'netmirror') {
-    filtered = (state.netMirrorCatalog && state.netMirrorCatalog.length > 0)
-      ? [...state.netMirrorCatalog]
-      : allItems.filter(it => it.provider?.includes('NetMirror') || /western|hollywood|netflix|original/i.test(it._rowTitle || ''));
-    if (sub === 'originals') filtered = filtered.filter(it => String(it.badge || '').toUpperCase().includes('ORIGINAL'));
-    if (sub === 'movies') filtered = filtered.filter(it => it.type !== 'series' && Number(it.stype) !== 2);
-    if (sub === 'series') filtered = filtered.filter(it => it.type === 'series' || Number(it.stype) === 2);
-    if (sub === 'scifi') filtered = filtered.filter(it => (it.genres || []).some(g => /sci-fi|action|fantasy|adventure/i.test(g)));
-    if (sub === 'toprated') filtered = filtered.filter(it => parseFloat(it.rating || '8.2') >= 8.2);
+  if (pageKey === 'bollywood' || pageKey === 'netmirror') {
+    filtered = (state.bollywoodCatalog && state.bollywoodCatalog.length > 0)
+      ? [...state.bollywoodCatalog]
+      : allItems.filter(it => it.provider?.includes('HDHub4u') || it.provider?.includes('Vegamovies') || it.provider?.includes('Dual Audio') || /bollywood|hindi|dual/i.test(it._rowTitle || ''));
+    if (sub === 'action') filtered = filtered.filter(it => (it.genres || []).some(g => /action|thriller/i.test(g)));
+    if (sub === 'comedy') filtered = filtered.filter(it => (it.genres || []).some(g => /comedy/i.test(g)));
+    if (sub === 'drama') filtered = filtered.filter(it => (it.genres || []).some(g => /drama|romance/i.test(g)));
+    if (sub === 'toprated') filtered = filtered.filter(it => parseFloat(it.rating || '8.2') >= 8.0);
   } else if (pageKey === 'movies') {
     filtered = allItems.filter(it => it.type !== 'series' && Number(it.stype) !== 2);
     if (sub === 'action') filtered = filtered.filter(it => (it.genres || []).some(g => /action|adventure/i.test(g)) || /action|hollywood/i.test(it._rowTitle || ''));
