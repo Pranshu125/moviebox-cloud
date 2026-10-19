@@ -28,6 +28,27 @@ const UI_DIR = fs.existsSync(path.join(APP_DIR, 'public')) ? path.join(APP_DIR, 
 const HOME_THEATER_DIR = IS_VERCEL ? path.join(os.tmpdir(), 'home-theater') : path.resolve(APP_DIR, '..');
 const UI_DATA_FILE = IS_VERCEL ? path.join(os.tmpdir(), 'ui-data.json') : path.join(APP_DIR, 'ui-data.json');
 
+// Preload static PWA core assets in memory for 0ms delivery and Vercel serverless resilience
+function readFirstExisting(paths) {
+  for (const p of paths) {
+    try {
+      if (fs.existsSync(p)) {
+        const c = fs.readFileSync(p, 'utf8');
+        if (c && c.length > 0) return c;
+      }
+    } catch {}
+  }
+  return '';
+}
+
+const STATIC_IN_MEMORY = {
+  '/index.html': readFirstExisting([path.join(APP_DIR, 'public', 'index.html'), path.join(APP_DIR, 'ui', 'index.html'), path.join(APP_DIR, 'index.html')]),
+  '/styles.css': readFirstExisting([path.join(APP_DIR, 'public', 'styles.css'), path.join(APP_DIR, 'ui', 'styles.css'), path.join(APP_DIR, 'styles.css')]),
+  '/app.js': readFirstExisting([path.join(APP_DIR, 'public', 'app.js'), path.join(APP_DIR, 'ui', 'app.js'), path.join(APP_DIR, 'app.js')]),
+  '/sw.js': readFirstExisting([path.join(APP_DIR, 'public', 'sw.js'), path.join(APP_DIR, 'ui', 'sw.js'), path.join(APP_DIR, 'sw.js')]),
+  '/manifest.json': readFirstExisting([path.join(APP_DIR, 'public', 'manifest.json'), path.join(APP_DIR, 'ui', 'manifest.json'), path.join(APP_DIR, 'manifest.json')])
+};
+
 // MovieBox-TUI native AppData paths on Windows / Cloud tmpdir
 const APPDATA = process.env.APPDATA || (IS_VERCEL ? path.join(os.tmpdir(), 'roaming') : path.join(process.env.USERPROFILE || '', 'AppData', 'Roaming'));
 const LOCALAPPDATA = process.env.LOCALAPPDATA || (IS_VERCEL ? path.join(os.tmpdir(), 'local') : path.join(process.env.USERPROFILE || '', 'AppData', 'Local'));
@@ -2548,6 +2569,27 @@ async function handleRequest(req, res) {
     return res.end('Forbidden');
   }
 
+  // 1. Instant sub-millisecond in-memory delivery for core PWA assets (Vercel Serverless & Edge)
+  if (safePath === '/' || safePath === '/index.html') {
+    if (STATIC_IN_MEMORY['/index.html']) {
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=0, must-revalidate'
+      });
+      return res.end(STATIC_IN_MEMORY['/index.html']);
+    }
+  }
+
+  if (STATIC_IN_MEMORY[safePath]) {
+    const ext = path.extname(safePath).toLowerCase();
+    res.writeHead(200, {
+      'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
+      'Cache-Control': safePath === '/sw.js' ? 'no-cache, no-store, must-revalidate' : 'public, max-age=3600'
+    });
+    return res.end(STATIC_IN_MEMORY[safePath]);
+  }
+
+  // 2. Fallback to filesystem stream if available
   const candidateFile = (fs.existsSync(filePath) && fs.statSync(filePath).isFile())
     ? filePath
     : (fs.existsSync(path.join(UI_DIR, 'index.html')) ? path.join(UI_DIR, 'index.html') : null);
@@ -2562,16 +2604,24 @@ async function handleRequest(req, res) {
     stream.on('error', (err) => {
       console.warn('[Static Stream Error]:', err?.message);
       if (!res.headersSent) {
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/"></head><body>Loading MovieBox Studio...</body></html>');
+        if (STATIC_IN_MEMORY['/index.html']) {
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          res.end(STATIC_IN_MEMORY['/index.html']);
+        } else {
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          res.end('<!DOCTYPE html><html><head><title>MovieBox Studio</title></head><body>Loading MovieBox Studio...</body></html>');
+        }
       }
     });
     stream.pipe(res);
   } else {
-    // If running in Vercel lambda and static file is on edge CDN, redirect or return shell
-    if (IS_VERCEL) {
-      res.writeHead(302, { Location: '/' });
-      return res.end();
+    // 3. Fallback for SPA routing: serve index.html with 200 OK
+    if (STATIC_IN_MEMORY['/index.html']) {
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=0, must-revalidate'
+      });
+      return res.end(STATIC_IN_MEMORY['/index.html']);
     }
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
@@ -2999,11 +3049,11 @@ function openBrowserUrl(url) {
 
 const server = http.createServer(handleRequest);
 
-module.exports = {
-  server,
-  handleRequest,
-  default: handleRequest
-};
+handleRequest.server = server;
+handleRequest.handleRequest = handleRequest;
+handleRequest.default = handleRequest;
+
+module.exports = handleRequest;
 
 if (require.main === module) {
   server.on('error', err => {
