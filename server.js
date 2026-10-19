@@ -828,13 +828,26 @@ async function handleRequest(req, res) {
   } else if (pathname === '/api/index.js' || pathname === '/api' || pathname.startsWith('/api/[')) {
     if (req.query && req.query.__api_path) {
       pathname = '/api/' + String(req.query.__api_path).replace(/^\/+/, '');
-    } else if (req.query && Array.isArray(req.query.slug)) {
-      pathname = '/api/' + req.query.slug.join('/');
+    } else if (req.query && (Array.isArray(req.query.path) || typeof req.query.path === 'string')) {
+      const p = Array.isArray(req.query.path) ? req.query.path.join('/') : req.query.path;
+      pathname = '/api/' + p.replace(/^\/+/, '');
+    } else if (req.query && (Array.isArray(req.query.slug) || typeof req.query.slug === 'string')) {
+      const s = Array.isArray(req.query.slug) ? req.query.slug.join('/') : req.query.slug;
+      pathname = '/api/' + s.replace(/^\/+/, '');
     } else if (forwardedUri) {
       try {
         pathname = new URL(forwardedUri, 'http://localhost').pathname;
       } catch {}
     }
+  }
+
+  // Handle direct serverless function invocation where Vercel may strip /api prefix
+  if (!pathname.startsWith('/api/') && [
+    '/home', '/search', '/state', '/subject', '/stream', '/feedback',
+    '/network-info', '/status', '/downloads', '/backup', '/restore',
+    '/gaiaflix', '/netmirror', '/vlc', '/direct-play', '/mb-proxy', '/mb-subtitle'
+  ].includes(pathname)) {
+    pathname = '/api' + pathname;
   }
 
   // Normalize duplicate slashes e.g. //api///moviebox/home -> /api/moviebox/home
@@ -847,7 +860,7 @@ async function handleRequest(req, res) {
   // A000. GET /robots.txt & GET /sitemap.xml — SEO Crawling & Indexing
   // --------------------------------------------------------------------------
   if (pathname === '/robots.txt' && req.method === 'GET') {
-    res.writeHead(200, {
+    safeSendHeaders(res, 200, {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=86400'
     });
@@ -855,7 +868,7 @@ async function handleRequest(req, res) {
   }
 
   if (pathname === '/sitemap.xml' && req.method === 'GET') {
-    res.writeHead(200, {
+    safeSendHeaders(res, 200, {
       'Content-Type': 'application/xml; charset=utf-8',
       'Cache-Control': 'public, max-age=86400'
     });
@@ -913,15 +926,15 @@ async function handleRequest(req, res) {
   // Legacy 301 Redirects (Item 10: 301 Redirects)
   // --------------------------------------------------------------------------
   if (pathname === '/gaiaflix' || pathname === '/gaiaflix/live') {
-    res.writeHead(301, { Location: '/#sports' });
+    safeSendHeaders(res, 301, { Location: '/#sports' });
     return res.end();
   }
   if (pathname === '/netmirror') {
-    res.writeHead(301, { Location: '/#bollywood' });
+    safeSendHeaders(res, 301, { Location: '/#bollywood' });
     return res.end();
   }
   if (pathname === '/watch') {
-    res.writeHead(301, { Location: '/#movies' });
+    safeSendHeaders(res, 301, { Location: '/#movies' });
     return res.end();
   }
 
@@ -1277,7 +1290,7 @@ async function handleRequest(req, res) {
   if ((pathname === '/api/gaiaflix/player' || pathname === '/gaiaflix/player') && req.method === 'GET') {
     const targetUrl = parsedUrl.searchParams.get('url') || parsedUrl.searchParams.get('stream') || parsedUrl.searchParams.get('target') || parsedUrl.searchParams.get('streamUrl') || '';
     if (!targetUrl || !/^https?:\/\//i.test(targetUrl)) {
-      res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+      safeSendHeaders(res, 400, { 'Content-Type': 'text/plain; charset=utf-8' });
       return res.end('Invalid or missing stream URL');
     }
     const cleanEmbed = decodeGaiaStreamUrl(targetUrl);
@@ -1327,7 +1340,7 @@ async function handleRequest(req, res) {
   <iframe src="${cleanEmbed.replace(/"/g, '&quot;')}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-downloads"></iframe>
 </body>
 </html>`;
-    res.writeHead(200, {
+    safeSendHeaders(res, 200, {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-cache',
       'Access-Control-Allow-Origin': '*'
@@ -1491,7 +1504,7 @@ async function handleRequest(req, res) {
   // --------------------------------------------------------------------------
   // B. GET /api/moviebox/home — LIVE MovieBox Homepage (Banners + All Rows!)
   // --------------------------------------------------------------------------
-  if (pathname === '/api/moviebox/home' && req.method === 'GET') {
+  if ((pathname === '/api/moviebox/home' || pathname === '/api/home' || pathname === '/home' || pathname === '/moviebox/home') && req.method === 'GET') {
     try {
       if (homeCache.data && Date.now() < homeCache.expiresAt && !parsedUrl.searchParams.get('refresh')) {
         return sendJson(res, 200, homeCache.data);
@@ -1692,7 +1705,7 @@ async function handleRequest(req, res) {
   // --------------------------------------------------------------------------
   // D. GET /api/moviebox/details?subjectId=... — Full Details, Dubs & Seasons
   // --------------------------------------------------------------------------
-  if (pathname === '/api/moviebox/details' && req.method === 'GET') {
+  if ((pathname === '/api/moviebox/details' || pathname === '/api/details' || pathname === '/details' || pathname === '/api/subject' || pathname === '/subject' || pathname === '/moviebox/details') && req.method === 'GET') {
     const subjectId = parsedUrl.searchParams.get('subjectId');
     if (!subjectId) return sendJson(res, 400, { ok: false, error: 'Missing subjectId' });
 
@@ -1829,7 +1842,7 @@ async function handleRequest(req, res) {
   // --------------------------------------------------------------------------
   // E. GET /api/moviebox/streams?subjectId=...&se=0&ep=0 — Resolve Real Streams!
   // --------------------------------------------------------------------------
-  if (pathname === '/api/moviebox/streams' && req.method === 'GET') {
+  if ((pathname === '/api/moviebox/streams' || pathname === '/api/streams' || pathname === '/streams' || pathname === '/api/stream' || pathname === '/stream' || pathname === '/moviebox/streams') && req.method === 'GET') {
     const subjectId = parsedUrl.searchParams.get('subjectId');
     let se = Number(parsedUrl.searchParams.get('se') || 0);
     let ep = Number(parsedUrl.searchParams.get('ep') || 0);
@@ -2223,7 +2236,7 @@ async function handleRequest(req, res) {
     const session = decodeStreamKey(streamKey);
 
     if (!session) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
+      safeSendHeaders(res, 404, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ ok: false, error: 'DASH session expired or not found' }));
     }
 
@@ -2244,7 +2257,7 @@ async function handleRequest(req, res) {
       });
 
       if (!upstreamRes.ok && upstreamRes.status !== 206) {
-        if (!res.headersSent) res.writeHead(upstreamRes.status);
+        if (!res.headersSent) safeSendHeaders(res, upstreamRes.status);
         return res.end(`Upstream error ${upstreamRes.status}`);
       }
 
@@ -2263,7 +2276,7 @@ async function handleRequest(req, res) {
         });
         mpdXml = mpdXml.replace(/codecs="hev1"/g, 'codecs="hev1.1.6.L120.90"');
         if (!res.headersSent) {
-          res.writeHead(200, {
+          safeSendHeaders(res, 200, {
             'Content-Type': 'application/dash+xml; charset=utf-8',
             'Access-Control-Allow-Origin': '*',
             'Cache-Control': 'no-cache'
@@ -2282,7 +2295,7 @@ async function handleRequest(req, res) {
       if (contentLen) responseHeaders['Content-Length'] = contentLen;
       if (contentRange) responseHeaders['Content-Range'] = contentRange;
 
-      res.writeHead(upstreamRes.status, responseHeaders);
+      safeSendHeaders(res, upstreamRes.status, responseHeaders);
       if (upstreamRes.body) {
         const reader = upstreamRes.body.getReader();
         req.once('close', () => {
@@ -2303,7 +2316,7 @@ async function handleRequest(req, res) {
       return;
     } catch (err) {
       if (!res.headersSent) {
-        res.writeHead(502);
+        safeSendHeaders(res, 502);
         return res.end(`DASH proxy error: ${err.message}`);
       }
       if (!res.writableEnded) res.end();
@@ -2318,7 +2331,7 @@ async function handleRequest(req, res) {
     const targetUrl = parsedUrl.searchParams.get('url');
     const cookie = parsedUrl.searchParams.get('cookie') || '';
     if (!targetUrl) {
-      res.writeHead(400);
+      safeSendHeaders(res, 400);
       return res.end('Missing url');
     }
 
@@ -2342,7 +2355,7 @@ async function handleRequest(req, res) {
       if (upstream.headers.get('content-range')) {
         resHeaders['Content-Range'] = upstream.headers.get('content-range');
       }
-      res.writeHead(upstream.status, resHeaders);
+      safeSendHeaders(res, upstream.status, resHeaders);
       if (upstream.body) {
         const reader = upstream.body.getReader();
         const pump = async () => {
@@ -2361,7 +2374,7 @@ async function handleRequest(req, res) {
       }
     } catch (err) {
       if (!res.headersSent) {
-        res.writeHead(502);
+        safeSendHeaders(res, 502);
         res.end(err.message);
       } else if (!res.writableEnded) {
         res.end();
@@ -2376,7 +2389,7 @@ async function handleRequest(req, res) {
   if (pathname === '/api/mb-subtitle' && req.method === 'GET') {
     const subUrl = parsedUrl.searchParams.get('url');
     if (!subUrl) {
-      res.writeHead(400);
+      safeSendHeaders(res, 400);
       return res.end('Missing subtitle url');
     }
     try {
@@ -2386,13 +2399,13 @@ async function handleRequest(req, res) {
       });
       const srtText = await subRes.text();
       const vttText = srtToVtt(srtText);
-      res.writeHead(200, {
+      safeSendHeaders(res, 200, {
         'Content-Type': 'text/vtt; charset=utf-8',
         'Access-Control-Allow-Origin': '*'
       });
       return res.end(vttText);
     } catch (err) {
-      res.writeHead(502);
+      safeSendHeaders(res, 502);
       return res.end(`WEBVTT\n\n`);
     }
   }
@@ -2403,13 +2416,13 @@ async function handleRequest(req, res) {
   if (pathname === '/api/local-stream' && req.method === 'GET') {
     const filePath = parsedUrl.searchParams.get('path');
     if (!filePath || !fs.existsSync(filePath)) {
-      res.writeHead(404);
+      safeSendHeaders(res, 404);
       return res.end('File not found');
     }
 
     const resolved = path.resolve(filePath);
     if (!resolved.toLowerCase().startsWith(HOME_THEATER_DIR.toLowerCase())) {
-      res.writeHead(403);
+      safeSendHeaders(res, 403);
       return res.end('Access denied');
     }
 
@@ -2425,7 +2438,7 @@ async function handleRequest(req, res) {
       const end = parts[1] ? parseInt(parts[1], 10) : Math.min(start + 10 * 1024 * 1024, fileSize - 1);
       const chunksize = (end - start) + 1;
       const file = fs.createReadStream(resolved, { start, end });
-      res.writeHead(206, {
+      safeSendHeaders(res, 206, {
         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
         'Accept-Ranges': 'bytes',
         'Content-Length': chunksize,
@@ -2433,7 +2446,7 @@ async function handleRequest(req, res) {
       });
       file.pipe(res);
     } else {
-      res.writeHead(200, {
+      safeSendHeaders(res, 200, {
         'Content-Length': fileSize,
         'Content-Type': contentType,
         'Accept-Ranges': 'bytes'

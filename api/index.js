@@ -1,4 +1,4 @@
-const { handleRequest } = require('../server.js');
+const requestHandler = require('../server.js');
 
 module.exports = async (req, res) => {
   // Polyfill writeHead and status for serverless compatibility
@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    return await handleRequest(req, res);
+    return await requestHandler(req, res);
   } catch (err) {
     console.error('[MovieBox Vercel Serverless Error]:', err?.message || err);
     if (!res.headersSent) {
