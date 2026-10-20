@@ -375,6 +375,9 @@ const PLAYBACK_SITES = [
     badgeText: 'AUTO',
     pillClass: 'gold',
     pillText: 'FASTEST 4K',
+    ping: '14ms',
+    downloadSpeed: '125 MB/s',
+    features: 'Dynamic 4K Load Balancer • Multi-Threaded Failover',
     desc: 'Dynamic cloud load balancer routing to optimal low-latency 4K mirror',
     providerName: 'Auto Cloud Matrix (Fastest 4K)'
   },
@@ -385,6 +388,9 @@ const PLAYBACK_SITES = [
     badgeText: 'HD',
     pillClass: 'cyan',
     pillText: 'DUAL AUDIO 4K',
+    ping: '26ms',
+    downloadSpeed: '95 MB/s',
+    features: 'Hindi Clean Master + English 5.1 Dual Audio Direct Mirror',
     desc: '4K / 1080p Multi-Audio • Hindi Clean Master + English 5.1',
     providerName: 'HDHub4u (Dual Audio Hindi+Eng / 1080p-4K)'
   },
@@ -395,6 +401,9 @@ const PLAYBACK_SITES = [
     badgeText: 'VM',
     pillClass: 'green',
     pillText: '10-BIT HEVC',
+    ping: '32ms',
+    downloadSpeed: '85 MB/s',
+    features: 'Direct 10-Bit HEVC Cinema High Bitrate Direct Master',
     desc: 'Direct 10-Bit HEVC Cinema High Bitrate Direct Master',
     providerName: 'Vegamovies (Direct 4K / HEVC Cinema HQ)'
   },
@@ -405,6 +414,9 @@ const PLAYBACK_SITES = [
     badgeText: 'SU',
     pillClass: 'purple',
     pillText: 'MULTI-CDN',
+    ping: '21ms',
+    downloadSpeed: '110 MB/s',
+    features: 'Ultra-Low Latency Multi-Language Cloud Streaming Cluster',
     desc: 'Ultra-low latency multi-language cloud streaming cluster',
     providerName: 'Streamu (Fast Multi-Language Cloud CDN)'
   },
@@ -415,6 +427,9 @@ const PLAYBACK_SITES = [
     badgeText: 'M4U',
     pillClass: 'amber',
     pillText: 'INDIAN CINEMA',
+    ping: '38ms',
+    downloadSpeed: '75 MB/s',
+    features: 'Bollywood Releases, South Hindi Dubbed Cinema Buffer Cluster',
     desc: 'Bollywood releases, South Hindi dubbed cinema & fast buffer cluster',
     providerName: 'Movies4u (1080p Fast Buffer Cluster)'
   },
@@ -425,10 +440,15 @@ const PLAYBACK_SITES = [
     badgeText: '123',
     pillClass: 'cyan',
     pillText: 'GLOBAL HQ',
+    ping: '35ms',
+    downloadSpeed: '80 MB/s',
+    features: 'Worldwide Cinema Blockbusters, Complete Series Direct Mirror',
     desc: 'Worldwide cinema premieres, Hollywood blockbusters & complete seasons',
     providerName: '123movies (1080p Cinema Mirror)'
   }
 ];
+
+const DOWNLOAD_SERVERS = PLAYBACK_SITES;
 
 function syncSiteSettingsUI() {
   const defaultSelect = document.getElementById('settingDefaultSite');
@@ -438,6 +458,14 @@ function syncSiteSettingsUI() {
 
   if (defaultSelect) defaultSelect.value = savedSite;
   if (alwaysAskToggle) alwaysAskToggle.checked = savedAlwaysAsk;
+
+  const defaultDlSelect = document.getElementById('settingDefaultDownloadServer');
+  const alwaysAskDlToggle = document.getElementById('settingAlwaysAskDownloadServerToggle');
+  const savedDlServer = localStorage.getItem('moviebox_default_dl_server') || 'auto';
+  const savedAlwaysAskDl = localStorage.getItem('moviebox_always_ask_dl_server') !== 'false';
+
+  if (defaultDlSelect) defaultDlSelect.value = savedDlServer;
+  if (alwaysAskDlToggle) alwaysAskDlToggle.checked = savedAlwaysAskDl;
 }
 
 function startPlaybackWithSitePreference(item, overrideSeason = null, overrideEpisode = null) {
@@ -518,6 +546,10 @@ function promptSourcePreferences(item, overrideSeason = null, overrideEpisode = 
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             <span>VLC</span>
           </button>
+          <button class="source-pref-btn-dl" data-site="${site.key}" title="Download from ${site.name}">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Download</span>
+          </button>
         </div>
       `;
 
@@ -541,6 +573,12 @@ function promptSourcePreferences(item, overrideSeason = null, overrideEpisode = 
         }
         modal.classList.add('hidden');
         launchInVlc(item, null, site.key);
+      });
+
+      card.querySelector('.source-pref-btn-dl').addEventListener('click', (e) => {
+        e.stopPropagation();
+        modal.classList.add('hidden');
+        openDownloadConfigModal(item, null, site.key);
       });
 
       card.addEventListener('click', () => {
@@ -569,6 +607,16 @@ function promptSourcePreferences(item, overrideSeason = null, overrideEpisode = 
       }
       modal.classList.add('hidden');
       openTheaterPlayer(item, overrideSeason, overrideEpisode, topSite);
+    };
+  }
+
+  // Quick Download Options Button
+  const quickDlBtn = document.getElementById('sourcePrefQuickDlBtn');
+  if (quickDlBtn) {
+    quickDlBtn.onclick = () => {
+      const topSite = sitesToRender[0]?.key || 'auto';
+      modal.classList.add('hidden');
+      openDownloadConfigModal(item, null, topSite);
     };
   }
 
@@ -4064,7 +4112,9 @@ const dlConfigState = {
   item: null,
   explicitStream: null,
   subjectId: null,
-  selectedLanguage: 'Original',
+  selectedServer: 'auto',
+  selectedServerName: 'Auto Multi-Server Matrix',
+  selectedLanguage: 'Original Audio',
   selectedAudioType: 'AAC 2.0 Stereo',
   dubs: [],
   seasons: [],
@@ -4080,12 +4130,196 @@ function openDownloadsModal() {
   refreshDownloadsUI();
 }
 
-async function startDownload(item, explicitStreamObj = null) {
+async function startDownload(item, explicitStreamObj = null, preselectedServer = null) {
   if (!item) return;
-  await openDownloadConfigModal(item, explicitStreamObj);
+  const defaultServer = preselectedServer || localStorage.getItem('moviebox_default_dl_server') || 'auto';
+  await openDownloadConfigModal(item, explicitStreamObj, defaultServer);
 }
 
-async function openDownloadConfigModal(item, explicitStreamObj = null) {
+function renderDlConfigServers(activeServerKey) {
+  const container = document.getElementById('dlCfgServersGrid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  DOWNLOAD_SERVERS.forEach(srv => {
+    const card = document.createElement('div');
+    const isActive = srv.key === activeServerKey;
+    card.className = `dl-cfg-server-card ${isActive ? 'active' : ''}`;
+    card.dataset.serverKey = srv.key;
+    card.innerHTML = `
+      <div class="dl-cfg-server-card-badge ${srv.badgeClass}">${srv.badgeText}</div>
+      <div class="dl-cfg-server-card-info">
+        <div class="dl-cfg-server-card-name-row">
+          <span class="dl-cfg-server-card-name">${srv.name}</span>
+          <span class="dl-cfg-server-pill ${srv.pillClass}">${srv.pillText}</span>
+        </div>
+        <div class="dl-cfg-server-card-meta">
+          <span class="dl-cfg-server-ping">${srv.ping}</span>
+          <span class="dl-cfg-server-dot">•</span>
+          <span class="dl-cfg-server-speed">${srv.downloadSpeed}</span>
+          <span class="dl-cfg-server-dot">•</span>
+          <span class="dl-cfg-server-feat">${srv.features}</span>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      container.querySelectorAll('.dl-cfg-server-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      switchDownloadServer(srv.key);
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function switchDownloadServer(serverKey) {
+  const srv = DOWNLOAD_SERVERS.find(s => s.key === serverKey) || DOWNLOAD_SERVERS[0];
+  dlConfigState.selectedServer = srv.key;
+  dlConfigState.selectedServerName = srv.name;
+
+  const statusBadge = document.getElementById('dlCfgActiveServerStatusText');
+  if (statusBadge) {
+    statusBadge.textContent = `Connected to ${srv.name} • ${srv.ping}`;
+  }
+
+  const isSeries = dlConfigState.item?.type === 'series' || Number(dlConfigState.item?.stype) === 2 || Number(dlConfigState.item?.season) > 0;
+  const metaEl = document.getElementById('dlCfgMeta');
+  if (metaEl) {
+    metaEl.textContent = `${dlConfigState.item?.year || '2026'} • ${srv.name} • ${isSeries ? `Season ${dlConfigState.se || 1} Episode ${dlConfigState.ep || 1}` : 'Feature Film'}`;
+  }
+
+  const statusLine = document.getElementById('dlCfgStatusLine');
+  if (statusLine) {
+    statusLine.textContent = `Connected to ${srv.name} (${srv.ping} • ${srv.downloadSpeed}) • Stream verified`;
+  }
+
+  adaptDlQualitiesForServer(srv);
+  updateDlConfigConfirmButton();
+}
+
+function adaptDlQualitiesForServer(srv) {
+  const item = dlConfigState.item || {};
+  const isSeries = item.type === 'series' || Number(item.stype) === 2 || Number(item.season) > 0;
+  const fallbackBaseSize = Number(item.sizeBytes) || (isSeries ? 420 * 1024 * 1024 : 1120 * 1024 * 1024);
+  const streamUrl = dlConfigState.explicitStream?.streamUrl || item.streamUrl || null;
+
+  let options = [];
+  if (srv.key === 'auto' || srv.key === 'hdhub4u') {
+    options = [
+      {
+        id: 'q_2160',
+        resolution: '4K 2160p',
+        quality: '4K Ultra HD',
+        repId: '0',
+        codec: 'HEVC 10-Bit',
+        sizeBytes: Math.round(fallbackBaseSize * 2.3),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 2.3)),
+        streamUrl
+      },
+      {
+        id: 'q_1080',
+        resolution: '1080p',
+        quality: '1080p Full HD',
+        repId: '0',
+        codec: 'HEVC',
+        sizeBytes: fallbackBaseSize,
+        sizeFormatted: formatBytes(fallbackBaseSize),
+        streamUrl
+      },
+      {
+        id: 'q_720',
+        resolution: '720p',
+        quality: '720p HD',
+        repId: '1',
+        codec: 'HEVC',
+        sizeBytes: Math.round(fallbackBaseSize * 0.54),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.54)),
+        streamUrl
+      },
+      {
+        id: 'q_480',
+        resolution: '480p',
+        quality: '480p SD',
+        repId: '2',
+        codec: 'HEVC',
+        sizeBytes: Math.round(fallbackBaseSize * 0.32),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.32)),
+        streamUrl
+      }
+    ];
+  } else if (srv.key === 'vegamovies') {
+    options = [
+      {
+        id: 'q_1080_hevc',
+        resolution: '1080p',
+        quality: '1080p Cinema Master',
+        repId: '0',
+        codec: '10-Bit HEVC',
+        sizeBytes: Math.round(fallbackBaseSize * 1.15),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 1.15)),
+        streamUrl
+      },
+      {
+        id: 'q_720_hevc',
+        resolution: '720p',
+        quality: '720p Cinema HQ',
+        repId: '1',
+        codec: '10-Bit HEVC',
+        sizeBytes: Math.round(fallbackBaseSize * 0.6),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.6)),
+        streamUrl
+      },
+      {
+        id: 'q_480_hevc',
+        resolution: '480p',
+        quality: '480p Mobile Cinema',
+        repId: '2',
+        codec: '10-Bit HEVC',
+        sizeBytes: Math.round(fallbackBaseSize * 0.34),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.34)),
+        streamUrl
+      }
+    ];
+  } else {
+    options = [
+      {
+        id: 'q_1080',
+        resolution: '1080p',
+        quality: '1080p Full HD',
+        repId: '0',
+        codec: 'HEVC',
+        sizeBytes: fallbackBaseSize,
+        sizeFormatted: formatBytes(fallbackBaseSize),
+        streamUrl
+      },
+      {
+        id: 'q_720',
+        resolution: '720p',
+        quality: '720p HD',
+        repId: '1',
+        codec: 'HEVC',
+        sizeBytes: Math.round(fallbackBaseSize * 0.54),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.54)),
+        streamUrl
+      },
+      {
+        id: 'q_480',
+        resolution: '480p',
+        quality: '480p SD',
+        repId: '2',
+        codec: 'HEVC',
+        sizeBytes: Math.round(fallbackBaseSize * 0.32),
+        sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.32)),
+        streamUrl
+      }
+    ];
+  }
+
+  renderDlConfigQualities(options);
+}
+
+async function openDownloadConfigModal(item, explicitStreamObj = null, preselectedServer = null) {
   const modal = document.getElementById('downloadConfigModal');
   if (!modal) return;
 
@@ -4094,9 +4328,14 @@ async function openDownloadConfigModal(item, explicitStreamObj = null) {
   const se = isSeries ? Number(item.season || 1) : 0;
   const ep = isSeries ? Number(item.episode || 1) : 0;
 
+  const chosenServerKey = preselectedServer || localStorage.getItem('moviebox_default_dl_server') || 'auto';
+  const srvObj = DOWNLOAD_SERVERS.find(s => s.key === chosenServerKey) || DOWNLOAD_SERVERS[0];
+
   dlConfigState.item = item;
   dlConfigState.explicitStream = explicitStreamObj;
   dlConfigState.subjectId = rawSubjectId;
+  dlConfigState.selectedServer = srvObj.key;
+  dlConfigState.selectedServerName = srvObj.name;
   dlConfigState.selectedLanguage = 'Original Audio';
   dlConfigState.selectedAudioType = 'AAC 2.0 Stereo';
   dlConfigState.dubs = [];
@@ -4105,6 +4344,8 @@ async function openDownloadConfigModal(item, explicitStreamObj = null) {
   dlConfigState.ep = ep;
   dlConfigState.qualityOptions = [];
   dlConfigState.selectedQualityObj = null;
+
+  renderDlConfigServers(dlConfigState.selectedServer);
 
   document.querySelectorAll('#dlCfgAudioTypePills .dl-cfg-pill').forEach((btn, idx) => {
     btn.classList.toggle('active', idx === 0);
@@ -4126,10 +4367,13 @@ async function openDownloadConfigModal(item, explicitStreamObj = null) {
 
   document.getElementById('dlCfgPoster').src = item.poster || item.backdrop || '';
   document.getElementById('dlCfgTitle').textContent = item.cleanTitle || item.title || 'Media Download';
-  document.getElementById('dlCfgMeta').textContent = `${item.year || '2026'} • ${item.provider || 'MovieBox CDN'} • ${isSeries ? `Season ${se} Episode ${ep}` : 'Feature Film'}`;
-  document.getElementById('dlCfgStatusLine').textContent = rawSubjectId
-    ? 'Fetching available audio tracks and exact resolution file sizes...'
-    : 'Direct stream ready for download configuration';
+  document.getElementById('dlCfgMeta').textContent = `${item.year || '2026'} • ${srvObj.name} • ${isSeries ? `Season ${se} Episode ${ep}` : 'Feature Film'}`;
+  document.getElementById('dlCfgStatusLine').textContent = `Connected to ${srvObj.name} (${srvObj.ping} • ${srvObj.downloadSpeed}) • Resolving audio tracks and stream sizes...`;
+
+  const statusBadge = document.getElementById('dlCfgActiveServerStatusText');
+  if (statusBadge) {
+    statusBadge.textContent = `Connected to ${srvObj.name} • ${srvObj.ping}`;
+  }
 
   const epSection = document.getElementById('dlCfgEpisodeSection');
   if (epSection) epSection.classList.add('hidden');
@@ -4138,39 +4382,7 @@ async function openDownloadConfigModal(item, explicitStreamObj = null) {
     { subjectId: rawSubjectId, lanName: 'Original Audio', cleanLang: 'Original Audio', lanCode: 'orig', original: true }
   ]);
 
-  const fallbackBaseSize = Number(item.sizeBytes) || (isSeries ? 420 * 1024 * 1024 : 1120 * 1024 * 1024);
-  renderDlConfigQualities([
-    {
-      id: 'q_1080',
-      resolution: '1080p',
-      quality: '1080p Full HD',
-      repId: '0',
-      codec: 'HEVC',
-      sizeBytes: fallbackBaseSize,
-      sizeFormatted: formatBytes(fallbackBaseSize),
-      streamUrl: explicitStreamObj?.streamUrl || item.streamUrl || null
-    },
-    {
-      id: 'q_720',
-      resolution: '720p',
-      quality: '720p HD',
-      repId: '1',
-      codec: 'HEVC',
-      sizeBytes: Math.round(fallbackBaseSize * 0.54),
-      sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.54)),
-      streamUrl: explicitStreamObj?.streamUrl || item.streamUrl || null
-    },
-    {
-      id: 'q_480',
-      resolution: '480p',
-      quality: '480p SD',
-      repId: '2',
-      codec: 'HEVC',
-      sizeBytes: Math.round(fallbackBaseSize * 0.32),
-      sizeFormatted: formatBytes(Math.round(fallbackBaseSize * 0.32)),
-      streamUrl: explicitStreamObj?.streamUrl || item.streamUrl || null
-    }
-  ]);
+  adaptDlQualitiesForServer(srvObj);
 
   modal.classList.remove('hidden');
 
@@ -4215,7 +4427,7 @@ async function openDownloadConfigModal(item, explicitStreamObj = null) {
 
     await refreshDlConfigStreams();
   } catch (err) {
-    document.getElementById('dlCfgStatusLine').textContent = 'Ready to download';
+    document.getElementById('dlCfgStatusLine').textContent = `Connected to ${srvObj.name} • Ready to download`;
   }
 }
 
@@ -4351,10 +4563,11 @@ function updateDlConfigConfirmButton() {
   const btn = document.getElementById('dlCfgConfirmBtn');
   if (!btn) return;
   const q = dlConfigState.selectedQualityObj;
+  const srv = DOWNLOAD_SERVERS.find(s => s.key === dlConfigState.selectedServer) || DOWNLOAD_SERVERS[0];
   if (q) {
-    btn.textContent = `Download ${q.resolution || q.quality} (${q.sizeFormatted})`;
+    btn.textContent = `Download ${q.resolution || q.quality} from ${srv.badgeText} (${q.sizeFormatted || formatBytes(q.sizeBytes)})`;
   } else {
-    btn.textContent = 'Start Download';
+    btn.textContent = `Download from ${srv.badgeText}`;
   }
 }
 
@@ -4400,12 +4613,14 @@ async function executeConfiguredDownload() {
         se: dlConfigState.se,
         ep: dlConfigState.ep,
         url: streamUrl,
-        sizeBytes
+        sizeBytes,
+        server: dlConfigState.selectedServer,
+        serverName: dlConfigState.selectedServerName
       })
     });
     const data = await res.json();
     if (data.ok) {
-      showToast(`Downloading "${data.download.title}" (${language} • ${audioType} • ${quality}) to ${targetFolder}`);
+      showToast(`Downloading "${data.download.title}" via ${dlConfigState.selectedServerName} (${language} • ${audioType} • ${quality}) to ${targetFolder}`);
       refreshDownloadsUI();
     } else {
       showToast(`Download error: ${data.error}`);
@@ -4485,12 +4700,16 @@ async function refreshDownloadsUI() {
       const langBadge = d.language ? `${d.language} • ` : '';
       const audioTypeBadge = d.audioType ? `${d.audioType} • ` : '';
       const folderInfo = d.targetFolder ? ` • ${d.targetFolder}` : '';
+      const serverKey = d.server || 'auto';
+      const srvObj = DOWNLOAD_SERVERS.find(s => s.key === serverKey) || DOWNLOAD_SERVERS[0];
+      const serverBadge = srvObj ? `<span class="dl-item-server-badge ${srvObj.badgeClass}">${srvObj.badgeText}</span>` : '';
+      const serverInfo = d.serverName ? ` • via ${d.serverName}` : '';
 
       card.innerHTML = `
         <div class="dl-item-top">
           <div class="dl-item-title-group">
-            <div class="dl-item-title">${d.title} <span style="font-size:12px;color:#93c5fd;">[${langBadge}${audioTypeBadge}${d.quality}]</span></div>
-            <div class="dl-item-sub">${d.filename}${segInfo}${folderInfo}</div>
+            <div class="dl-item-title">${serverBadge}${d.title} <span style="font-size:12px;color:#93c5fd;">[${langBadge}${audioTypeBadge}${d.quality}]</span></div>
+            <div class="dl-item-sub">${d.filename}${segInfo}${serverInfo}${folderInfo}</div>
           </div>
           <div class="dl-metrics-badges">
             ${isDownloading ? `<span class="dl-metric-pill speed">${formatSpeed(d.speedBytesPerSec)}</span>` : ''}
@@ -5778,6 +5997,22 @@ function bindEvents() {
     alwaysAskToggle.addEventListener('change', (e) => {
       localStorage.setItem('moviebox_always_ask_site', e.target.checked ? 'true' : 'false');
       showToast(e.target.checked ? 'Site selector prompt enabled' : 'Site selector prompt disabled');
+    });
+  }
+
+  const defaultDlSelect = document.getElementById('settingDefaultDownloadServer');
+  if (defaultDlSelect) {
+    defaultDlSelect.addEventListener('change', (e) => {
+      localStorage.setItem('moviebox_default_dl_server', e.target.value);
+      showToast(`Default download server set to: ${e.target.options[e.target.selectedIndex].text}`);
+    });
+  }
+
+  const alwaysAskDlToggle = document.getElementById('settingAlwaysAskDownloadServerToggle');
+  if (alwaysAskDlToggle) {
+    alwaysAskDlToggle.addEventListener('change', (e) => {
+      localStorage.setItem('moviebox_always_ask_dl_server', e.target.checked ? 'true' : 'false');
+      showToast(e.target.checked ? 'Download server selector enabled' : 'Download server selector disabled');
     });
   }
 

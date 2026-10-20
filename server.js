@@ -3024,6 +3024,8 @@ function serializeDownloadJob(job) {
     targetFolder: job.targetFolder || DOWNLOADS_DIR,
     filename: job.filename,
     savePath: job.savePath,
+    server: job.server || 'auto',
+    serverName: job.serverName || 'Auto Multi-Server Matrix',
     streamUrl: `/api/local-stream?path=${encodeURIComponent(job.savePath)}`,
     mode: job.mode,
     status: job.status,
@@ -3058,6 +3060,8 @@ async function createAndStartDownloadJob(params) {
   const quality = params.quality || '1080p Full HD';
   const language = (params.language && String(params.language).trim()) || '';
   const audioType = (params.audioType && String(params.audioType).trim()) || 'AAC 2.0 Stereo';
+  const server = (params.server && String(params.server).trim()) || 'auto';
+  const serverName = (params.serverName && String(params.serverName).trim()) || 'Auto Multi-Server Matrix';
   const repId = params.repId !== undefined && params.repId !== null ? String(params.repId) : '0';
   const se = Number(params.se || 0);
   const ep = Number(params.ep || 0);
@@ -3076,6 +3080,8 @@ async function createAndStartDownloadJob(params) {
     quality,
     language: language || 'Original',
     audioType,
+    server,
+    serverName,
     repId,
     targetFolder,
     filename,

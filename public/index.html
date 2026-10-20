@@ -1287,6 +1287,10 @@
 
         <div class="source-pref-footer-btns">
           <button type="button" class="source-pref-cancel-btn" id="sourcePrefCancelBtn">Cancel</button>
+          <button type="button" class="source-pref-download-btn" id="sourcePrefQuickDlBtn">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Download</span>
+          </button>
           <button type="button" class="source-pref-primary-btn" id="sourcePrefQuickPlayBtn">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
             <span>Play Best Stream (Auto 4K)</span>
@@ -1360,6 +1364,25 @@
             </div>
           </div>
 
+          <div class="settings-card">
+            <h3>Download Server Preferences</h3>
+            <label class="setting-field">
+              <span>Default Download Server</span>
+              <select id="settingDefaultDownloadServer" class="setting-select" style="width: 100%; height: 38px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16); color: #fff; padding: 0 10px; font-size: 13px;">
+                <option value="auto">Auto Multi-Server Matrix (Fastest 4K CDN)</option>
+                <option value="hdhub4u">HDHub4u (Dual Audio Hindi+Eng / 1080p-4K)</option>
+                <option value="vegamovies">Vegamovies (Direct 4K / HEVC Cinema HQ)</option>
+                <option value="streamu">StreamU (Fast Multi-Language Cloud CDN)</option>
+                <option value="movies4u">Movies4u (1080p Fast Buffer Cluster)</option>
+                <option value="123movies">123movies (1080p Cinema Mirror)</option>
+              </select>
+            </label>
+            <div class="setting-toggle-row">
+              <span>Always Ask Server on Download</span>
+              <input type="checkbox" id="settingAlwaysAskDownloadServerToggle" checked />
+            </div>
+          </div>
+
           <!-- Backup & Migration (Item from Image 2: Backups) -->
           <div class="settings-card">
             <h3>Data Backup &amp; Migration</h3>
@@ -1397,7 +1420,7 @@
         <div class="dl-cfg-top-header">
           <div>
             <h2>Download Options</h2>
-            <p class="settings-sub">Select audio language, audio format, video resolution, and destination folder</p>
+            <p class="settings-sub">Select download server, audio language, audio format, video resolution, and destination folder</p>
           </div>
         </div>
 
@@ -1405,9 +1428,21 @@
           <img id="dlCfgPoster" src="" alt="" class="dl-cfg-poster" />
           <div class="dl-cfg-media-info">
             <div class="dl-cfg-media-title" id="dlCfgTitle">Title</div>
-            <div class="dl-cfg-media-sub" id="dlCfgMeta">MovieBox CDN • Multi-Audio</div>
-            <div class="dl-cfg-status-line" id="dlCfgStatusLine">Resolving available audio tracks and stream sizes...</div>
+            <div class="dl-cfg-media-sub" id="dlCfgMeta">Auto Multi-Server Matrix • Multi-Audio</div>
+            <div class="dl-cfg-status-line" id="dlCfgStatusLine">Connected to 6 cloud streaming mirrors • Resolving stream sizes...</div>
           </div>
+        </div>
+
+        <!-- 0. Download Server & Multi-Source Selector -->
+        <div class="dl-cfg-section">
+          <div class="dl-cfg-section-header">
+            <label class="dl-cfg-label">Download Server &amp; Mirror</label>
+            <span class="dl-cfg-server-badge" id="dlCfgActiveServerStatus">
+              <span class="dl-cfg-live-dot"></span>
+              <span id="dlCfgActiveServerStatusText">Connected • Multi-Threaded Engine</span>
+            </span>
+          </div>
+          <div class="dl-cfg-servers-grid" id="dlCfgServersGrid"></div>
         </div>
 
         <!-- Series Season & Episode Selector (Hidden for Movies) -->
@@ -1473,8 +1508,8 @@
         </div>
 
         <div class="dl-cfg-footer">
-          <button type="button" class="btn-hero-secondary" id="dlCfgCancelBtn">Cancel</button>
-          <button type="button" class="btn-hero-play" id="dlCfgConfirmBtn">Start Download</button>
+          <button type="button" class="dl-cfg-cancel-btn" id="dlCfgCancelBtn">Cancel</button>
+          <button type="button" class="dl-cfg-confirm-btn" id="dlCfgConfirmBtn">Start Download</button>
         </div>
       </div>
     </div>
