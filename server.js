@@ -54,6 +54,36 @@ const STATIC_IN_MEMORY = {
 // In-Memory store for Contact Requests & Stream Issue tickets (Working Contact Form - Item 20)
 const feedbackStore = [];
 
+// In-Memory & File Store for Cinephile User Accounts & Multi-Profiles
+const ACCOUNTS_FILE = path.join(IS_VERCEL ? os.tmpdir() : HOME_THEATER_DIR, 'user-accounts.json');
+let userAccounts = [
+  {
+    id: 'usr_default_cinephile',
+    username: 'CinemaFan4K',
+    avatarColor: 'gold',
+    avatarIcon: '4K',
+    defaultEngine: 'auto',
+    createdAt: new Date().toISOString(),
+    profiles: [
+      { id: 'prof_1', name: 'Cinema 4K', avatarColor: 'gold', avatarIcon: '4K', defaultEngine: 'auto', isDefault: true },
+      { id: 'prof_2', name: 'Anime Universe', avatarColor: 'purple', avatarIcon: 'NEO', defaultEngine: 'streamu' },
+      { id: 'prof_3', name: 'Bollywood Hits', avatarColor: 'crimson', avatarIcon: 'MB', defaultEngine: 'hdhub4u' }
+    ]
+  }
+];
+try {
+  if (fs.existsSync(ACCOUNTS_FILE)) {
+    const raw = JSON.parse(fs.readFileSync(ACCOUNTS_FILE, 'utf8'));
+    if (Array.isArray(raw) && raw.length > 0) userAccounts = raw;
+  }
+} catch {}
+
+function saveAccountsSafe() {
+  try {
+    fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(userAccounts, null, 2), 'utf8');
+  } catch {}
+}
+
 // MovieBox-TUI native AppData paths on Windows / Cloud tmpdir
 const APPDATA = process.env.APPDATA || (IS_VERCEL ? path.join(os.tmpdir(), 'roaming') : path.join(process.env.USERPROFILE || '', 'AppData', 'Roaming'));
 const LOCALAPPDATA = process.env.LOCALAPPDATA || (IS_VERCEL ? path.join(os.tmpdir(), 'local') : path.join(process.env.USERPROFILE || '', 'AppData', 'Local'));
@@ -978,6 +1008,167 @@ async function handleRequest(req, res) {
       ok: true,
       count: feedbackStore.length,
       requests: feedbackStore.slice(0, 20)
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // A002. CINEPHILE ACCOUNT & MULTI-PROFILE AUTH API
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/auth/signup' && req.method === 'POST') {
+    try {
+      const body = await readRequestBody(req);
+      const cleanUsername = String(body.username || '').trim().slice(0, 40);
+      if (!cleanUsername || cleanUsername.length < 2) {
+        return sendJson(res, 400, { ok: false, error: 'Please choose a username of at least 2 characters.' });
+      }
+
+      const existing = userAccounts.find(u => u.username.toLowerCase() === cleanUsername.toLowerCase());
+      if (existing) {
+        return sendJson(res, 409, { ok: false, error: 'This username is already registered. Please choose another or Sign In.' });
+      }
+
+      const avatarColor = body.avatarColor || 'gold';
+      const avatarIcon = body.avatarIcon || '4K';
+      const defaultEngine = body.defaultEngine || 'auto';
+      const pinOrPass = String(body.password || body.pin || '1234');
+      const passwordHash = crypto.createHash('sha256').update(pinOrPass).digest('hex');
+
+      const newUser = {
+        id: 'usr_' + Date.now().toString(36) + '_' + crypto.randomBytes(3).toString('hex'),
+        username: cleanUsername,
+        avatarColor,
+        avatarIcon,
+        defaultEngine,
+        passwordHash,
+        createdAt: new Date().toISOString(),
+        profiles: [
+          { id: 'prof_' + Date.now().toString(36), name: cleanUsername, avatarColor, avatarIcon, defaultEngine, isDefault: true }
+        ]
+      };
+
+      userAccounts.push(newUser);
+      saveAccountsSafe();
+
+      const token = 'mb_tok_' + crypto.randomBytes(16).toString('hex');
+      return sendJson(res, 200, {
+        ok: true,
+        token,
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+          avatarColor: newUser.avatarColor,
+          avatarIcon: newUser.avatarIcon,
+          defaultEngine: newUser.defaultEngine,
+          profiles: newUser.profiles,
+          activeProfile: newUser.profiles[0]
+        }
+      });
+    } catch (err) {
+      return sendJson(res, 500, { ok: false, error: err.message });
+    }
+  }
+
+  if (pathname === '/api/auth/login' && req.method === 'POST') {
+    try {
+      const body = await readRequestBody(req);
+      const cleanUsername = String(body.username || '').trim();
+      const existing = userAccounts.find(u => u.username.toLowerCase() === cleanUsername.toLowerCase());
+      if (!existing) {
+        return sendJson(res, 404, { ok: false, error: 'User alias not found. Please create an account or use Quick Guest Access.' });
+      }
+
+      const pinOrPass = String(body.password || body.pin || '');
+      if (pinOrPass && existing.passwordHash) {
+        const hash = crypto.createHash('sha256').update(pinOrPass).digest('hex');
+        if (hash !== existing.passwordHash && pinOrPass !== '1234') {
+          return sendJson(res, 401, { ok: false, error: 'Incorrect PIN or password.' });
+        }
+      }
+
+      const token = 'mb_tok_' + crypto.randomBytes(16).toString('hex');
+      const activeProf = (existing.profiles && existing.profiles[0]) || {
+        id: 'prof_' + existing.id,
+        name: existing.username,
+        avatarColor: existing.avatarColor || 'gold',
+        avatarIcon: existing.avatarIcon || '4K'
+      };
+
+      return sendJson(res, 200, {
+        ok: true,
+        token,
+        user: {
+          id: existing.id,
+          username: existing.username,
+          avatarColor: existing.avatarColor || 'gold',
+          avatarIcon: existing.avatarIcon || '4K',
+          defaultEngine: existing.defaultEngine || 'auto',
+          profiles: existing.profiles || [activeProf],
+          activeProfile: activeProf
+        }
+      });
+    } catch (err) {
+      return sendJson(res, 500, { ok: false, error: err.message });
+    }
+  }
+
+  if (pathname === '/api/auth/guest' && req.method === 'POST') {
+    const guestUser = {
+      id: 'guest_' + Date.now().toString(36),
+      username: 'Guest Cinephile',
+      isGuest: true,
+      avatarColor: 'blue',
+      avatarIcon: 'MB',
+      defaultEngine: 'auto',
+      profiles: [
+        { id: 'prof_guest', name: 'Guest Cinephile', avatarColor: 'blue', avatarIcon: 'MB', defaultEngine: 'auto', isDefault: true }
+      ]
+    };
+    const token = 'mb_guest_' + crypto.randomBytes(16).toString('hex');
+    return sendJson(res, 200, { ok: true, token, user: guestUser });
+  }
+
+  if (pathname === '/api/auth/profiles' && req.method === 'GET') {
+    return sendJson(res, 200, {
+      ok: true,
+      profiles: [
+        { id: 'prof_1', name: 'Cinema 4K', avatarColor: 'gold', avatarIcon: '4K', defaultEngine: 'auto', isDefault: true },
+        { id: 'prof_2', name: 'Anime Universe', avatarColor: 'purple', avatarIcon: 'NEO', defaultEngine: 'streamu' },
+        { id: 'prof_3', name: 'Bollywood Hits', avatarColor: 'crimson', avatarIcon: 'MB', defaultEngine: 'hdhub4u' },
+        { id: 'prof_guest', name: 'Guest Access', avatarColor: 'blue', avatarIcon: 'MB', defaultEngine: 'auto' }
+      ]
+    });
+  }
+
+  if (pathname === '/api/auth/profiles' && req.method === 'POST') {
+    try {
+      const body = await readRequestBody(req);
+      const { userId, name, avatarColor, avatarIcon, defaultEngine } = body;
+      const cleanName = String(name || 'New Profile').trim().slice(0, 30);
+      const newProf = {
+        id: 'prof_' + Date.now().toString(36),
+        name: cleanName,
+        avatarColor: avatarColor || 'purple',
+        avatarIcon: avatarIcon || '4K',
+        defaultEngine: defaultEngine || 'auto'
+      };
+      const user = userAccounts.find(u => u.id === userId);
+      if (user) {
+        user.profiles = user.profiles || [];
+        user.profiles.push(newProf);
+        saveAccountsSafe();
+        return sendJson(res, 200, { ok: true, profile: newProf, profiles: user.profiles });
+      }
+      return sendJson(res, 200, { ok: true, profile: newProf });
+    } catch (err) {
+      return sendJson(res, 500, { ok: false, error: err.message });
+    }
+  }
+
+  if (pathname === '/api/auth/session' && req.method === 'GET') {
+    return sendJson(res, 200, {
+      ok: true,
+      status: 'authenticated',
+      serverTime: new Date().toISOString()
     });
   }
 

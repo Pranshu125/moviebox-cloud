@@ -267,9 +267,43 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
 
-        <button class="profile-avatar-btn" id="profileSpaceBtn" title="Watchlist">
-          <div class="avatar-ring">MB</div>
-        </button>
+        <div class="user-auth-wrap" id="userAuthWrap">
+          <button class="action-pill auth-pill" id="topAuthBtn" title="Sign In / Create Account">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="topAuthBtnText">Sign In</span>
+          </button>
+
+          <button class="profile-avatar-btn" id="profileSpaceBtn" title="Account &amp; Profiles">
+            <div class="avatar-ring gold" id="userAvatarRing">4K</div>
+          </button>
+
+          <!-- Floating Profile Dropdown -->
+          <div class="profile-dropdown-menu hidden" id="profileDropdownMenu">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar">
+                <div class="avatar-ring gold" id="dropdownAvatarRingInner">4K</div>
+              </div>
+              <div class="dropdown-user-info">
+                <strong id="dropdownUserName">CinemaFan4K</strong>
+                <span id="dropdownUserRole">Cinema 4K Member</span>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-section-title">Active Profiles</div>
+            <div class="dropdown-profiles-list" id="dropdownProfilesList">
+              <!-- Dynamically populated -->
+            </div>
+            <div class="dropdown-divider"></div>
+            <ul class="dropdown-nav-list">
+              <li><button type="button" class="dropdown-item" id="menuMyWatchlistBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>My Watchlist</span></button></li>
+              <li><button type="button" class="dropdown-item" id="menuContinueWatchingBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Continue Watching</span></button></li>
+              <li><button type="button" class="dropdown-item" id="menuSourcePreferencesBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Streaming Engine Preferences</span></button></li>
+              <li><button type="button" class="dropdown-item" id="menuBackupRestoreBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Library Backup &amp; Sync</span></button></li>
+              <li><button type="button" class="dropdown-item" id="menuSwitchAccountBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg><span id="menuAuthActionText">Sign In / Switch Account</span></button></li>
+              <li><button type="button" class="dropdown-item danger" id="menuSignOutBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -1697,6 +1731,156 @@
 
         <div class="privacy-modal-footer">
           <button type="button" class="btn-hero-play" id="acknowledgePrivacyBtn">I Understand &amp; Agree</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       15. CINEPHILE ACCOUNT & MULTI-PROFILE AUTH MODAL
+       ===================================================================== -->
+  <div class="modal-backdrop hidden" id="authModal">
+    <div class="netflix-modal auth-modal-box">
+      <button class="modal-close-btn" id="closeAuthModalBtn">&times;</button>
+      <div class="settings-modal-inner">
+        <div class="auth-modal-header">
+          <div class="auth-badge-pill">CINEMA MEMBERSHIP</div>
+          <h2 id="authModalTitle">Welcome to MovieBox Studio</h2>
+          <p class="settings-sub" id="authModalSubtitle">Sign in or create a cinema profile to sync your watchlist, resume across devices, and set streaming engine preferences.</p>
+        </div>
+
+        <!-- AUTH TABS -->
+        <div class="auth-tabs-row" id="authTabsRow">
+          <button type="button" class="auth-tab-btn active" data-auth-tab="login">Sign In</button>
+          <button type="button" class="auth-tab-btn" data-auth-tab="signup">Create Account</button>
+          <button type="button" class="auth-tab-btn" data-auth-tab="profiles">Switch Profile</button>
+        </div>
+
+        <!-- TAB 1: SIGN IN -->
+        <div class="auth-tab-panel" id="authPanelLogin">
+          <form id="authLoginForm" class="auth-form" onsubmit="return false;">
+            <div class="contact-field-group">
+              <label for="loginUsernameInput">Username or Cinephile Alias <span class="required-star">*</span></label>
+              <input type="text" id="loginUsernameInput" class="dl-input" placeholder="e.g. CinemaLover4K or MasterStreamer" autocomplete="username" required />
+            </div>
+
+            <div class="contact-field-group">
+              <label for="loginPasswordInput">Security PIN or Password <span class="required-star">*</span></label>
+              <input type="password" id="loginPasswordInput" class="dl-input" placeholder="Enter your 4-digit PIN or password" autocomplete="current-password" required />
+            </div>
+
+            <div class="auth-options-row">
+              <label class="auth-checkbox-label">
+                <input type="checkbox" id="loginRememberMe" checked />
+                <span>Keep me signed in on this device</span>
+              </label>
+            </div>
+
+            <div class="auth-privacy-banner">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Zero Personal Tracking: No email or phone numbers required. Your session is signed cryptographically on your client and local proxy.</span>
+            </div>
+
+            <div class="auth-actions-row">
+              <button type="button" class="btn-hero-secondary" id="guestLoginBtn">Quick Guest Access</button>
+              <button type="submit" class="btn-hero-play" id="submitLoginBtn">Sign In</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- TAB 2: CREATE ACCOUNT (SIGN UP) -->
+        <div class="auth-tab-panel hidden" id="authPanelSignup">
+          <form id="authSignupForm" class="auth-form" onsubmit="return false;">
+            <div class="contact-field-group">
+              <label for="signupUsernameInput">Choose Cinephile Username / Alias <span class="required-star">*</span></label>
+              <input type="text" id="signupUsernameInput" class="dl-input" placeholder="e.g. 4KCollector, NeoCinephile, HindiCinemaFan" autocomplete="username" required />
+            </div>
+
+            <div class="contact-field-group">
+              <label>Select Profile Avatar Style</label>
+              <div class="avatar-picker-grid" id="signupAvatarPicker">
+                <button type="button" class="avatar-pick-btn active" data-color="gold" data-icon="4K" title="Cinema Gold">
+                  <div class="avatar-ring gold">4K</div>
+                  <span>Gold 4K</span>
+                </button>
+                <button type="button" class="avatar-pick-btn" data-color="crimson" data-icon="MB" title="Crimson Red">
+                  <div class="avatar-ring crimson">MB</div>
+                  <span>Crimson</span>
+                </button>
+                <button type="button" class="avatar-pick-btn" data-color="blue" data-icon="ATMOS" title="Cyber Blue">
+                  <div class="avatar-ring blue">ATMOS</div>
+                  <span>Atmos Blue</span>
+                </button>
+                <button type="button" class="avatar-pick-btn" data-color="purple" data-icon="NEO" title="Cyber Purple">
+                  <div class="avatar-ring purple">NEO</div>
+                  <span>Cyber Violet</span>
+                </button>
+                <button type="button" class="avatar-pick-btn" data-color="green" data-icon="LIVE" title="Emerald Live">
+                  <div class="avatar-ring green">LIVE</div>
+                  <span>Neon Green</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="contact-field-row">
+              <div class="contact-field-group">
+                <label for="signupPasswordInput">Security PIN or Password <span class="required-star">*</span></label>
+                <input type="password" id="signupPasswordInput" class="dl-input" placeholder="Create a 4-digit PIN or password" autocomplete="new-password" required />
+              </div>
+
+              <div class="contact-field-group">
+                <label for="signupDefaultEngineSelect">Default Streaming Engine</label>
+                <select id="signupDefaultEngineSelect" class="dl-input contact-select">
+                  <option value="auto">Auto Multi-Server Matrix (Fastest)</option>
+                  <option value="hdhub4u">HDHub4u 4K Dual Audio</option>
+                  <option value="vegamovies">Vegamovies Ultra x265</option>
+                  <option value="streamu">StreamU Cloud Engine</option>
+                  <option value="movies4u">Movies4u Mirror</option>
+                  <option value="123movies">123Movies HQ Cinema</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="auth-privacy-banner">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Privacy By Design: No personal name, telephone, or payment method needed. Accounts are portable via JSON library export.</span>
+            </div>
+
+            <div class="auth-actions-row">
+              <button type="button" class="btn-hero-secondary" id="signupCancelBtn">Cancel</button>
+              <button type="submit" class="btn-hero-play" id="submitSignupBtn">Create Account &amp; Start Streaming</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- TAB 3: PROFILES SWITCHER -->
+        <div class="auth-tab-panel hidden" id="authPanelProfiles">
+          <div class="profiles-manager-view">
+            <p class="settings-sub" style="margin-bottom:16px;">Switch between viewer profiles or create a separate profile for Family, Anime, or 4K Cinema.</p>
+            <div class="profiles-cards-grid" id="authProfilesCardsGrid">
+              <!-- Dynamically populated profiles cards -->
+            </div>
+            <div class="add-profile-box" style="margin-top:20px; text-align:center;">
+              <button type="button" class="btn-hero-secondary" id="addNewProfileBtn">+ Add Another Profile</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOGGED IN USER STATUS CARD (when already logged in) -->
+        <div id="authActiveUserCard" class="auth-active-user-card hidden" style="margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.08);">
+          <div class="auth-user-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="avatar-ring large gold" id="activeUserAvatarBadge">4K</div>
+              <div>
+                <strong style="font-size:16px; color:#f8fafc;" id="activeUserDisplayName">CinemaFan4K</strong>
+                <div style="font-size:12px; color:#38bdf8;" id="activeUserBadgeText">Cinema 4K Ultra Member</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn-hero-secondary" id="activeUserSwitchBtn" style="font-size:12px; padding:6px 14px;">Switch Profile</button>
+              <button type="button" class="btn-hero-play" id="activeUserSignOutBtn" style="font-size:12px; padding:6px 14px; background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.5); color:#fca5a5;">Sign Out</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
