@@ -369,20 +369,20 @@ const LIVE_SPORTS_SUGGESTIONS = [
 // =========================================================================
 const PLAYBACK_SITES = [
   {
-    key: 'netmirror',
-    name: 'NetMirror 4K Ultra HD',
-    badgeClass: 'netmirror',
-    badgeText: 'NETMIRROR',
+    key: 'auto',
+    name: 'Auto Multi-Server Matrix (Recommended)',
+    badgeClass: 'auto',
+    badgeText: 'AUTO',
     pillClass: 'gold',
-    pillText: '4K ULTRA HD',
-    desc: 'Direct 4K / 1080p Ultra HD • Spatial Audio • Dolby Vision CDN',
-    providerName: 'NetMirror 4K (Ultra HD / Dolby Vision)'
+    pillText: 'FASTEST 4K',
+    desc: 'Dynamic cloud load balancer routing to optimal low-latency 4K mirror',
+    providerName: 'Auto Cloud Matrix (Fastest 4K)'
   },
   {
     key: 'hdhub4u',
-    name: 'HDHub4u Bollywood & Dual Audio',
+    name: 'HDHub4u 4K Dual Audio',
     badgeClass: 'hdhub',
-    badgeText: 'HDHUB4U',
+    badgeText: 'HD',
     pillClass: 'cyan',
     pillText: 'DUAL AUDIO 4K',
     desc: '4K / 1080p Multi-Audio • Hindi Clean Master + English 5.1',
@@ -390,9 +390,9 @@ const PLAYBACK_SITES = [
   },
   {
     key: 'vegamovies',
-    name: 'Vegamovies Cinema HQ',
+    name: 'Vegamovies Ultra Cinema',
     badgeClass: 'vegamovies',
-    badgeText: 'VEGA',
+    badgeText: 'VM',
     pillClass: 'green',
     pillText: '10-BIT HEVC',
     desc: 'Direct 10-Bit HEVC Cinema High Bitrate Direct Master',
@@ -400,53 +400,33 @@ const PLAYBACK_SITES = [
   },
   {
     key: 'streamu',
-    name: 'Streamu Global Cloud CDN',
+    name: 'StreamU Global Cloud Engine',
     badgeClass: 'streamu',
-    badgeText: 'STREAMU',
-    pillClass: 'gold',
-    pillText: 'FAST CLOUD',
+    badgeText: 'SU',
+    pillClass: 'purple',
+    pillText: 'MULTI-CDN',
     desc: 'Ultra-low latency multi-language cloud streaming cluster',
     providerName: 'Streamu (Fast Multi-Language Cloud CDN)'
   },
   {
     key: 'movies4u',
-    name: 'Movies4u Buffer Cluster',
+    name: 'Movies4u Cinema Mirror',
     badgeClass: 'movies4u',
     badgeText: 'M4U',
-    pillClass: 'cyan',
-    pillText: 'RESILIENT',
-    desc: 'Multi-bitrate adaptive resilient high-speed mirror',
+    pillClass: 'amber',
+    pillText: 'INDIAN CINEMA',
+    desc: 'Bollywood releases, South Hindi dubbed cinema & fast buffer cluster',
     providerName: 'Movies4u (1080p Fast Buffer Cluster)'
   },
   {
     key: '123movies',
-    name: '123movies Cinema Mirror',
+    name: '123Movies HQ Cinema',
     badgeClass: 'm123',
-    badgeText: '123M',
-    pillClass: 'green',
-    pillText: 'FAST MIRROR',
-    desc: 'Global high speed streaming mirror with multi-server failover',
+    badgeText: '123',
+    pillClass: 'cyan',
+    pillText: 'GLOBAL HQ',
+    desc: 'Worldwide cinema premieres, Hollywood blockbusters & complete seasons',
     providerName: '123movies (1080p Cinema Mirror)'
-  },
-  {
-    key: 'moviebox',
-    name: 'MovieBox Native CDN (DASH / HLS)',
-    badgeClass: 'moviebox',
-    badgeText: 'MOVIEBOX',
-    pillClass: 'gold',
-    pillText: 'ADAPTIVE DASH',
-    desc: 'Official multi-bitrate DASH/MP4 stream with original audio tracks',
-    providerName: 'MovieBox Native CDN (Adaptive DASH)'
-  },
-  {
-    key: 'gaiaflix',
-    name: 'GaiaFlix Live Stadium Relay',
-    badgeClass: 'gaiaflix',
-    badgeText: 'GAIAFLIX',
-    pillClass: 'green',
-    pillText: '1080P60 LIVE',
-    desc: 'Live 1080p60 Stadium feed with zero buffer relay',
-    providerName: 'GaiaFlix Live Stadium Relay (1080p60)'
   }
 ];
 
@@ -511,9 +491,7 @@ function promptSourcePreferences(item, overrideSeason = null, overrideEpisode = 
   }
 
   const isLive = Boolean(item.isLive || item.isGaiaFlix || item.type === 'live');
-  let sitesToRender = isLive
-    ? [PLAYBACK_SITES.find(s => s.key === 'gaiaflix'), ...PLAYBACK_SITES.filter(s => s.key !== 'gaiaflix')].filter(Boolean)
-    : PLAYBACK_SITES.filter(s => s.key !== 'gaiaflix');
+  let sitesToRender = PLAYBACK_SITES;
 
   if (serversList) {
     serversList.innerHTML = '';
@@ -583,7 +561,7 @@ function promptSourcePreferences(item, overrideSeason = null, overrideEpisode = 
   const quickBtn = document.getElementById('sourcePrefQuickPlayBtn');
   if (quickBtn) {
     quickBtn.onclick = () => {
-      const topSite = sitesToRender[0]?.key || 'netmirror';
+      const topSite = sitesToRender[0]?.key || 'auto';
       if (rememberCheckbox && rememberCheckbox.checked) {
         localStorage.setItem('moviebox_default_site', topSite);
         localStorage.setItem('moviebox_always_ask_site', 'false');
